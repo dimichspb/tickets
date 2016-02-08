@@ -11,7 +11,7 @@ class m160119_144604_creating_countries_table extends Migration
             'code' => Schema::TYPE_STRING . ' NOT NULL',
             'country' => Schema::TYPE_STRING . ' NOT NULL',
             'population' => Schema::TYPE_INTEGER . ' NOT NULL',
-        ]);
+        ], "DEFAULT CHARSET=utf8");
         $this->addPrimaryKey('pk_code', 'country', 'code');
     }
 

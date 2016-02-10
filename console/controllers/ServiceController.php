@@ -3,6 +3,8 @@
 namespace console\controllers;
 
 use common\Models\Country;
+use common\Models\CountryDesc;
+use common\Models\Language;
 use yii\console\Controller;
 use common\models\ServiceType;
 use linslin\yii2\curl\Curl;
@@ -84,6 +86,7 @@ class ServiceController extends Controller
                 'code' => $item['code'],
                 'name' => $item['name'],
                 'currency' => $item['currency'],
+                'description' => $item['name_translations'],
             ]);
         }
     }
@@ -119,13 +122,50 @@ class ServiceController extends Controller
 
         if (!$country) {
             $country = new Country();
+            $country->code = $countryData['code'];
         }
 
-        $country->code = $countryData['code'];
         $country->name = $countryData['name'];
-        $country->currency = $countryData['currency'];
+        $country->currency = !empty($countryData['currency'])? $countryData['currency']: 'NULL';
 
-        return $country->save();
+        $result = $country->save();
+
+        if (isset($countryData['description'])) {
+            $this->addCountryDescriptions($country, $countryData['description']);
+        }
+
+        return $result;
+    }
+
+    private function addCountryDescriptions($country, array $countryDataArray)
+    {
+        if (count($countryDataArray)>0)
+        {
+            foreach ($countryDataArray as $countryDataIndex => $countryDataValue) {
+                $this->addCountryDescription($country, $countryDataIndex, $countryDataValue);
+            }
+        }
+    }
+
+    private function addCountryDescription($country, $countryDataIndex, $countryDataValue)
+    {
+        $language = Language::getLanguageByCode($countryDataIndex);
+
+        $countryDesc = CountryDesc::find()
+            ->where([
+                'country' => $country->code,
+                'language' => $language->code,
+            ])->one();
+
+        if (!$countryDesc) {
+            $countryDesc = new CountryDesc();
+            $countryDesc->country = $country->code;
+            $countryDesc->language = $language->code;
+        }
+
+        $countryDesc->name = $countryDataValue;
+
+        return $countryDesc->save();
     }
 
     private function addCity($cityData)

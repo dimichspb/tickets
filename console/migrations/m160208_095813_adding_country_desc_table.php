@@ -8,16 +8,20 @@ class m160208_095813_adding_country_desc_table extends Migration
     public function up()
     {
         $this->createTable('language', [
-            'code' => Schema::TYPE_STRING . ' NOT NULL',
+            'code' => Schema::TYPE_STRING . '(5) NOT NULL',
         ], "DEFAULT CHARSET=utf8");
         $this->addPrimaryKey('pk_code', 'language', 'code');
 
         $this->createTable('country_desc', [
-            'country' => Schema::TYPE_STRING . ' NOT NULL',
-            'language' => Schema::TYPE_STRING . ' NOT NULL',
+            'country' => Schema::TYPE_STRING . '(2) NOT NULL',
+            'language' => Schema::TYPE_STRING . '(5) NOT NULL',
             'name' => Schema::TYPE_STRING . ' NOT NULL',
         ], "DEFAULT CHARSET=utf8");
 
+        $this->addPrimaryKey('pk_country_desc', 'country_desc', [
+            'country',
+            'language',
+        ]);
         $this->addForeignKey('fkey_country_desc_country_code', 'country_desc', 'country', 'country', 'code', 'CASCADE', 'CASCADE');
         $this->addForeignKey('fkey_country_desc_language_code', 'country_desc', 'language', 'language', 'code', 'RESTRICT', 'RESTRICT');
     }

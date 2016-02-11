@@ -29,7 +29,7 @@ class Country extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'name', 'currency'], 'required'],
+            [['code'], 'required'],
             [['code', 'name', 'currency'], 'string', 'max' => 255],
             [['code'], 'unique']
         ];
@@ -53,5 +53,20 @@ class Country extends \yii\db\ActiveRecord
     public function getCountryDescs()
     {
         return $this->hasMany(CountryDesc::className(), ['country' => 'code']);
+    }
+
+    public static function getCountryByCode($countryCode)
+    {
+        $country = Country::find()
+            ->where([
+                'code' => $countryCode,
+            ])->one();
+        if (!$country) {
+            $country = new Country();
+            $country->code = $countryCode;
+            $country->save();
+        }
+
+        return $country;
     }
 }

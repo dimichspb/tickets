@@ -8,7 +8,7 @@ class m160119_144604_creating_countries_table extends Migration
     public function up()
     {
         $this->createTable('country', [
-            'code' => Schema::TYPE_STRING . ' NOT NULL',
+            'code' => Schema::TYPE_STRING . '(2) NOT NULL',
             'country' => Schema::TYPE_STRING . ' NOT NULL',
             'population' => Schema::TYPE_INTEGER . ' NOT NULL',
         ], "DEFAULT CHARSET=utf8");

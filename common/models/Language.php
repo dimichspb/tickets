@@ -52,10 +52,9 @@ class Language extends \yii\db\ActiveRecord
 
     public static function getLanguageByCode($languageCode)
     {
-        $language = Language::find()
-            ->where([
+        $language = Language::findOne([
                 'code' => $languageCode,
-            ])->one();
+            ]);
         if (!$language) {
             $language = new Language();
             $language->code = $languageCode;

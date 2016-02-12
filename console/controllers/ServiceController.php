@@ -9,6 +9,7 @@ use common\models\CityDesc;
 use common\models\Airport;
 use common\models\AirportDesc;
 use common\models\Language;
+use common\Models\Place;
 use yii\console\Controller;
 use common\models\ServiceType;
 use linslin\yii2\curl\Curl;
@@ -37,6 +38,81 @@ class ServiceController extends Controller
                 $this->uploadNewData($endpoint->service_type, $endpoint->service, $responseJson);
             }
         }
+    }
+
+    public function actionPlaces()
+    {
+        $this->addCountriesToPlaces();
+        $this->addCitiesToPlaces();
+        $this->addAirportsToPlaces();
+
+    }
+
+    private function addCountriesToPlaces()
+    {
+        $countries = Country::find()->all();
+        $totalItems = count($countries);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Countries, total items: ' . $totalItems . PHP_EOL);
+
+        foreach($countries as $country) {
+            $this->addNewPlace([
+                'country' => $country->code,
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+
+    private function addCitiesToPlaces()
+    {
+        $cities = City::find()->all();
+        $totalItems = count($cities);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Cities, total items: ' . $totalItems . PHP_EOL);
+
+        foreach($cities as $city) {
+            $country = Country::getCountryByCode($city->country);
+            $parent = Place::getPlaceByCountryCode($country->code);
+            $this->addNewPlace([
+                'city' => $city->code,
+                'country' => $country->code,
+                'parent' => $parent->id,
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+
+    private function addAirportsToPlaces()
+    {
+        $airports = Airport::find()->all();
+        $totalItems = count($airports);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Airports, total items: ' . $totalItems . PHP_EOL);
+
+        foreach ($airports as $airport) {
+            $city = City::getCityByCode($airport->city);
+            $country = Country::getCountryByCode($city->country);
+            $parent = Place::getPlaceByCityCode($city->code);
+
+            $this->addNewPlace([
+                'airport' => $airport->code,
+                'city' => $city->code,
+                'country' => $country->code,
+                'parent' => $parent->id,
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+
+    private function addNewPlace(array $placeData)
+    {
+        $place = Place::findOne($placeData);
+        if (!$place) {
+            $place = new Place();
+            $place->setAttributes($placeData);
+            $place->save();
+        }
+        return $place;
     }
 
     private function uploadNewData($serviceType, $service, $dataJson)
@@ -88,10 +164,9 @@ class ServiceController extends Controller
     private function uploadCountriesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
-
         $totalItems = count($dataArray);
         $currentItem = 0;
-        $this->stdout(PHP_EOL . 'Total items: '. $totalItems . PHP_EOL);
+        $this->stdout(PHP_EOL . 'Adding Countries, total items: '. $totalItems . PHP_EOL);
 
 
         foreach ($dataArray as $item) {
@@ -110,7 +185,7 @@ class ServiceController extends Controller
         $dataArray = Json::decode($dataJson);
         $totalItems = count($dataArray);
         $currentItem = 0;
-        $this->stdout(PHP_EOL . 'Total items: '. $totalItems . PHP_EOL);
+        $this->stdout(PHP_EOL . 'Adding Cities, total items: '. $totalItems . PHP_EOL);
 
         foreach ($dataArray as $item) {
             $this->addCity([
@@ -130,7 +205,7 @@ class ServiceController extends Controller
         $dataArray = Json::decode($dataJson);
         $totalItems = count($dataArray);
         $currentItem = 0;
-        $this->stdout(PHP_EOL . 'Total items: '. $totalItems . PHP_EOL);
+        $this->stdout(PHP_EOL . 'Adding airports, total items: '. $totalItems . PHP_EOL);
 
         foreach ($dataArray as $item) {
             $this->addAirport([
@@ -148,10 +223,7 @@ class ServiceController extends Controller
 
     private function addCountry($countryData)
     {
-        $country = Country::find()
-            ->where([
-                'code' => $countryData['code'],
-            ])->one();
+        $country = Country::getCountryByCode($countryData['code']);
 
         if (!$country) {
             $country = new Country();
@@ -184,11 +256,10 @@ class ServiceController extends Controller
     {
         $language = Language::getLanguageByCode($countryDataIndex);
 
-        $countryDesc = CountryDesc::find()
-            ->where([
+        $countryDesc = CountryDesc::findOne([
                 'country' => $country->code,
                 'language' => $language->code,
-            ])->one();
+            ]);
 
         if (!$countryDesc) {
             $countryDesc = new CountryDesc();
@@ -205,10 +276,7 @@ class ServiceController extends Controller
     {
         $country = Country::getCountryByCode($cityData['country']);
 
-        $city = City::find()
-            ->where([
-                'code' => $cityData['code'],
-            ])->one();
+        $city = City::getCityByCode($cityData['code']);
 
         if (!$city) {
             $city = new City();
@@ -243,11 +311,10 @@ class ServiceController extends Controller
     {
         $language = Language::getLanguageByCode($cityDataIndex);
 
-        $cityDesc = CityDesc::find()
-            ->where([
+        $cityDesc = CityDesc::findOne([
                 'city' => $city->code,
                 'language' => $language->code,
-            ])->one();
+            ]);
 
         if (!$cityDesc) {
             $cityDesc = new CityDesc();
@@ -265,10 +332,7 @@ class ServiceController extends Controller
         $country = Country::getCountryByCode($airportData['country']);
         $city = City::getCityByCode($airportData['city']);
 
-        $airport = Airport::find()
-            ->where([
-                'code' => $airportData['code'],
-            ])->one();
+        $airport = Airport::getAirportByCode($airportData['code']);
 
         if (!$airport) {
             $airport = new Airport();
@@ -302,11 +366,10 @@ class ServiceController extends Controller
     {
         $language = Language::getLanguageByCode($airportDataIndex);
 
-        $airportDesc = AirportDesc::find()
-            ->where([
+        $airportDesc = AirportDesc::findOne([
                 'airport' => $airport->code,
                 'language' => $language->code,
-            ])->one();
+            ]);
 
         if (!$airportDesc) {
             $airportDesc = new AirportDesc();
@@ -331,7 +394,7 @@ class ServiceController extends Controller
         ];
     }
 
-    private function progressBar($totalItems, &$currentItem, $step = 10)
+    private function progressBar($totalItems, &$currentItem = 0, $step = 10)
     {
         if ($currentItem++ > $totalItems / $step) {
             Console::stdout('.');

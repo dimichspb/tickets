@@ -88,4 +88,18 @@ class Airport extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Language::className(), ['code' => 'language'])->viaTable('airport_desc', ['airport' => 'code']);
     }
+
+    public static function getAirportByCode($airportCode)
+    {
+        $airport = Airport::findOne([
+            'code' => $airportCode,
+        ]);
+        if (!$airport) {
+            $airport = new Airport();
+            $airport->code = $airportCode;
+            $airport->save();
+        }
+
+        return $airport;
+    }
 }

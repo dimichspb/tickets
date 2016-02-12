@@ -60,10 +60,9 @@ class City extends \yii\db\ActiveRecord
 
     public static function getCityByCode($cityCode)
     {
-        $city = City::find()
-            ->where([
+        $city = City::findOne([
                 'code' => $cityCode,
-            ])->one();
+            ]);
         if (!$city) {
             $city = new City();
             $city->code = $cityCode;

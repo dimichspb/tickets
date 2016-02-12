@@ -57,10 +57,9 @@ class Country extends \yii\db\ActiveRecord
 
     public static function getCountryByCode($countryCode)
     {
-        $country = Country::find()
-            ->where([
+        $country = Country::findOne([
                 'code' => $countryCode,
-            ])->one();
+            ]);
         if (!$country) {
             $country = new Country();
             $country->code = $countryCode;

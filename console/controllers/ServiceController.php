@@ -2,6 +2,8 @@
 
 namespace console\controllers;
 
+use common\models\Region;
+use common\models\RegionDesc;
 use common\models\Country;
 use common\models\CountryDesc;
 use common\models\City;
@@ -118,6 +120,12 @@ class ServiceController extends Controller
     private function uploadNewData($serviceType, $service, $dataJson)
     {
         switch ($serviceType) {
+            case 'RG':
+                $this->uploadRegions($service, $dataJson);
+                break;
+            case 'SR':
+                $this->uploadSubRegions($service, $dataJson);
+                break;
             case 'CN':
                 $this->uploadCountries($service, $dataJson);
                 break;
@@ -126,6 +134,18 @@ class ServiceController extends Controller
                 break;
             case 'AP':
                 $this->uploadAirports($service, $dataJson);
+                break;
+            case 'CR': 
+                $this->uploadCountriesToRegions($service, $dataJson);
+            default:
+        }
+    }
+
+    private function uploadRegions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                $this->uploadRegionsFromAVS($dataJson);
                 break;
             default:
         }
@@ -161,6 +181,22 @@ class ServiceController extends Controller
         }
     }
 
+    private function uploadRegionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+        $totalItems = count($dataArray);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Regions, total items: '. $totalItems . PHP_EOL);
+        
+        foreach ($dataArray as $item) {
+            $this->addRegion([
+                'code' => $item['code'],
+                'name' => $item['name'],
+                'description' => $item['name_translations'],
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
     private function uploadCountriesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -220,6 +256,56 @@ class ServiceController extends Controller
             $this->progressBar($totalItems, $currentItem);
         }
     }
+
+    private function addRegion($regionData)
+    {
+        $region = Region::getRegionByCode($regionData['code']);
+        
+        if (!$region) {
+            $region = new Region();
+            $region->code = $regionData['code'];
+        }
+        
+        $region->name = $regionData['name'];
+        
+        $result = $region->save();
+        
+        if ($result && isset($regionData['description'])) {
+            $this->addRegionDescriptions($region, $regionData['description']);
+        }
+        
+        return $result;
+    }
+
+    private function addRegionDescriptions(Region $region, array $regionDataArray)
+    {
+        if (count($regionDataArray)>0)
+        {
+            foreach ($regionDataArray as $regionDataIndex => $regionDataValue) {
+                $this->addRegionDescription($region, $regionDataIndex, $regionDataValue);
+            }
+        }
+    }
+
+    private function addRegionDescription(Region $region, $regionDataIndex, $regionDataValue)
+    {
+        $language = Language::getLanguageByCode($regionDataIndex);
+
+        $regionDesc = RegionDesc::findOne([
+                'region' => $region->code,
+                'language' => $language->code,
+            ]);
+
+        if (!$regionDesc) {
+            $regionDesc = new RegionDesc();
+            $regionDesc->region = $region->code;
+            $regionDesc->language = $language->code;
+        }
+
+        $regionDesc->name = $regionDataValue;
+
+        return $regionDesc->save();
+    }    
 
     private function addCountry($countryData)
     {
@@ -401,4 +487,41 @@ class ServiceController extends Controller
             $currentItem = 0;
         }
     }
+    
+    
+    /*
+    public function actionMerge()
+    {
+        $rootDir = dirname(dirname(dirname(__DIR__)));
+
+        $firstJSONFile = $rootDir . "\APIFake\data\segions.json";
+        $secondJSONFile = $rootDir . "\APIFake\data\segions_desc.json";
+        $newJSONFile = $rootDir . "\APIFake\data\segions.json";
+       
+        
+                
+        if (!file_exists($firstJSONFile)) {
+            throw new \InvalidArgumentException("First JSON file is missing");
+        }
+        if (!file_exists($secondJSONFile)) {
+            throw new \InvalidArgumentException("Second JSON file is missing");
+        }
+        
+        $firstJSONArray = JSON::decode(file_get_contents($firstJSONFile));
+        $secondJSONArray = JSON::decode(file_get_contents($secondJSONFile));
+        
+        //var_dump($secondJSONArray);
+        //var_dump(array_column($secondJSONArray, 'code'));
+        foreach ($firstJSONArray as &$firstJSONItem) {
+            $key = (array_search($firstJSONItem['code'], array_column($secondJSONArray, 'code')));
+            //var_dump($firstJSONItem['code']);
+            //var_dump($secondJSONArray[$key]);
+            array_shift($secondJSONArray[$key]);
+            $firstJSONItem['name_translations'] = $secondJSONArray[$key];
+        }
+        
+        echo $newJSONFile;
+        file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
+    }
+    */
 }

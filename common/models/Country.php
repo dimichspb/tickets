@@ -9,9 +9,17 @@ use Yii;
  *
  * @property string $code
  * @property string $name
+ * @property string $region
+ * @property string $subregion
  * @property string $currency
  *
+ * @property Airport[] $airports
+ * @property City[] $cities
+ * @property Region $region0
+ * @property Subregion $subregion0
  * @property CountryDesc[] $countryDescs
+ * @property Language[] $languages
+ * @property Place[] $places
  */
 class Country extends \yii\db\ActiveRecord
 {
@@ -30,7 +38,9 @@ class Country extends \yii\db\ActiveRecord
     {
         return [
             [['code'], 'required'],
-            [['code', 'name', 'currency'], 'string', 'max' => 255],
+            [['code'], 'string', 'max' => 2],
+            [['name'], 'string', 'max' => 255],
+            [['region', 'subregion', 'currency'], 'string', 'max' => 3],
             [['code'], 'unique']
         ];
     }
@@ -43,8 +53,42 @@ class Country extends \yii\db\ActiveRecord
         return [
             'code' => 'Code',
             'name' => 'Name',
+            'region' => 'Region',
+            'subregion' => 'Subregion',
             'currency' => 'Currency',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAirports()
+    {
+        return $this->hasMany(Airport::className(), ['country' => 'code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCities()
+    {
+        return $this->hasMany(City::className(), ['country' => 'code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRegion()
+    {
+        return $this->hasOne(Region::className(), ['code' => 'region']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubregion()
+    {
+        return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
     }
 
     /**
@@ -55,6 +99,23 @@ class Country extends \yii\db\ActiveRecord
         return $this->hasMany(CountryDesc::className(), ['country' => 'code']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguages()
+    {
+        return $this->hasMany(Language::className(), ['code' => 'language'])->viaTable('country_desc', ['country' => 'code']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlaces()
+    {
+        return $this->hasMany(Place::className(), ['country' => 'code']);
+    }
+    
+    
     public static function getCountryByCode($countryCode)
     {
         $country = Country::findOne([

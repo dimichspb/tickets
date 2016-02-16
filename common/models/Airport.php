@@ -11,13 +11,18 @@ use Yii;
  * @property string $name
  * @property string $coordinates
  * @property string $time_zone
+ * @property string $region
+ * @property string $subregion
  * @property string $country
  * @property string $city
  *
  * @property City $city0
  * @property Country $country0
+ * @property Region $region0
+ * @property Subregion $subregion0
  * @property AirportDesc[] $airportDescs
  * @property Language[] $languages
+ * @property Place[] $places
  */
 class Airport extends \yii\db\ActiveRecord
 {
@@ -36,7 +41,7 @@ class Airport extends \yii\db\ActiveRecord
     {
         return [
             [['code', 'country', 'city'], 'required'],
-            [['code', 'city'], 'string', 'max' => 3],
+            [['code', 'region', 'subregion', 'city'], 'string', 'max' => 3],
             [['name', 'coordinates', 'time_zone'], 'string', 'max' => 255],
             [['country'], 'string', 'max' => 2]
         ];
@@ -52,6 +57,8 @@ class Airport extends \yii\db\ActiveRecord
             'name' => 'Name',
             'coordinates' => 'Coordinates',
             'time_zone' => 'Time Zone',
+            'region' => 'Region',
+            'subregion' => 'Subregion',
             'country' => 'Country',
             'city' => 'City',
         ];
@@ -76,6 +83,22 @@ class Airport extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getRegion0()
+    {
+        return $this->hasOne(Region::className(), ['code' => 'region']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubregion0()
+    {
+        return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getAirportDescs()
     {
         return $this->hasMany(AirportDesc::className(), ['airport' => 'code']);
@@ -89,6 +112,14 @@ class Airport extends \yii\db\ActiveRecord
         return $this->hasMany(Language::className(), ['code' => 'language'])->viaTable('airport_desc', ['airport' => 'code']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlaces()
+    {
+        return $this->hasMany(Place::className(), ['airport' => 'code']);
+    }
+    
     public static function getAirportByCode($airportCode)
     {
         $airport = Airport::findOne([

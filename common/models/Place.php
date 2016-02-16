@@ -8,6 +8,8 @@ use Yii;
  * This is the model class for table "place".
  *
  * @property integer $id
+ * @property string $region
+ * @property string $subregion
  * @property string $country
  * @property string $city
  * @property string $airport
@@ -18,6 +20,8 @@ use Yii;
  * @property Country $country0
  * @property Place $parent0
  * @property Place[] $places
+ * @property Region $region0
+ * @property Subregion $subregion0
  */
 class Place extends \yii\db\ActiveRecord
 {
@@ -35,9 +39,9 @@ class Place extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'parent'], 'integer'],
-            [['country'], 'string', 'max' => 2],
-            [['city', 'airport'], 'string', 'max' => 3]
+            [['parent'], 'integer'],
+            [['region', 'subregion', 'city', 'airport'], 'string', 'max' => 3],
+            [['country'], 'string', 'max' => 2]
         ];
     }
 
@@ -48,6 +52,8 @@ class Place extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'region' => 'Region',
+            'subregion' => 'Subregion',
             'country' => 'Country',
             'city' => 'City',
             'airport' => 'Airport',
@@ -93,6 +99,52 @@ class Place extends \yii\db\ActiveRecord
     public function getPlaces()
     {
         return $this->hasMany(Place::className(), ['parent' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRegion0()
+    {
+        return $this->hasOne(Region::className(), ['code' => 'region']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubregion0()
+    {
+        return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
+    }
+    
+    public static function getPlaceByRegionCode($regionCode)
+    {
+        $place = Place::findOne([
+            'region' => $regionCode,
+        ]);
+        if (!$place) {
+            $region = Region::getRegionByCode($regionCode);
+            $place = new Place();
+            $place->region = $region->code;
+            $place->save();
+        }
+
+        return $place;
+    }
+    
+    public static function getPlaceBySubregionCode($subregionCode)
+    {
+        $place = Place::findOne([
+            'subregion' => $subregionCode,
+        ]);
+        if (!$place) {
+            $subregion = Subregion::getSubregionByCode($subregionCode);
+            $place = new Place();
+            $place->subregion = $subregion->code;
+            $place->save();
+        }
+
+        return $place;
     }
 
     public static function getPlaceByCountryCode($countryCode)

@@ -4,6 +4,8 @@ namespace console\controllers;
 
 use common\models\Region;
 use common\models\RegionDesc;
+use common\models\Subregion;
+use common\models\SubregionDesc;
 use common\models\Country;
 use common\models\CountryDesc;
 use common\models\City;
@@ -44,10 +46,46 @@ class ServiceController extends Controller
 
     public function actionPlaces()
     {
+        $this->addRegionsToPlaces();
+        $this->addSubregionsToPlaces();
         $this->addCountriesToPlaces();
         $this->addCitiesToPlaces();
         $this->addAirportsToPlaces();
 
+    }
+
+    private function addRegionsToPlaces()
+    {
+        $regions = Region::find()->all();
+        $totalItems = count($regions);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Regions, total items: ' . $totalItems . PHP_EOL);
+
+        foreach($regions as $region) {
+            $this->addNewPlace([
+                'region' => $region->code,
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+    
+    private function addSubregionsToPlaces()
+    {
+        $subregions = Subregion::find()->all();
+        $totalItems = count($subregions);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Subregions, total items: ' . $totalItems . PHP_EOL);
+
+        foreach($subregions as $subregion) {
+            $region = Region::getRegionByCode($subregion->region);
+            $parent = Place::getPlaceByRegionCode($region->code);
+            $this->addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
+                'parent' => $parent->id,
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
     }
 
     private function addCountriesToPlaces()
@@ -58,8 +96,14 @@ class ServiceController extends Controller
         $this->stdout(PHP_EOL . 'Adding Countries, total items: ' . $totalItems . PHP_EOL);
 
         foreach($countries as $country) {
+            $subregion = Subregion::getSubregionByCode($country->subregion);
+            $region = Region::getRegionByCode($subregion->region);
+            $parent = Place::getPlaceBySubregionCode($subregion->code);
             $this->addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
                 'country' => $country->code,
+                'parent' => $parent->id,
             ]);
             $this->progressBar($totalItems, $currentItem);
         }
@@ -74,10 +118,14 @@ class ServiceController extends Controller
 
         foreach($cities as $city) {
             $country = Country::getCountryByCode($city->country);
+            $subregion = Subregion::getSubregionByCode($country->subregion);
+            $region = Region::getRegionByCode($subregion->region);
             $parent = Place::getPlaceByCountryCode($country->code);
             $this->addNewPlace([
-                'city' => $city->code,
+                'region' => $region->code,
+                'subregion' => $subregion->code,
                 'country' => $country->code,
+                'city' => $city->code,
                 'parent' => $parent->id,
             ]);
             $this->progressBar($totalItems, $currentItem);
@@ -94,12 +142,16 @@ class ServiceController extends Controller
         foreach ($airports as $airport) {
             $city = City::getCityByCode($airport->city);
             $country = Country::getCountryByCode($city->country);
+            $subregion = Subregion::getSubregionByCode($country->subregion);
+            $region = Region::getRegionByCode($subregion->region);
             $parent = Place::getPlaceByCityCode($city->code);
 
             $this->addNewPlace([
-                'airport' => $airport->code,
-                'city' => $city->code,
+                'region' => $region->code,
+                'subregion' => $subregion->code,
                 'country' => $country->code,
+                'city' => $city->code,
+                'airport' => $airport->code,
                 'parent' => $parent->id,
             ]);
             $this->progressBar($totalItems, $currentItem);
@@ -124,7 +176,7 @@ class ServiceController extends Controller
                 $this->uploadRegions($service, $dataJson);
                 break;
             case 'SR':
-                $this->uploadSubRegions($service, $dataJson);
+                $this->uploadSubregions($service, $dataJson);
                 break;
             case 'CN':
                 $this->uploadCountries($service, $dataJson);
@@ -146,6 +198,16 @@ class ServiceController extends Controller
         switch ($service) {
             case 'AVS':
                 $this->uploadRegionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private function uploadSubregions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                $this->uploadSubregionsFromAVS($dataJson);
                 break;
             default:
         }
@@ -180,6 +242,16 @@ class ServiceController extends Controller
             default:
         }
     }
+    
+    private function uploadCountriesToRegions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                $this->uploadCountriesToRegionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
 
     private function uploadRegionsFromAVS($dataJson)
     {
@@ -197,6 +269,25 @@ class ServiceController extends Controller
             $this->progressBar($totalItems, $currentItem);
         }
     }
+    
+    private function uploadSubregionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+        $totalItems = count($dataArray);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Subregions, total items: '. $totalItems . PHP_EOL);
+        
+        foreach ($dataArray as $item) {
+            $this->addSubregion([
+                'code' => $item['code'],
+                'region' => $item['region'],
+                'name' => $item['name'],
+                'description' => $item['name_translations'],
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+    
     private function uploadCountriesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -257,6 +348,36 @@ class ServiceController extends Controller
         }
     }
 
+    private function uploadCountriesToRegionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+        $totalItems = count($dataArray);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding CountriesToRegions, total items: '. $totalItems . PHP_EOL);
+
+
+        foreach ($dataArray as $item) {
+            $this->updateCountryRegion([
+                'code' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+            
+            $this->updateCitiesRegionsByCountry([
+                'country' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+            
+            $this->updateAirportsRegionsByCountry([
+                'country' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+
     private function addRegion($regionData)
     {
         $region = Region::getRegionByCode($regionData['code']);
@@ -305,7 +426,60 @@ class ServiceController extends Controller
         $regionDesc->name = $regionDataValue;
 
         return $regionDesc->save();
-    }    
+    }
+    
+    
+    private function addSubregion(array $subregionData)
+    {
+        $subregion = Subregion::getSubregionByCode($subregionData['code']);
+        
+        if (!$subregion) {
+            $subregion = new Subregion();
+            $subregion->code = $subregionData['code'];
+        }
+        
+        $subregion->region = $subregionData['region'];
+        $subregion->name = $subregionData['name'];
+        
+        $result = $subregion->save();
+
+        if ($result && isset($subregionData['description'])) {
+            $this->addSubregionDescriptions($subregion, $subregionData['description']);
+        }
+        
+        return $result;
+    }
+
+    private function addSubregionDescriptions(Subregion $subregion, array $subregionDataArray)
+    {
+        if (count($subregionDataArray)>0)
+        {
+            foreach ($subregionDataArray as $subregionDataIndex => $subregionDataValue) {
+                $this->addSubregionDescription($subregion, $subregionDataIndex, $subregionDataValue);
+            }
+        }
+    }
+
+    private function addSubregionDescription(Subregion $subregion, $subregionDataIndex, $subregionDataValue)
+    {
+        $language = Language::getLanguageByCode($subregionDataIndex);
+
+        $subregionDesc = SubregionDesc::findOne([
+                'subregion' => $subregion->code,
+                'language' => $language->code,
+            ]);
+
+        if (!$subregionDesc) {
+            $subregionDesc = new SubregionDesc();
+            $subregionDesc->subregion = $subregion->code;
+            $subregionDesc->language = $language->code;
+        }
+
+        $subregionDesc->name = $subregionDataValue;
+
+        return $subregionDesc->save();
+    }
+       
 
     private function addCountry($countryData)
     {
@@ -468,6 +642,49 @@ class ServiceController extends Controller
         return $airportDesc->save();
     }
 
+    private function updateCountryRegion($countryData)
+    {
+        $country = Country::getCountryByCode($countryData['code']);
+
+        if (!$country) {
+            $country = new Country();
+            $country->code = $countryData['code'];
+        }
+
+        $country->region = $countryData['region'];
+        $country->subregion = $countryData['subregion'];
+
+        $result = $country->save();
+
+        return $result;
+    }
+    
+    private function updateCitiesRegionsByCountry($countryData)
+    {
+        $cities = City::findAll([
+            'country' => $countryData['country'],
+        ]);
+
+        foreach ($cities as $city) {
+            $city->region = $countryData['region'];
+            $city->subregion = $countryData['subregion'];
+            $city->save();
+        }
+    }
+    
+    private function updateAirportsRegionsByCountry($countryData)
+    {
+        $airports = Airport::findAll([
+            'country' => $countryData['country'],
+        ]);
+
+        foreach ($airports as $airport) {
+            $airport->region = $countryData['region'];
+            $airport->subregion = $countryData['subregion'];
+            $airport->save();
+        }
+    }
+
     private function actionCurl($url, array $params = [])
     {
         $curl = new Curl();
@@ -494,9 +711,9 @@ class ServiceController extends Controller
     {
         $rootDir = dirname(dirname(dirname(__DIR__)));
 
-        $firstJSONFile = $rootDir . "\APIFake\data\segions.json";
-        $secondJSONFile = $rootDir . "\APIFake\data\segions_desc.json";
-        $newJSONFile = $rootDir . "\APIFake\data\segions.json";
+        $firstJSONFile = $rootDir . '\APIFake\data\subregions.json';
+        $secondJSONFile = $rootDir . '\APIFake\data\subregions_desc.json';
+        $newJSONFile = $rootDir . '\APIFake\data\subregion.json';
        
         
                 
@@ -510,18 +727,21 @@ class ServiceController extends Controller
         $firstJSONArray = JSON::decode(file_get_contents($firstJSONFile));
         $secondJSONArray = JSON::decode(file_get_contents($secondJSONFile));
         
-        //var_dump($secondJSONArray);
-        //var_dump(array_column($secondJSONArray, 'code'));
+        $secondJSONArrayCodesList = array_column($secondJSONArray, 'code');
+        //var_dump($secondJSONArrayCodesList);
         foreach ($firstJSONArray as &$firstJSONItem) {
-            $key = (array_search($firstJSONItem['code'], array_column($secondJSONArray, 'code')));
+            $key = array_search($firstJSONItem['code'], $secondJSONArrayCodesList);
             //var_dump($firstJSONItem['code']);
+            //var_dump($key);
             //var_dump($secondJSONArray[$key]);
-            array_shift($secondJSONArray[$key]);
+            array_shift($secondJSONArray[$key]); //remove "code" element
             $firstJSONItem['name_translations'] = $secondJSONArray[$key];
         }
         
         echo $newJSONFile;
+        //var_dump($firstJSONArray);
         file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
     }
     */
+    
 }

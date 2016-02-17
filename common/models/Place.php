@@ -4,6 +4,7 @@ namespace common\Models;
 
 use Yii;
 
+
 /**
  * This is the model class for table "place".
  *
@@ -196,5 +197,28 @@ class Place extends \yii\db\ActiveRecord
         }
 
         return $place;
+    }
+
+    public function getAirports()
+    {
+        $airportsList = [];
+        if ($this->airport) {
+            $airport = Airport::getAirportByCode($this->airport);
+            $airportsList[] = $airport;
+        } elseif ($this->city) {
+            $city = City::getCityByCode($this->city);
+            $airportsList = $city->getAirports();
+        } elseif ($this->country) {
+            $country = Country::getCountryByCode($this->country);
+            $airportsList = $country->getAirports();
+        } elseif ($this->subregion) {
+            $subregion = Subregion::getSubregionByCode($this->subregion);
+            $airportsList = $subregion->getAirports();
+        } elseif ($this->region) {
+            $region = Region::getRegionByCode($this->region);
+            $airportsList = $region->getAirports();
+        }
+
+        return $airportsList;
     }
 }

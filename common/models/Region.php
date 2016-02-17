@@ -42,7 +42,39 @@ class Region extends \yii\db\ActiveRecord
             'name' => 'Name',
         ];
     }
-    
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAirports()
+    {
+        return $this->hasMany(Airport::className(), ['region' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCities()
+    {
+        return $this->hasMany(City::className(), ['region' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountries()
+    {
+        return $this->hasMany(Country::className(), ['region' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubregions()
+    {
+        return $this->hasMany(Subregion::className(), ['region' => 'code'])->all();
+    }
+
     public static function getRegionByCode($regionCode)
     {
         $region = Region::findOne([

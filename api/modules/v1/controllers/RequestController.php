@@ -11,21 +11,17 @@ use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
 
-/**
- * Country Controller API
- *
- * @author Budi Irawan <deerawan@gmail.com>
- */
-class CountryController extends ActiveController
+
+class RequestController extends ActiveController
 {
-    public $modelClass = 'common\models\Country';
+    public $modelClass = 'common\models\Request';
 
     private $accessRules = [
-        'index' => 'getCountriesList',
-        'view' => 'getCountryDetails',
-        'create' => 'createCountryDetails',
-        'update' => 'updateCountryDetails',
-        'delete' => 'deleteCountryDetails',
+        'index' => 'getRequestsList',
+        'view' => 'getRequestDetails',
+        'create' => 'createRequestDetails',
+        'update' => 'updateRequestDetails',
+        'delete' => 'deleteRequestDetails',
     ];
 
     public function behaviors()
@@ -46,8 +42,8 @@ class CountryController extends ActiveController
 
     public function checkAccess($action, $model = null, $params = [])
     {
-         if (!isset($this->accessRules[$action]) || !Yii::$app->user->can($this->accessRules[$action])) {
-             throw new ForbiddenHttpException;
-         }
+        if (!isset($this->accessRules[$action]) || !Yii::$app->user->can($this->accessRules[$action])) {
+            throw new ForbiddenHttpException;
+        }
     }
 }

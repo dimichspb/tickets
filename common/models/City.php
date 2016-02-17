@@ -67,7 +67,7 @@ class City extends \yii\db\ActiveRecord
      */
     public function getAirports()
     {
-        return $this->hasMany(Airport::className(), ['city' => 'code']);
+        return $this->hasMany(Airport::className(), ['city' => 'code'])->all();
     }
 
     /**

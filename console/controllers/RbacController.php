@@ -2,85 +2,214 @@
 namespace console\Controllers;
 
 use Yii;
+use yii\rbac\Permission;
+use yii\rbac\Role;
 
 class RbacController extends \yii\console\Controller
 {
+
+    const ADMIN_ROLE_NAME = 'Admin';
+    const USER_ROLE_NAME = 'User';
+
+    protected $userRole;
+    protected $adminRole;
+
     public function actionInit()
+    {
+        $this->actionAddCommonRoles();
+        $this->actionAddCountriesPermissions();
+        $this->actionAddRequestsPermissions();
+    }
+
+    private function actionAddCommonRoles()
+    {
+        $this->addCommonUserRole();
+        $this->addCommonAdminRole();
+    }
+
+    private function addCommonUserRole(array $permissions = [])
     {
         $auth = Yii::$app->authManager;
 
-        //getCountriesList permission
-        $getCountriesList = $auth->createPermission('getCountriesList');
-        $getCountriesList->description = 'Get Countries list permission';
-        if ($auth->add($getCountriesList)) {
-            $this->stdout($getCountriesList->name . " permission has been added\n");
-        };
-
-        //getCountryDetails permission
-        $getCountryDetails = $auth->createPermission('getCountryDetails');
-        $getCountryDetails->description = 'Get Country details permission';
-        if ($auth->add($getCountryDetails)) {
-            $this->stdout($getCountryDetails->name . " permission has been added\n");
-        }
-
-        //createCountry permission
-        $createCountryDetails = $auth->createPermission('createCountryDetails');
-        $createCountryDetails->description = 'Create Country details permission';
-        if ($auth->add($createCountryDetails)) {
-            $this->stdout($createCountryDetails->name . " permission has been added\n");
-        }
-
-        //updateCountry permission
-        $updateCountryDetails = $auth->createPermission('updateCountryDetails');
-        $updateCountryDetails->description = 'Update Country details permission';
-        if ($auth->add($updateCountryDetails)) {
-            $this->stdout($updateCountryDetails->name . " permission has been added\n");
-        }
-
-        //deleteCountry permission
-        $deleteCountryDetails = $auth->createPermission('deleteCountryDetails');
-        $deleteCountryDetails->description = 'Delete Country details permission';
-        if ($auth->add($deleteCountryDetails)) {
-            $this->stdout($deleteCountryDetails->name . " permission has been added\n");
-        }
-
-        //countriesUser role
-        $countriesUser = $auth->createRole('countriesUser');
-        $countriesUser->description = 'Countries user role';
-        if ($auth->add($countriesUser)) {
-            $this->stdout($countriesUser->name . " role has been added\n");
-        }
-        $auth->addChild($countriesUser, $getCountriesList);
-        $auth->addChild($countriesUser, $getCountryDetails);
-
-        //countriesAdmin role
-        $countriesAdmin = $auth->createRole('countriesAdmin');
-        $countriesAdmin->description = 'Countries admin role';
-        if ($auth->add($countriesAdmin)) {
-            $this->stdout($countriesAdmin->name . " role has been added\n");
-        }
-        $auth->addChild($countriesAdmin, $countriesUser);
-        $auth->addChild($countriesAdmin, $createCountryDetails);
-        $auth->addChild($countriesAdmin, $updateCountryDetails);
-        $auth->addChild($countriesAdmin, $deleteCountryDetails);
-
         //User role
-        $user = $auth->createRole('User');
-        $user->description = 'User role';
-        if ($auth->add($user)) {
-            $this->stdout($user->name . " role has been added\n");
+        if (!$this->userRole = $auth->getRole(self::USER_ROLE_NAME)) {
+            $this->userRole = $this->createRole(self::USER_ROLE_NAME, $permissions, 'User role');
         }
-        $auth->addChild($user, $countriesUser);
+    }
+
+    private function addCommonAdminRole(array $permissions = [])
+    {
+        $auth = Yii::$app->authManager;
 
         //Admin role
-        $admin = $auth->createRole('Admin');
-        $admin->description = 'Admin role';
-        if ($auth->add($admin)) {
-            $this->stdout($admin->name . " role has been added\n");
+        if (!$this->adminRole = $auth->getRole(self::ADMIN_ROLE_NAME)) {
+            $this->adminRole = $this->createRole(self::ADMIN_ROLE_NAME, $permissions, 'Admin role' );
+            $auth->assign($this->adminRole, 1); // User with ID 1 has Admin role;
         }
-        $auth->addChild($admin, $countriesAdmin);
+    }
 
-        $auth->assign($admin, 1); // User with ID 1 has Admin role;
+    public function actionAddCountriesPermissions()
+    {
+        //getCountriesList permission
+        $getCountriesList = $this->createPermission('getCountriesList', 'Get Countries list permission');
+
+        //getCountryDetails permission
+        $getCountryDetails = $this->createPermission('getCountryDetails', 'Get Country details permission');
+
+        //createCountry permission
+        $createCountryDetails = $this->createPermission('createCountryDetails', 'Create Country details permission');
+
+        //updateCountry permission
+        $updateCountryDetails = $this->createPermission('updateCountryDetails', 'Update Country details permission');
+
+        //deleteCountry permission
+        $deleteCountryDetails = $this->createPermission('deleteCountryDetails', 'Delete Country details permission');
+
+        //countriesUser role
+        $countriesUser = $this->createRole('countriesUser', [
+            $getCountriesList,
+            $getCountryDetails,
+            ], 'Countries user role');
+
+        //countriesAdmin role
+        $countriesAdmin = $this->createRole('countriesAdmin', [
+                $createCountryDetails,
+                $updateCountryDetails,
+                $deleteCountryDetails
+            ], 'Countries admin role');
+        $this->addRoleChild($countriesAdmin, $countriesUser);
+
+        //User role
+        $this->addCommonUserRole();
+        $this->addRoleChild($this->userRole, $countriesUser);
+
+        //Admin role
+        $this->addCommonAdminRole();
+        $this->addRoleChild($this->adminRole, $countriesAdmin);
+
+    }
+
+    public function actionAddRequestsPermissions()
+    {
+        //getRequestsList permission
+        $getRequestsList = $this->createPermission('getRequestsList', 'Get Requests list permission');
+
+        //getRequestDetails permission
+        $getRequestDetails = $this->createPermission('getRequestDetails', 'Get Request details permission');
+
+        //createRequest permission
+        $createRequestDetails = $this->createPermission('createRequestDetails', 'Create Request details permission');
+
+        //updateRequest permission
+        $updateRequestDetails = $this->createPermission('updateRequestDetails', 'Update Request details permission');
+
+        //deleteRequest permission
+        $deleteRequestDetails = $this->createPermission('deleteRequestDetails', 'Delete Request details permission');
+
+        //requestsUser role
+        $requestsUser = $this->createRole('requestsUser', [
+            $getRequestDetails,
+            $createRequestDetails,
+            ], 'Requests user role');
+
+        //requestsAdmin role
+        $requestsAdmin = $this->createRole('requestsAdmin', [
+            $getRequestsList,
+            $updateRequestDetails,
+            $deleteRequestDetails,
+            ], 'Requests admin role');
+
+        $this->addRoleChild($requestsAdmin, $requestsUser);
+
+        //User role
+        $this->addCommonUserRole();
+        $this->addRoleChild($this->userRole, $requestsUser);
+
+        //Admin role
+        $this->addCommonAdminRole();
+        $this->addRoleChild($this->adminRole, $requestsAdmin);
+    }
+
+    private function createPermission($permissionName, $permissionDesc = '')
+    {
+        $auth = Yii::$app->authManager;
+
+        if ($permission = $auth->getPermission($permissionName)) {
+
+        } else {
+            $permissionDesc = empty($permissionDesc) ? $permissionName : $permissionDesc;
+
+            $permission = $auth->createPermission($permissionName);
+            $permission->description = $permissionDesc;
+            if ($auth->add($permission)) {
+                $this->stdout($permission->description . " has been added\n");
+            }
+        }
+        return $permission;
+    }
+
+    /**
+     * @param $roleName
+     * @param array $permissions
+     * @param string $roleDesc
+     * @return \yii\rbac\Role
+     */
+    private function createRole($roleName, array $permissions, $roleDesc = '')
+    {
+        $auth = Yii::$app->authManager;
+
+        if ($role = $auth->getRole($roleName)) {
+            $this->addRolePermissions($role, $permissions);
+        } else {
+            $roleDesc = empty($roleDesc) ? $roleName : $roleDesc;
+
+            $role = $auth->createRole($roleName);
+            $role->description = $roleDesc;
+            if ($auth->add($role)) {
+                $this->stdout($role->description . " has been added\n");
+                $this->addRolePermissions($role, $permissions);
+            }
+        }
+        return $role;
+    }
+
+    private function addRolePermissions(Role $role, array $permissions)
+    {
+        $auth = Yii::$app->authManager;
+
+        foreach ($permissions as $permission) {
+            if (!$this->checkRolePermission($role, $permission)) {
+                $auth->addChild($role, $permission);
+            }
+        }
+    }
+
+    private function addRoleChild(Role $role, $child)
+    {
+        $auth = Yii::$app->authManager;
+
+        if (!$this->checkRoleChild($role, $child)) {
+            $auth->addChild($role, $child);
+        }
+
+    }
+
+    private function checkRolePermission(Role $role, Permission $permission)
+    {
+        $auth = Yii::$app->authManager;
+
+        $rolePermissions = $auth->getPermissionsByRole($role->name);
+
+        return in_array($permission, $rolePermissions);
+    }
+
+    private function checkRoleChild(Role $role, $child)
+    {
+        $auth = Yii::$app->authManager;
+
+        $roleChildren = $auth->getChildren($role->name);
+
+        return in_array($child, $roleChildren);
     }
 
     public function actionRemoveAll()

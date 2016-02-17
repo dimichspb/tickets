@@ -64,7 +64,7 @@ class Country extends \yii\db\ActiveRecord
      */
     public function getAirports()
     {
-        return $this->hasMany(Airport::className(), ['country' => 'code']);
+        return $this->hasMany(Airport::className(), ['country' => 'code'])->all();
     }
 
     /**
@@ -72,7 +72,7 @@ class Country extends \yii\db\ActiveRecord
      */
     public function getCities()
     {
-        return $this->hasMany(City::className(), ['country' => 'code']);
+        return $this->hasMany(City::className(), ['country' => 'code'])->all();
     }
 
     /**

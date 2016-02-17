@@ -52,6 +52,30 @@ class Subregion extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getAirports()
+    {
+        return $this->hasMany(Airport::className(), ['subregion' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCities()
+    {
+        return $this->hasMany(City::className(), ['subregion' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountries()
+    {
+        return $this->hasMany(Country::className(), ['subregion' => 'code'])->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getRegion0()
     {
         return $this->hasOne(Region::className(), ['code' => 'region']);

@@ -207,16 +207,16 @@ class Place extends \yii\db\ActiveRecord
             $airportsList[] = $airport;
         } elseif ($this->city) {
             $city = City::getCityByCode($this->city);
-            $airportsList = $city->getAirports();
+            $airportsList = $city->airports;
         } elseif ($this->country) {
             $country = Country::getCountryByCode($this->country);
-            $airportsList = $country->getAirports();
+            $airportsList = $country->airports;
         } elseif ($this->subregion) {
             $subregion = Subregion::getSubregionByCode($this->subregion);
-            $airportsList = $subregion->getAirports();
+            $airportsList = $subregion->airports;
         } elseif ($this->region) {
             $region = Region::getRegionByCode($this->region);
-            $airportsList = $region->getAirports();
+            $airportsList = $region->airports;
         }
 
         return $airportsList;

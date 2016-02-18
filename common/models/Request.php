@@ -93,24 +93,26 @@ class Request extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-            $this->createRoutes();
+            //$this->createRoutes();
         }
         return parent::beforeSave($insert);
     }
 
-    private function createRoutes()
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            //$this->createRoutes();
+        }
+        parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function createRoutes()
     {
         $originPlace = Place::findOne($this->origin);
         $destinationPlace = Place::findOne($this->destination);
 
-        //var_dump($originPlace);
-        //var_dump($destinationPlace);
-
         $originAirportList = $originPlace->getAirports();
         $destinationAirportsList = $destinationPlace->getAirports();
-
-        //var_dump($originAirportList);
-        //var_dump($destinationAirportsList);
 
         $thereDatesList = new \DatePeriod(
             new \DateTime($this->there_start_date),
@@ -143,7 +145,7 @@ class Request extends \yii\db\ActiveRecord
 
     }
 
-    private function createRoute(Airport $originAirport, Airport $destinationAirport, \DateTime $thereDate, \DateTime $backDate = null)
+    public function createRoute(Airport $originAirport, Airport $destinationAirport, \DateTime $thereDate, \DateTime $backDate = null)
     {
         if ($backDate) {
             $route = Route::findOne([
@@ -168,6 +170,15 @@ class Request extends \yii\db\ActiveRecord
             $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
         }
 
-        return $route->save();
+        //return $route->save();
+        if ($route->validate()) {
+            $route->save();
+            $route->link('requests', $this);
+        }
+    }
+
+    public function getRoutes()
+    {
+        return $this->hasMany(Route::className(), ['id' => 'route'])->viaTable('request_to_route', ['request' => 'id']);
     }
 }

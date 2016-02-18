@@ -12,6 +12,7 @@ use Yii;
  * @property string $destination_airport
  * @property string $there_date
  * @property string $back_date
+ * @property string $currency
  *
  * @property Airport $destinationAirport
  * @property Airport $originAirport
@@ -34,7 +35,7 @@ class Route extends \yii\db\ActiveRecord
         return [
             [['origin_airport', 'destination_airport', 'there_date'], 'required'],
             [['there_date', 'back_date'], 'safe'],
-            [['origin_airport', 'destination_airport'], 'string', 'max' => 3]
+            [['origin_airport', 'destination_airport', 'currency'], 'string', 'max' => 3]
         ];
     }
 
@@ -49,6 +50,7 @@ class Route extends \yii\db\ActiveRecord
             'destination_airport' => 'Destination Airport',
             'there_date' => 'There Date',
             'back_date' => 'Back Date',
+            'currency' => 'Currency',
         ];
     }
 
@@ -66,5 +68,37 @@ class Route extends \yii\db\ActiveRecord
     public function getOriginAirport()
     {
         return $this->hasOne(Airport::className(), ['code' => 'origin_airport']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrency()
+    {
+        return $this->hasOne(Currency::className(), ['code' => 'currency']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequests()
+    {
+        return $this->hasMany(Request::className(), ['id' => 'request'])->viaTable('request_to_route', ['route' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $route = Route::findOne([
+                'origin_airport' => $this->origin_airport,
+                'destination_airport' => $this->destination_airport,
+                'there_date' => $this->there_date,
+                'back_date' => $this->back_date,
+                'currency' => $this->currency,
+            ]);
+            if (!$route) {
+                return parent::beforeSave($insert);
+            }
+        }
     }
 }

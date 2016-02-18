@@ -11,6 +11,7 @@ use Yii;
  * @property string $region
  * @property string $name
  *
+ * @property Airport[] $airports
  * @property Region $region0
  * @property SubregionDesc[] $subregionDescs
  * @property Language[] $languages

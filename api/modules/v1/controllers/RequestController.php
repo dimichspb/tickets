@@ -4,6 +4,7 @@ namespace api\modules\v1\controllers;
 
 use Yii;
 use yii\rest\ActiveController;
+use yii\rest\CreateAction;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\filters\auth\CompositeAuth;
@@ -15,6 +16,7 @@ use yii\filters\auth\QueryParamAuth;
 class RequestController extends ActiveController
 {
     public $modelClass = 'common\models\Request';
+    private $createActionDetails;
 
     private $accessRules = [
         'index' => 'getRequestsList',
@@ -45,5 +47,33 @@ class RequestController extends ActiveController
         if (!isset($this->accessRules[$action]) || !Yii::$app->user->can($this->accessRules[$action])) {
             throw new ForbiddenHttpException;
         }
+    }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        $this->createActionDetails = $actions['create'];
+        unset($actions['create']);
+        return $actions;
+    }
+
+    public function actionCreate()
+    {
+        $createActionClassName = $this->createActionDetails['class'];
+        $createActionModelClass = $this->createActionDetails['modelClass'];
+        $createActionCheckAccess = $this->createActionDetails['checkAccess'];
+        $createActionScenario = $this->createActionDetails['scenario'];
+
+        $createAction = new $createActionClassName('create', $this, [
+            'modelClass' => $createActionModelClass,
+            'checkAccess' => $createActionCheckAccess,
+            'scenario' => $createActionScenario,
+        ]);
+
+        $model = $createAction->run();
+        $model->save();
+        $model->createRoutes();
+
+        return $model;
     }
 }

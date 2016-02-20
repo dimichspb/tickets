@@ -86,6 +86,11 @@ class Route extends \yii\db\ActiveRecord
         return $this->hasMany(Request::className(), ['id' => 'request'])->viaTable('request_to_route', ['route' => 'id']);
     }
 
+    public function getRates()
+    {
+        return $this->hasMany(Rate::className(), ['route' => 'id']);
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {
@@ -101,4 +106,10 @@ class Route extends \yii\db\ActiveRecord
             }
         }
     }
+
+    public static function getRoutesWithOldRate()
+    {
+        return (Route::find()->select('route.id, count(rate.id) as rates')->leftJoin('rate', 'rate.route=route.id')->groupBy('route.id')->having('rates = 0')->all());
+    }
+
 }

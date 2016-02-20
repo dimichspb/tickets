@@ -129,4 +129,13 @@ class Country extends \yii\db\ActiveRecord
 
         return $country;
     }
+
+    public static function getCountryByName($countryName)
+    {
+        $country = Country::findOne([
+            'name' => $countryName,
+        ]);
+
+        return $country;
+    }
 }

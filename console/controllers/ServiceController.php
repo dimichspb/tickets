@@ -12,8 +12,10 @@ use common\models\City;
 use common\models\CityDesc;
 use common\models\Airport;
 use common\models\AirportDesc;
+use common\models\Airline;
 use common\models\Language;
 use common\Models\Place;
+use common\models\Route;
 use yii\console\Controller;
 use common\models\ServiceType;
 use linslin\yii2\curl\Curl;
@@ -189,6 +191,10 @@ class ServiceController extends Controller
                 break;
             case 'CR': 
                 $this->uploadCountriesToRegions($service, $dataJson);
+                break;
+            case 'AL':
+                $this->uploadAirlines($service, $dataJson);
+                break;
             default:
         }
     }
@@ -248,6 +254,16 @@ class ServiceController extends Controller
         switch ($service) {
             case 'AVS':
                 $this->uploadCountriesToRegionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private function uploadAirlines($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                $this->uploadAirlinesFromAVS($dataJson);
                 break;
             default:
         }
@@ -373,6 +389,27 @@ class ServiceController extends Controller
                 'country' => $item['country'],
                 'region' => $item['region'],
                 'subregion' => $item['subregion'],
+            ]);
+            $this->progressBar($totalItems, $currentItem);
+        }
+    }
+
+    private function uploadAirlinesFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+        $totalItems = count($dataArray);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Adding Airlines, total items: '. $totalItems . PHP_EOL);
+
+        foreach ($dataArray as $item) {
+            $this->addAirline([
+                'name' => $item['name'],
+                'alias' => $item['alias'],
+                'iata' => $item['iata'],
+                'icao' => $item['icao'],
+                'callsign' => $item['callsign'],
+                'country' => $item['country'],
+                'is_active' => $item['is_active'],
             ]);
             $this->progressBar($totalItems, $currentItem);
         }
@@ -642,6 +679,27 @@ class ServiceController extends Controller
         return $airportDesc->save();
     }
 
+    private function addAirline($airlineData)
+    {
+        $airline = Airline::getAirlineByName($airlineData['name']);
+
+        if (!$airline) {
+            $airline = new Airline();
+            $airline->name = $airlineData['name'];
+        }
+
+        $airline->alias = $airlineData['alias'];
+        $airline->iata = $airlineData['iata'];
+        $airline->icao = $airlineData['icao'];
+        $airline->callsign = $airlineData['callsign'];
+        $airline->country = Country::getCountryByName($airlineData['country'])? Country::getCountryByName($airlineData['country'])->code: NULL;
+        $airline->is_active = $airlineData['is_active'];
+
+        $result = $airline->save();
+
+        return $result;
+    }
+
     private function updateCountryRegion($countryData)
     {
         $country = Country::getCountryByCode($countryData['code']);
@@ -690,7 +748,7 @@ class ServiceController extends Controller
         $curl = new Curl();
         $curl->reset()->setOption(
             CURLOPT_POSTFIELDS,
-            http_build_query($params))->post($url);
+            http_build_query($params))->get($url);
         return [
             'response' => $curl->response,
             'responseCode' => $curl->responseCode,
@@ -704,44 +762,51 @@ class ServiceController extends Controller
             $currentItem = 0;
         }
     }
-    
-    
-    /*
-    public function actionMerge()
-    {
-        $rootDir = dirname(dirname(dirname(__DIR__)));
 
-        $firstJSONFile = $rootDir . '\APIFake\data\subregions.json';
-        $secondJSONFile = $rootDir . '\APIFake\data\subregions_desc.json';
-        $newJSONFile = $rootDir . '\APIFake\data\subregion.json';
-       
-        
-                
-        if (!file_exists($firstJSONFile)) {
-            throw new \InvalidArgumentException("First JSON file is missing");
-        }
-        if (!file_exists($secondJSONFile)) {
-            throw new \InvalidArgumentException("Second JSON file is missing");
-        }
-        
-        $firstJSONArray = JSON::decode(file_get_contents($firstJSONFile));
-        $secondJSONArray = JSON::decode(file_get_contents($secondJSONFile));
-        
-        $secondJSONArrayCodesList = array_column($secondJSONArray, 'code');
-        //var_dump($secondJSONArrayCodesList);
-        foreach ($firstJSONArray as &$firstJSONItem) {
-            $key = array_search($firstJSONItem['code'], $secondJSONArrayCodesList);
-            //var_dump($firstJSONItem['code']);
-            //var_dump($key);
-            //var_dump($secondJSONArray[$key]);
-            array_shift($secondJSONArray[$key]); //remove "code" element
-            $firstJSONItem['name_translations'] = $secondJSONArray[$key];
-        }
-        
-        echo $newJSONFile;
-        //var_dump($firstJSONArray);
-        file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
+
+    public function actionRates()
+    {
+        $routesToUpdate = Route::getRoutesWithOldRate();
+
+        var_dump(count($routesToUpdate));
     }
-    */
+
+        /*
+        public function actionMerge()
+        {
+            $rootDir = dirname(dirname(dirname(__DIR__)));
+
+            $firstJSONFile = $rootDir . '\APIFake\data\subregions.json';
+            $secondJSONFile = $rootDir . '\APIFake\data\subregions_desc.json';
+            $newJSONFile = $rootDir . '\APIFake\data\subregion.json';
+
+
+
+            if (!file_exists($firstJSONFile)) {
+                throw new \InvalidArgumentException("First JSON file is missing");
+            }
+            if (!file_exists($secondJSONFile)) {
+                throw new \InvalidArgumentException("Second JSON file is missing");
+            }
+
+            $firstJSONArray = JSON::decode(file_get_contents($firstJSONFile));
+            $secondJSONArray = JSON::decode(file_get_contents($secondJSONFile));
+
+            $secondJSONArrayCodesList = array_column($secondJSONArray, 'code');
+            //var_dump($secondJSONArrayCodesList);
+            foreach ($firstJSONArray as &$firstJSONItem) {
+                $key = array_search($firstJSONItem['code'], $secondJSONArrayCodesList);
+                //var_dump($firstJSONItem['code']);
+                //var_dump($key);
+                //var_dump($secondJSONArray[$key]);
+                array_shift($secondJSONArray[$key]); //remove "code" element
+                $firstJSONItem['name_translations'] = $secondJSONArray[$key];
+            }
+
+            echo $newJSONFile;
+            //var_dump($firstJSONArray);
+            file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
+        }
+        */
     
 }

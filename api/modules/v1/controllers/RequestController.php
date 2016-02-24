@@ -71,8 +71,10 @@ class RequestController extends ActiveController
         ]);
 
         $model = $createAction->run();
-        $model->save();
-        $model->createRoutes();
+
+        if ($model->validate() && $model->save()) {
+            $model->createRoutes();
+        }
 
         return $model;
     }

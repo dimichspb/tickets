@@ -85,7 +85,7 @@ class Request extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser0()
+    public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user']);
     }
@@ -111,8 +111,9 @@ class Request extends \yii\db\ActiveRecord
         $originPlace = Place::findOne($this->origin);
         $destinationPlace = Place::findOne($this->destination);
 
-        $originAirportList = $originPlace->getAirports();
-        $destinationAirportsList = $destinationPlace->getAirports();
+        $originCitiesList = $originPlace->getCities();
+        $destinationCitiesList = $destinationPlace->getCities();
+
 
         $thereDatesList = new \DatePeriod(
             new \DateTime($this->there_start_date),
@@ -129,15 +130,15 @@ class Request extends \yii\db\ActiveRecord
             $backDatesList = NULL;
         }
 
-        foreach ($originAirportList as $originAirport) {
-            foreach ($destinationAirportsList as $destinationAirport) {
+        foreach ($originCitiesList as $originCity) {
+            foreach ($destinationCitiesList as $destinationCity) {
                 foreach ($thereDatesList as $thereDate) {
                     if ($backDatesList) {
                         foreach ($backDatesList as $backDate) {
-                            $this->createRoute($originAirport, $destinationAirport, $thereDate, $backDate);
+                            $this->createRoute($originCity, $destinationCity, $thereDate, $backDate);
                         }
                     } else {
-                        $this->createRoute($originAirport, $destinationAirport, $thereDate);
+                        $this->createRoute($originCity, $destinationCity, $thereDate);
                     }
                 }
             }
@@ -145,34 +146,33 @@ class Request extends \yii\db\ActiveRecord
 
     }
 
-    public function createRoute(Airport $originAirport, Airport $destinationAirport, \DateTime $thereDate, \DateTime $backDate = null)
+    public function createRoute(City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
     {
         if ($backDate) {
             $route = Route::findOne([
-                'origin_airport' => $originAirport->code,
-                'destination_airport' => $destinationAirport->code,
+                'origin_city' => $originCity->code,
+                'destination_city' => $destinationCity->code,
                 'there_date' => $thereDate->format('Y-m-d H:i:s'),
                 'back_date' => $backDate->format('Y-m-d H:i:s'),
             ]);
         } else {
             $route = Route::findOne([
-                'origin_airport' => $originAirport->code,
-                'destination_airport' => $destinationAirport->code,
+                'origin_city' => $originCity->code,
+                'destination_city' => $destinationCity->code,
                 'there_date' => $thereDate->format('Y-m-d H:i:s'),
             ]);
         }
 
         if (!$route) {
             $route = new Route();
-            $route->origin_airport = $originAirport->code;
-            $route->destination_airport = $destinationAirport->code;
+            $route->origin_city = $originCity->code;
+            $route->destination_city = $destinationCity->code;
             $route->there_date = $thereDate->format('Y-m-d H:i:s');
             $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
         }
 
         //return $route->save();
-        if ($route->validate()) {
-            $route->save();
+        if ($route->validate() && $route->save()) {
             $route->link('requests', $this);
         }
     }

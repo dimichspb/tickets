@@ -67,7 +67,7 @@ class Airport extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCity0()
+    public function getCity()
     {
         return $this->hasOne(City::className(), ['code' => 'city']);
     }
@@ -132,5 +132,16 @@ class Airport extends \yii\db\ActiveRecord
         }
 
         return $airport;
+    }
+
+    public static function getCityByCode($airportCode)
+    {
+        $airport = Airport::findOne([
+            'code' => $airportCode,
+        ]);
+
+        if ($airport) {
+            return $airport->getCity()->one();
+        }
     }
 }

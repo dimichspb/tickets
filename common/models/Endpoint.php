@@ -50,9 +50,9 @@ class Endpoint extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getService0()
+    public function getService()
     {
-        return $this->hasOne(Service::className(), ['code' => 'service']);
+        return $this->hasOne(Service::className(), ['code' => 'service'])->one();
     }
 
     /**

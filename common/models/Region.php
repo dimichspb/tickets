@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  *
  * @property Airport[] $airports
+ * @property City[] $cities
  */
 class Region extends \yii\db\ActiveRecord
 {

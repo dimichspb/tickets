@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\Models\Endpoint;
 use common\models\Region;
 use common\models\RegionDesc;
 use common\models\Subregion;
@@ -16,11 +17,14 @@ use common\models\Airline;
 use common\models\Language;
 use common\Models\Place;
 use common\models\Route;
+use common\models\Rate;
 use yii\console\Controller;
 use common\models\ServiceType;
 use linslin\yii2\curl\Curl;
 use yii\helpers\Json;
 use yii\helpers\Console;
+use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 
 class ServiceController extends Controller
 {
@@ -746,9 +750,8 @@ class ServiceController extends Controller
     private function actionCurl($url, array $params = [])
     {
         $curl = new Curl();
-        $curl->reset()->setOption(
-            CURLOPT_POSTFIELDS,
-            http_build_query($params))->get($url);
+        $urlQuery = $url . "?" . http_build_query($params);
+        $curl->get($urlQuery);
         return [
             'response' => $curl->response,
             'responseCode' => $curl->responseCode,
@@ -768,9 +771,79 @@ class ServiceController extends Controller
     {
         $routesToUpdate = Route::getRoutesWithOldRate();
 
-        var_dump(count($routesToUpdate));
+        $activeRateService = ServiceType::findOne([
+                'status' => ServiceType::STATUS_ACTIVE,
+                'code' => 'DR',
+            ]);
+
+        if (!$activeRateService || !$routesToUpdate) {
+            return;
+        }
+
+        $this->stdout(PHP_EOL . $activeRateService->name . PHP_EOL);
+        foreach ($activeRateService->endpoints  as $endpoint) {
+            $this->getRatesFromService($endpoint, $routesToUpdate);
+        }
     }
 
+    private function getRatesFromService(Endpoint $endpoint, array $routesToUpdate)
+    {
+        switch ($endpoint->service) {
+            case 'AVS':
+                $this->getRatesFromAVS($endpoint, $routesToUpdate);
+                break;
+            default:
+        }
+    }
+
+    private function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
+    {
+        foreach ($routesToUpdate as $routeToUpdate) {
+            $curlAction = $this->actionCurl($endpoint->endpoint, [
+                'currency' => $routeToUpdate->currency,
+                'origin' => $routeToUpdate->origin_city,
+                'destination' => $routeToUpdate->destination_city,
+                'depart_date' => \Yii::$app->formatter->asDate($routeToUpdate->there_date, 'php:Y-m-d'),
+                'return_date' => \Yii::$app->formatter->asDate($routeToUpdate->back_date, 'php:Y-m-d'),
+                'token' => $endpoint->getService()->token,
+            ]);
+
+            $responseJson = $curlAction['response'];
+            $responseCode = $curlAction['responseCode'];
+
+            if ($responseCode !== 200) {
+                continue;
+            }
+            $this->addRatesAVS($endpoint, $routeToUpdate, $responseJson);
+        }
+    }
+
+    private function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
+    {
+        $data = Json::decode($dataJson);
+
+        foreach ($data['data'] as $destinationItemIndex => $destinationItemData) {
+            foreach ($destinationItemData as $destinationDataItem) {
+                $rate = new Rate();
+                $rate->route = $route->id;
+                $rate->origin_city = $route->origin_city;
+                $rate->destination_city = $destinationItemIndex;
+                $rate->there_date = \Yii::$app->formatter->asDatetime($destinationDataItem['departure_at'],'php:Y-m-d H:i:s');
+                $rate->back_date = \Yii::$app->formatter->asDatetime($destinationDataItem['return_at'],'php:Y-m-d H:i:s');
+                $rate->service = $endpoint->service;
+                $rate->airline = Airline::getAirlineByName($destinationDataItem['airline'])->id;
+                $rate->flight_number = (string)$destinationDataItem['flight_number'];
+                $rate->currency = $route->currency;
+                $rate->price = (float)$destinationDataItem['price'];
+
+                if ($rate->validate()) {
+                    $rate->save();
+                }
+            }
+
+        }
+
+    }
         /*
         public function actionMerge()
         {

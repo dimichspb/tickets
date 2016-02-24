@@ -8,14 +8,14 @@ use Yii;
  * This is the model class for table "route".
  *
  * @property integer $id
- * @property string $origin_airport
- * @property string $destination_airport
+ * @property string $origin_city
+ * @property string $destination_city
  * @property string $there_date
  * @property string $back_date
  * @property string $currency
  *
- * @property Airport $destinationAirport
- * @property Airport $originAirport
+ * @property City $destinationCity
+ * @property City $originCity
  */
 class Route extends \yii\db\ActiveRecord
 {
@@ -33,9 +33,9 @@ class Route extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['origin_airport', 'destination_airport', 'there_date'], 'required'],
+            [['origin_city', 'destination_city', 'there_date'], 'required'],
             [['there_date', 'back_date'], 'safe'],
-            [['origin_airport', 'destination_airport', 'currency'], 'string', 'max' => 3]
+            [['origin_city', 'destination_city', 'currency'], 'string', 'max' => 3]
         ];
     }
 
@@ -46,8 +46,8 @@ class Route extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'origin_airport' => 'Origin Airport',
-            'destination_airport' => 'Destination Airport',
+            'origin_city' => 'Origin City',
+            'destination_city' => 'Destination City',
             'there_date' => 'There Date',
             'back_date' => 'Back Date',
             'currency' => 'Currency',
@@ -57,17 +57,17 @@ class Route extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDestinationAirport()
+    public function getDestinationCity()
     {
-        return $this->hasOne(Airport::className(), ['code' => 'destination_airport']);
+        return $this->hasOne(City::className(), ['code' => 'destination_city']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOriginAirport()
+    public function getOriginCity()
     {
-        return $this->hasOne(Airport::className(), ['code' => 'origin_airport']);
+        return $this->hasOne(City::className(), ['code' => 'origin_city']);
     }
 
     /**
@@ -95,8 +95,8 @@ class Route extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $route = Route::findOne([
-                'origin_airport' => $this->origin_airport,
-                'destination_airport' => $this->destination_airport,
+                'origin_city' => $this->origin_city,
+                'destination_city' => $this->destination_city,
                 'there_date' => $this->there_date,
                 'back_date' => $this->back_date,
                 'currency' => $this->currency,
@@ -109,7 +109,13 @@ class Route extends \yii\db\ActiveRecord
 
     public static function getRoutesWithOldRate()
     {
-        return (Route::find()->select('route.id, count(rate.id) as rates')->leftJoin('rate', 'rate.route=route.id')->groupBy('route.id')->having('rates = 0')->all());
+        $query = (Route::find()->select('route.*, count(rate.id) as rates')->leftJoin('rate', 'rate.route=route.id AND DATE(rate.create_date) = CURDATE()')->groupBy('route.id')->having('rates = 0'));
+
+        $result = $query->all();
+
+        if (count($result) > 0) {
+            return($result);
+        }
     }
 
 }

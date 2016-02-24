@@ -8,19 +8,21 @@ use Yii;
  * This is the model class for table "rate".
  *
  * @property integer $id
- * @property integer $origin_place
- * @property integer $destination_place
+ * @property integer $route;
+ * @property integer $origin_city
+ * @property integer $destination_city
  * @property string $there_date
  * @property string $back_date
  * @property integer $airline
  * @property string $flight_number
  * @property string $currency
  * @property string $price
+ * @property string $service
  *
  * @property Airline $airline0
- * @property Place $originPlace
- * @property Place $destinationPlace
- * @property Place $originPlace0
+ * @property City $originCity
+ * @property City $destinationCity
+
  */
 class Rate extends \yii\db\ActiveRecord
 {
@@ -38,8 +40,9 @@ class Rate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['origin_place', 'destination_place', 'there_date', 'airline', 'flight_number', 'currency', 'price'], 'required'],
-            [['origin_place', 'destination_place', 'airline'], 'integer'],
+            [['route', 'origin_city', 'destination_city', 'there_date', 'airline', 'flight_number', 'currency', 'price'], 'required'],
+            [['origin_city', 'destination_city'], 'string'],
+            [['airline'], 'integer'],
             [['there_date', 'back_date'], 'safe'],
             [['price'], 'number'],
             [['flight_number'], 'string', 'max' => 5],
@@ -54,8 +57,9 @@ class Rate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'origin_place' => 'Origin Place',
-            'destination_place' => 'Destination Place',
+            'route' => 'Route',
+            'origin_city' => 'Origin City',
+            'destination_city' => 'Destination City',
             'there_date' => 'There Date',
             'back_date' => 'Back Date',
             'airline' => 'Airline',
@@ -76,25 +80,23 @@ class Rate extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOriginPlace()
+    public function getOriginCity()
     {
-        return $this->hasOne(Place::className(), ['id' => 'origin_place']);
+        return $this->hasOne(City::className(), ['code' => 'origin_city']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDestinationPlace()
+    public function getDestinationCity()
     {
-        return $this->hasOne(Place::className(), ['id' => 'destination_place']);
+        return $this->hasOne(City::className(), ['city' => 'destination_city']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getOriginPlace0()
+
+    public function getRoute()
     {
-        return $this->hasOne(Place::className(), ['id' => 'origin_place']);
+        return $this->hasOne(Route::className(), ['id' => 'route']);
     }
 
     public static function getTodayRateByRouteId($routeId)

@@ -65,7 +65,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAirport0()
+    public function getAirport()
     {
         return $this->hasOne(Airport::className(), ['code' => 'airport']);
     }
@@ -73,7 +73,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCity0()
+    public function getCity()
     {
         return $this->hasOne(City::className(), ['code' => 'city']);
     }
@@ -81,7 +81,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCountry0()
+    public function getCountry()
     {
         return $this->hasOne(Country::className(), ['code' => 'country']);
     }
@@ -89,7 +89,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getParent0()
+    public function getParent()
     {
         return $this->hasOne(Place::className(), ['id' => 'parent']);
     }
@@ -220,5 +220,28 @@ class Place extends \yii\db\ActiveRecord
         }
 
         return $airportsList;
+    }
+
+    public function getCities()
+    {
+        $citiesList = [];
+        if ($this->airport) {
+            $city = Airport::getCityByCode($this->airport);
+            $citiesList[] = $city;
+        } elseif ($this->city) {
+            $city = City::getCityByCode($this->city);
+            $citiesList[] = $city;
+        } elseif ($this->country) {
+            $country = Country::getCountryByCode($this->country);
+            $citiesList = $country->getCities()->all();
+        } elseif ($this->subregion) {
+            $subregion = Subregion::getSubregionByCode($this->subregion);
+            $citiesList = $subregion->getCities()->all();
+        } elseif ($this->region) {
+            $region = Region::getRegionByCode($this->region);
+            $citiesList = $region->getCities()->all();
+        }
+
+        return $citiesList;
     }
 }

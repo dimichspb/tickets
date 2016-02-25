@@ -69,7 +69,7 @@ class ServiceController extends Controller
         Route::createRoutes($requestId, $limit);
     }
 
-    public function actionRates($requestId = NULL, $limit = 3)
+    public function actionRates($requestId = NULL, $limit = 100)
     {
         Rate::getRates($requestId, $limit);
     }

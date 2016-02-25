@@ -25,6 +25,10 @@ use common\models\Route;
  */
 class Request extends \yii\db\ActiveRecord
 {
+    const STATUS_ACTIVE = 0;
+    const STATUS_INACTIVE = 1;
+    const STATUS_DELETED = 2;
+
     /**
      * @inheritdoc
      */
@@ -99,5 +103,10 @@ class Request extends \yii\db\ActiveRecord
     public static function getAllRequests()
     {
         return Request::find()->all();
+    }
+
+    public static function getRequestById($requestId)
+    {
+        return Request::findOne($requestId);
     }
 }

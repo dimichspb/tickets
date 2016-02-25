@@ -64,14 +64,14 @@ class ServiceController extends Controller
 
     }
 
-    public function actionRoutes($limit = 100)
+    public function actionRoutes($requestId = NULL, $limit = 1000)
     {
-        Route::createRoutes($limit);
+        Route::createRoutes($requestId, $limit);
     }
 
-    public function actionRates($limit = 10)
+    public function actionRates($requestId = NULL, $limit = 3)
     {
-        Rate::getRates($limit);
+        Rate::getRates($requestId, $limit);
     }
 
         /*

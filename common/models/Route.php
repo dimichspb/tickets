@@ -112,7 +112,7 @@ class Route extends \yii\db\ActiveRecord
 
     public static function getRoutesWithOldRate()
     {
-        $query = (Route::find()->select('route.*, count(rate.id) as rates')->leftJoin('rate', 'rate.route=route.id AND DATE(rate.create_date) = CURDATE()')->groupBy('route.id')->having('rates = 0'));
+        $query = (Route::find()->select('`route`.*, count(`rate`.`id`) as `rates`')->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
 
         $result = $query->all();
 
@@ -121,10 +121,25 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
-    public static function createRoutes($limit)
+    public static function getRoutesWithOldRateByRequestId($requestId)
+    {
+        $query = (Route::find()->select('`route`.*, `request_to_route`.*, count(`rate`.`id`) as `rates`')->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
+
+        $result = $query->all();
+
+        if (count($result) > 0) {
+            return($result);
+        }
+    }
+
+    public static function createRoutes($requestId, $limit)
     {
         Route::setLimit($limit);
-        $requests = Request::getAllRequests();
+        if ($requestId) {
+            $requests = [Request::getRequestById($requestId)];
+        } else {
+            $requests = Request::getAllRequests();
+        }
 
         foreach ($requests as $request) {
             Route::createRoutesByRequest($request);
@@ -211,8 +226,7 @@ class Route extends \yii\db\ActiveRecord
     private static function checkLimit()
     {
         if (isset(self::$limit)) {
-            self::$limit--;
-            if (self::$limit <= 0) exit();
+            if (--self::$limit <= 0) exit();
         }
     }
 

@@ -12,18 +12,16 @@ use common\models\Route;
  *
  * @property integer $id
  * @property string $create_date
- * @property integer $user
- * @property integer $origin
- * @property integer $destination
+
  * @property string $there_start_date
  * @property string $there_end_date
- * @property string $back_start_date
- * @property string $back_end_date
+ * @property string $travel_period_start
+ * @property string $travel_period_end
  * @property integer $status
  *
- * @property Place $destination0
- * @property Place $origin0
- * @property User $user0
+ * @property Place $destination
+ * @property Place $origin
+ * @property User $user
  */
 class Request extends \yii\db\ActiveRecord
 {
@@ -41,9 +39,9 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['create_date', 'there_start_date', 'there_end_date', 'back_start_date', 'back_end_date'], 'safe'],
+            [['create_date', 'there_start_date', 'there_end_date'], 'safe'],
             [['user', 'origin', 'destination', 'there_start_date', 'there_end_date'], 'required'],
-            [['user', 'origin', 'destination', 'status'], 'integer']
+            [['user', 'origin', 'destination', 'status', 'travel_period_start', 'travel_period_end'], 'integer']
         ];
     }
 
@@ -60,8 +58,8 @@ class Request extends \yii\db\ActiveRecord
             'destination' => 'Destination',
             'there_start_date' => 'There Start Date',
             'there_end_date' => 'There End Date',
-            'back_start_date' => 'Back Start Date',
-            'back_end_date' => 'Back End Date',
+            'travel_period_start' => 'Travel period start',
+            'travel_period_end' => 'Travel period end',
             'status' => 'Status',
         ];
     }
@@ -69,7 +67,7 @@ class Request extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDestination0()
+    public function getDestination()
     {
         return $this->hasOne(Place::className(), ['id' => 'destination']);
     }
@@ -77,7 +75,7 @@ class Request extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOrigin0()
+    public function getOrigin()
     {
         return $this->hasOne(Place::className(), ['id' => 'origin']);
     }
@@ -90,22 +88,6 @@ class Request extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user']);
     }
 
-    public function beforeSave($insert)
-    {
-        if ($insert) {
-            //$this->createRoutes();
-        }
-        return parent::beforeSave($insert);
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        if ($insert) {
-            //$this->createRoutes();
-        }
-        parent::afterSave($insert, $changedAttributes);
-    }
-
     public function createRoutes()
     {
         $originPlace = Place::findOne($this->origin);
@@ -114,27 +96,29 @@ class Request extends \yii\db\ActiveRecord
         $originCitiesList = $originPlace->getCities();
         $destinationCitiesList = $destinationPlace->getCities();
 
+        $thereStartDateTime = new \DateTime($this->there_start_date);
+        $thereEndDateTime = new \DateTime($this->there_end_date);
+        $thereEndDateTime->add(new \DateInterval('P1D'));
 
         $thereDatesList = new \DatePeriod(
-            new \DateTime($this->there_start_date),
+            $thereStartDateTime,
             new \DateInterval('P1D'),
-            new \DateTime($this->there_end_date)
+            $thereEndDateTime
         );
-        if ($this->back_start_date && $this->back_end_date) {
-            $backDatesList = new \DatePeriod(
-                new \DateTime($this->back_start_date),
-                new \DateInterval('P1D'),
-                new \DateTime($this->back_end_date)
-            );
+
+        if ($this->travel_period_start && $this->travel_period_end) {
+            $travelPeriodRange = range($this->travel_period_start, $this->travel_period_end);
         } else {
-            $backDatesList = NULL;
+            $travelPeriodRange = NULL;
         }
 
         foreach ($originCitiesList as $originCity) {
             foreach ($destinationCitiesList as $destinationCity) {
                 foreach ($thereDatesList as $thereDate) {
-                    if ($backDatesList) {
-                        foreach ($backDatesList as $backDate) {
+                    if ($travelPeriodRange) {
+                        foreach ($travelPeriodRange as $traverPeriodItem) {
+                            $backDate = clone $thereDate;
+                            $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
                             $this->createRoute($originCity, $destinationCity, $thereDate, $backDate);
                         }
                     } else {
@@ -143,7 +127,6 @@ class Request extends \yii\db\ActiveRecord
                 }
             }
         }
-
     }
 
     public function createRoute(City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
@@ -171,8 +154,7 @@ class Request extends \yii\db\ActiveRecord
             $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
         }
 
-        //return $route->save();
-        if ($route->validate() && $route->save()) {
+        if ($route->validate() && !$route->save()) {
             $route->link('requests', $this);
         }
     }

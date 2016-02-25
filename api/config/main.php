@@ -54,6 +54,13 @@ return [
                         '{id}' => '<id:\\w+>'
                     ],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'v1/rate',   // our request api rule,
+                    'tokens' => [
+                        '{id}' => '<id:\\w+>'
+                    ],
+                ],
             ],
         ],
         'request' => [

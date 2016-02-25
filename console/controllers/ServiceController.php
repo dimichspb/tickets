@@ -798,6 +798,10 @@ class ServiceController extends Controller
 
     private function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
+        $totalItems = count($routesToUpdate);
+        $currentItem = 0;
+        $this->stdout(PHP_EOL . 'Getting Rates, total routes to update: '. $totalItems . PHP_EOL);
+
         foreach ($routesToUpdate as $routeToUpdate) {
             $curlAction = $this->actionCurl($endpoint->endpoint, [
                 'currency' => $routeToUpdate->currency,
@@ -815,6 +819,7 @@ class ServiceController extends Controller
                 continue;
             }
             $this->addRatesAVS($endpoint, $routeToUpdate, $responseJson);
+            $this->progressBar($totalItems, $currentItem);
         }
     }
 

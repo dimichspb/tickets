@@ -10,19 +10,20 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
+use common\models\Rate;
 
 
-class RequestController extends ActiveController
+class RateController extends ActiveController
 {
-    public $modelClass = 'common\models\Request';
-    private $createActionDetails;
+    public $modelClass = 'common\models\Rate';
+    private $indexActionDetails;
 
     private $accessRules = [
-        'index' => 'getRequestsList',
-        'view' => 'getRequestDetails',
-        'create' => 'createRequestDetails',
-        'update' => 'updateRequestDetails',
-        'delete' => 'deleteRequestDetails',
+        'index' => 'getRatesList',
+        'view' => 'getRateDetails',
+        'create' => 'createRateDetails',
+        'update' => 'updateRateDetails',
+        'delete' => 'deleteRateDetails',
     ];
 
     public function behaviors()
@@ -51,30 +52,28 @@ class RequestController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        $this->createActionDetails = $actions['create'];
-        unset($actions['create']);
+        //$this->indexActionDetails = $actions['index'];
+        //unset($actions['index']);
+        $actions['index']['prepareDataProvider'] = [new Rate(), 'getRatesByRequestIdDataProvider'];
         return $actions;
     }
-
-    public function actionCreate()
+/*
+    public function actionIndex()
     {
-        $createActionClassName = $this->createActionDetails['class'];
-        $createActionModelClass = $this->createActionDetails['modelClass'];
-        $createActionCheckAccess = $this->createActionDetails['checkAccess'];
-        $createActionScenario = $this->createActionDetails['scenario'];
+        $indexActionClassName = $this->indexActionDetails['class'];
+        $indexActionModelClass = $this->indexActionDetails['modelClass'];
+        $indexActionCheckAccess = $this->indexActionDetails['checkAccess'];
+        $indexActionScenario = $this->indexActionDetails['scenario'];
 
-        $createAction = new $createActionClassName('create', $this, [
-            'modelClass' => $createActionModelClass,
-            'checkAccess' => $createActionCheckAccess,
-            'scenario' => $createActionScenario,
+        $indexAction = new $indexActionClassName('index', $this, [
+            'modelClass' => $indexActionModelClass,
+            'checkAccess' => $indexActionCheckAccess,
+            'scenario' => $indexActionScenario,
         ]);
 
-        $model = $createAction->run();
-
-        if ($model->validate() && $model->save()) {
-            $model->createRoutes();
-        }
 
         return $model;
     }
+*/
+
 }

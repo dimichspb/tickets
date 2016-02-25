@@ -130,6 +130,47 @@ class RbacController extends \yii\console\Controller
         $this->addRoleChild($this->adminRole, $requestsAdmin);
     }
 
+    public function actionAddRatesPermissions()
+    {
+        //getRatesList permission
+        $getRatesList = $this->createPermission('getRatesList', 'Get Rates list permission');
+
+        //getRateDetails permission
+        $getRateDetails = $this->createPermission('getRateDetails', 'Get Rate details permission');
+
+        //createRate permission
+        $createRateDetails = $this->createPermission('createRateDetails', 'Create Rate details permission');
+
+        //updateRate permission
+        $updateRateDetails = $this->createPermission('updateRateDetails', 'Update Rate details permission');
+
+        //deleteRate permission
+        $deleteRateDetails = $this->createPermission('deleteRateDetails', 'Delete Rate details permission');
+
+        //ratesUser role
+        $ratesUser = $this->createRole('ratesUser', [
+            $getRateDetails,
+        ], 'Rates user role');
+
+        //ratesAdmin role
+        $ratesAdmin = $this->createRole('ratesAdmin', [
+            $getRatesList,
+            $createRateDetails,
+            $updateRateDetails,
+            $deleteRateDetails,
+        ], 'Rates admin role');
+
+        $this->addRoleChild($ratesAdmin, $ratesUser);
+
+        //User role
+        $this->addCommonUserRole();
+        $this->addRoleChild($this->userRole, $ratesUser);
+
+        //Admin role
+        $this->addCommonAdminRole();
+        $this->addRoleChild($this->adminRole, $ratesAdmin);
+    }
+
     private function createPermission($permissionName, $permissionDesc = '')
     {
         $auth = Yii::$app->authManager;

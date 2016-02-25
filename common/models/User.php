@@ -206,6 +206,9 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * Do some changes before save user into DB
+     *
+     * @param $insert boolean
+     * @return boolean
      */
     public function beforeSave($insert)
     {

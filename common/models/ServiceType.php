@@ -114,4 +114,15 @@ class ServiceType extends \yii\db\ActiveRecord
             default:
         }
     }
+
+    /**
+     * @return null|ServiceType
+     */
+    public static function directFlights()
+    {
+        return ServiceType::findOne([
+            'status' => ServiceType::STATUS_ACTIVE,
+            'code' => 'DR',
+        ]);
+    }
 }

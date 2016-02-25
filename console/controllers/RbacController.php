@@ -47,48 +47,7 @@ class RbacController extends \yii\console\Controller
             $auth->assign($this->adminRole, 1); // User with ID 1 has Admin role;
         }
     }
-
-    public function actionAddCountriesPermissions()
-    {
-        //getCountriesList permission
-        $getCountriesList = $this->createPermission('getCountriesList', 'Get Countries list permission');
-
-        //getCountryDetails permission
-        $getCountryDetails = $this->createPermission('getCountryDetails', 'Get Country details permission');
-
-        //createCountry permission
-        $createCountryDetails = $this->createPermission('createCountryDetails', 'Create Country details permission');
-
-        //updateCountry permission
-        $updateCountryDetails = $this->createPermission('updateCountryDetails', 'Update Country details permission');
-
-        //deleteCountry permission
-        $deleteCountryDetails = $this->createPermission('deleteCountryDetails', 'Delete Country details permission');
-
-        //countriesUser role
-        $countriesUser = $this->createRole('countriesUser', [
-            $getCountriesList,
-            $getCountryDetails,
-            ], 'Countries user role');
-
-        //countriesAdmin role
-        $countriesAdmin = $this->createRole('countriesAdmin', [
-                $createCountryDetails,
-                $updateCountryDetails,
-                $deleteCountryDetails
-            ], 'Countries admin role');
-        $this->addRoleChild($countriesAdmin, $countriesUser);
-
-        //User role
-        $this->addCommonUserRole();
-        $this->addRoleChild($this->userRole, $countriesUser);
-
-        //Admin role
-        $this->addCommonAdminRole();
-        $this->addRoleChild($this->adminRole, $countriesAdmin);
-
-    }
-
+    
     public function actionAddRequestsPermissions()
     {
         //getRequestsList permission

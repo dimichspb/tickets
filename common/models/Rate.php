@@ -30,6 +30,8 @@ use yii\helpers\Json;
  */
 class Rate extends \yii\db\ActiveRecord
 {
+    private static $limit;
+
     /**
      * @inheritdoc
      */
@@ -124,8 +126,9 @@ class Rate extends \yii\db\ActiveRecord
 
 
 
-    public static function getRates()
+    public static function getRates($limit)
     {
+        Rate::setLimit($limit);
         $routesToUpdate = Route::getRoutesWithOldRate();
 
         $activeRateService = ServiceType::findOne([
@@ -192,12 +195,24 @@ class Rate extends \yii\db\ActiveRecord
                 $rate->currency = $route->currency;
                 $rate->price = (float)$destinationDataItem['price'];
 
-                if ($rate->validate()) {
-                    $rate->save();
+                if ($rate->validate() && $rate->save()) {
+                    Rate::checkLimit();
                 }
             }
 
         }
+    }
 
+    private static function setLimit($limit)
+    {
+        self::$limit = $limit;
+    }
+
+    private static function checkLimit()
+    {
+        if (isset(self::$limit)) {
+            self::$limit--;
+            if (self::$limit <= 0) exit();
+        }
     }
 }

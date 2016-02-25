@@ -9,20 +9,14 @@ use Yii;
  * This is the model class for table "place".
  *
  * @property integer $id
- * @property string $region
- * @property string $subregion
- * @property string $country
- * @property string $city
- * @property string $airport
- * @property integer $parent
  *
- * @property Airport $airport0
- * @property City $city0
- * @property Country $country0
- * @property Place $parent0
+ * @property Airport $airport
+ * @property City $city
+ * @property Country $country
+ * @property Place $parent
  * @property Place[] $places
- * @property Region $region0
- * @property Subregion $subregion0
+ * @property Region $region
+ * @property Subregion $subregion
  */
 class Place extends \yii\db\ActiveRecord
 {
@@ -113,7 +107,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSubregion0()
+    public function getSubregion()
     {
         return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
     }
@@ -233,13 +227,13 @@ class Place extends \yii\db\ActiveRecord
             $citiesList[] = $city;
         } elseif ($this->country) {
             $country = Country::getCountryByCode($this->country);
-            $citiesList = $country->getCities()->all();
+            $citiesList = $country->getCities();
         } elseif ($this->subregion) {
             $subregion = Subregion::getSubregionByCode($this->subregion);
-            $citiesList = $subregion->getCities()->all();
+            $citiesList = $subregion->getCities();
         } elseif ($this->region) {
             $region = Region::getRegionByCode($this->region);
-            $citiesList = $region->getCities()->all();
+            $citiesList = $region->getCities();
         }
 
         return $citiesList;
@@ -254,5 +248,14 @@ class Place extends \yii\db\ActiveRecord
             $place->save();
         }
         return $place;
+    }
+
+    /**
+     * @param $id
+     * @return null|Place
+     */
+    public static function getPlaceById($id)
+    {
+        return Place::findOne($id);
     }
 }

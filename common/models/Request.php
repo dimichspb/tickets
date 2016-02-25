@@ -88,79 +88,16 @@ class Request extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user']);
     }
 
-    public function createRoutes()
-    {
-        $originPlace = Place::findOne($this->origin);
-        $destinationPlace = Place::findOne($this->destination);
-
-        $originCitiesList = $originPlace->getCities();
-        $destinationCitiesList = $destinationPlace->getCities();
-
-        $thereStartDateTime = new \DateTime($this->there_start_date);
-        $thereEndDateTime = new \DateTime($this->there_end_date);
-        $thereEndDateTime->add(new \DateInterval('P1D'));
-
-        $thereDatesList = new \DatePeriod(
-            $thereStartDateTime,
-            new \DateInterval('P1D'),
-            $thereEndDateTime
-        );
-
-        if ($this->travel_period_start && $this->travel_period_end) {
-            $travelPeriodRange = range($this->travel_period_start, $this->travel_period_end);
-        } else {
-            $travelPeriodRange = NULL;
-        }
-
-        foreach ($originCitiesList as $originCity) {
-            foreach ($destinationCitiesList as $destinationCity) {
-                foreach ($thereDatesList as $thereDate) {
-                    if ($travelPeriodRange) {
-                        foreach ($travelPeriodRange as $traverPeriodItem) {
-                            $backDate = clone $thereDate;
-                            $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
-                            $this->createRoute($originCity, $destinationCity, $thereDate, $backDate);
-                        }
-                    } else {
-                        $this->createRoute($originCity, $destinationCity, $thereDate);
-                    }
-                }
-            }
-        }
-    }
-
-    public function createRoute(City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
-    {
-        if ($backDate) {
-            $route = Route::findOne([
-                'origin_city' => $originCity->code,
-                'destination_city' => $destinationCity->code,
-                'there_date' => $thereDate->format('Y-m-d H:i:s'),
-                'back_date' => $backDate->format('Y-m-d H:i:s'),
-            ]);
-        } else {
-            $route = Route::findOne([
-                'origin_city' => $originCity->code,
-                'destination_city' => $destinationCity->code,
-                'there_date' => $thereDate->format('Y-m-d H:i:s'),
-            ]);
-        }
-
-        if (!$route) {
-            $route = new Route();
-            $route->origin_city = $originCity->code;
-            $route->destination_city = $destinationCity->code;
-            $route->there_date = $thereDate->format('Y-m-d H:i:s');
-            $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
-        }
-
-        if ($route->validate() && !$route->save()) {
-            $route->link('requests', $this);
-        }
-    }
-
     public function getRoutes()
     {
         return $this->hasMany(Route::className(), ['id' => 'route'])->viaTable('request_to_route', ['request' => 'id']);
+    }
+
+    /**
+     * @return array|Request[]
+     */
+    public static function getAllRequests()
+    {
+        return Request::find()->all();
     }
 }

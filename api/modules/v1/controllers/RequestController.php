@@ -52,11 +52,11 @@ class RequestController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        $this->createActionDetails = $actions['create'];
-        unset($actions['create']);
+        //$this->createActionDetails = $actions['create'];
+        //unset($actions['create']);
         return $actions;
     }
-
+/*
     public function actionCreate()
     {
         $createActionClassName = $this->createActionDetails['class'];
@@ -74,9 +74,10 @@ class RequestController extends ActiveController
 
         if ($model->validate() && $model->save()) {
             $model->createRoutes();
-            Rate::getRates();
+            //Rate::getRates(); //save traffic
         }
 
         return $model;
     }
+*/
 }

@@ -8,6 +8,7 @@ use common\models\Subregion;
 use common\models\Country;
 use common\models\City;
 use common\models\Airport;
+use common\models\Route;
 use common\models\Rate;
 use common\models\ServiceType;
 
@@ -16,6 +17,41 @@ class ServiceController extends Controller
     public function actionIndex()
     {
         ServiceType::process();
+    }
+
+    public function actionAirlines()
+    {
+        ServiceType::process('AL');
+    }
+
+    public function actionRegions()
+    {
+        ServiceType::process('RG');
+    }
+
+    public function actionSubregions()
+    {
+        ServiceType::process('SR');
+    }
+
+    public function actionCounties()
+    {
+        ServiceType::process('CN');
+    }
+
+    public function actionCities()
+    {
+        ServiceType::process('CT');
+    }
+
+    public function actionAirports()
+    {
+        ServiceType::process('AP');
+    }
+
+    public function actionCountriesRegions()
+    {
+        ServiceType::process('CR');
     }
 
     public function actionPlaces()
@@ -28,9 +64,14 @@ class ServiceController extends Controller
 
     }
 
-    public function actionRates()
+    public function actionRoutes($limit = 100)
     {
-        Rate::getRates();
+        Route::createRoutes($limit);
+    }
+
+    public function actionRates($limit = 10)
+    {
+        Rate::getRates($limit);
     }
 
         /*

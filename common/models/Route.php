@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Console;
 
 /**
  * This is the model class for table "route".
@@ -19,6 +20,8 @@ use Yii;
  */
 class Route extends \yii\db\ActiveRecord
 {
+    private static $limit;
+
     /**
      * @inheritdoc
      */
@@ -115,6 +118,101 @@ class Route extends \yii\db\ActiveRecord
 
         if (count($result) > 0) {
             return($result);
+        }
+    }
+
+    public static function createRoutes($limit)
+    {
+        Route::setLimit($limit);
+        $requests = Request::getAllRequests();
+
+        foreach ($requests as $request) {
+            Route::createRoutesByRequest($request);
+        }
+    }
+
+    private static function createRoutesByRequest(Request $request)
+    {
+        $originPlace = Place::getPlaceById($request->origin);
+        $destinationPlace = Place::getPlaceById($request->destination);
+
+        $originCitiesList = $originPlace->getCities();
+        $destinationCitiesList = $destinationPlace->getCities();
+
+        $thereStartDateTime = new \DateTime($request->there_start_date);
+        $thereEndDateTime = new \DateTime($request->there_end_date);
+        $thereEndDateTime->add(new \DateInterval('P1D'));
+
+        $thereDatesList = new \DatePeriod(
+            $thereStartDateTime,
+            new \DateInterval('P1D'),
+            $thereEndDateTime
+        );
+
+        if ($request->travel_period_start && $request->travel_period_end) {
+            $travelPeriodRange = range($request->travel_period_start, $request->travel_period_end);
+        } else {
+            $travelPeriodRange = NULL;
+        }
+
+        foreach ($originCitiesList as $originCity) {
+            foreach ($destinationCitiesList as $destinationCity) {
+                foreach ($thereDatesList as $thereDate) {
+                    if ($travelPeriodRange) {
+                        foreach ($travelPeriodRange as $traverPeriodItem) {
+                            $backDate = clone $thereDate;
+                            $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
+                            Route::createRoute($request, $originCity, $destinationCity, $thereDate, $backDate);
+                        }
+                    } else {
+                        Route::createRoute($request, $originCity, $destinationCity, $thereDate);
+                    }
+                }
+            }
+        }
+    }
+
+    private static function createRoute(Request $request, City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
+    {
+        if ($backDate) {
+            $route = Route::findOne([
+                'origin_city' => $originCity->code,
+                'destination_city' => $destinationCity->code,
+                'there_date' => $thereDate->format('Y-m-d H:i:s'),
+                'back_date' => $backDate->format('Y-m-d H:i:s'),
+            ]);
+        } else {
+            $route = Route::findOne([
+                'origin_city' => $originCity->code,
+                'destination_city' => $destinationCity->code,
+                'there_date' => $thereDate->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        if (!$route) {
+            $route = new Route();
+            $route->origin_city = $originCity->code;
+            $route->destination_city = $destinationCity->code;
+            $route->there_date = $thereDate->format('Y-m-d H:i:s');
+            $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
+        }
+
+        if ($route->validate() && $route->save()) {
+            $route->link('requests', $request);
+            Route::checkLimit();
+        }
+    }
+
+    private static function setLimit($limit)
+    {
+        self::$limit = $limit;
+    }
+
+    private static function checkLimit()
+    {
+        if (isset(self::$limit)) {
+            self::$limit--;
+            if (self::$limit <= 0) exit();
         }
     }
 

@@ -56,12 +56,22 @@ class ServiceType extends \yii\db\ActiveRecord
         return $this->hasMany(Endpoint::className(), ['service_type' => 'code']);
     }
 
-    public static function process()
+    public static function process($filter = '')
     {
-        $activeServiceTypes = ServiceType::find()
-            ->where(['status' => ServiceType::STATUS_ACTIVE])
-            ->orderBy('order')
-            ->all();
+        if (!empty($filter)) {
+            $activeServiceTypes = ServiceType::find()
+                ->where([
+                    'status' => ServiceType::STATUS_ACTIVE,
+                    'code' => $filter,
+                ])
+                ->orderBy('order')
+                ->all();
+        } else {
+            $activeServiceTypes = ServiceType::find()
+                ->where(['status' => ServiceType::STATUS_ACTIVE])
+                ->orderBy('order')
+                ->all();
+        }
 
         foreach ($activeServiceTypes as $activeServiceType) {
             foreach ($activeServiceType->endpoints as $endpoint) {

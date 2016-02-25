@@ -10,6 +10,7 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
+use common\models\Rate;
 
 
 class RequestController extends ActiveController
@@ -73,6 +74,7 @@ class RequestController extends ActiveController
 
         if ($model->validate() && $model->save()) {
             $model->createRoutes();
+            Rate::getRates();
         }
 
         return $model;

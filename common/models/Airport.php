@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "airport".
@@ -142,6 +143,93 @@ class Airport extends \yii\db\ActiveRecord
 
         if ($airport) {
             return $airport->getCity()->one();
+        }
+    }
+
+    public static function addAirportsToPlaces()
+    {
+        $airports = Airport::find()->all();
+
+        foreach ($airports as $airport) {
+            if ($city = City::getCityByCode($airport->city)) continue;
+            if ($country = Country::getCountryByCode($city->country)) continue;
+            if ($subregion = Subregion::getSubregionByCode($country->subregion)) continue;
+            if ($region = Region::getRegionByCode($subregion->region)) continue;
+            if ($parent = Place::getPlaceByCityCode($city->code)) continue;
+
+            Place::addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
+                'country' => $country->code,
+                'city' => $city->code,
+                'airport' => $airport->code,
+                'parent' => $parent->id,
+            ]);
+        }
+    }
+
+    public static function uploadAirports($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Airport::uploadAirportsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadAirportsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Airport::addAirport([
+                'code' => $item['code'],
+                'name' => $item['name'],
+                'coordinates' => serialize($item['coordinates']),
+                'description' => $item['name_translations'],
+                'time_zone' => $item['time_zone'],
+                'country' => $item['country_code'],
+                'city' => $item['city_code'],
+            ]);
+        }
+    }
+
+    private static function addAirport($airportData)
+    {
+        $country = Country::getCountryByCode($airportData['country']);
+        $city = City::getCityByCode($airportData['city']);
+
+        $airport = Airport::getAirportByCode($airportData['code']);
+
+        if (!$airport) {
+            $airport = new Airport();
+            $airport->code = $airportData['code'];
+        }
+
+        $airport->name = $airportData['name'];
+        $airport->time_zone = $airportData['time_zone'];
+        $airport->coordinates = $airportData['coordinates'];
+        $airport->country = $country->code;
+        $airport->city = $city->code;
+
+        $result = $airport->save();
+
+        if ($result && isset($airportData['description'])) {
+            AirportDesc::addAirportDescriptions($airport, $airportData['description']);
+        }
+    }
+
+    public static function updateAirportsRegionsByCountry($countryData)
+    {
+        $airports = Airport::findAll([
+            'country' => $countryData['country'],
+        ]);
+
+        foreach ($airports as $airport) {
+            $airport->region = $countryData['region'];
+            $airport->subregion = $countryData['subregion'];
+            $airport->save();
         }
     }
 }

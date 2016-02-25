@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "city".
@@ -131,4 +132,89 @@ class City extends \yii\db\ActiveRecord
 
         return $city;
     }
+
+    public static function addCitiesToPlaces()
+    {
+        $cities = City::find()->all();
+
+        foreach($cities as $city) {
+            if ($country = Country::getCountryByCode($city->country)) continue;
+            if ($subregion = Subregion::getSubregionByCode($country->subregion)) continue;
+            if ($region = Region::getRegionByCode($subregion->region)) continue;
+            if ($parent = Place::getPlaceByCountryCode($country->code)) continue;
+
+            Place::addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
+                'country' => $country->code,
+                'city' => $city->code,
+                'parent' => $parent->id,
+            ]);
+        }
+    }
+
+    public static function uploadCities($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                City::uploadCitiesFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadCitiesFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            City::addCity([
+                'code' => $item['code'],
+                'name' => $item['name'],
+                'coordinates' => serialize($item['coordinates']),
+                'description' => $item['name_translations'],
+                'time_zone' => $item['time_zone'],
+                'country' => $item['country_code'],
+            ]);
+        }
+    }
+
+    private static function addCity($cityData)
+    {
+        $country = Country::getCountryByCode($cityData['country']);
+
+        $city = City::getCityByCode($cityData['code']);
+
+        if (!$city) {
+            $city = new City();
+            $city->code = $cityData['code'];
+        }
+
+        $city->name = $cityData['name'];
+        $city->coordinates = $cityData['coordinates'];
+        $city->time_zone = $cityData['time_zone'];
+        $city->country = $country->code;
+
+        $result = $city->save();
+
+        if ($result && isset($cityData['description'])) {
+            CityDesc::addCityDescriptions($city, $cityData['description']);
+        }
+
+        return $result;
+    }
+
+    public static function updateCitiesRegionsByCountry($countryData)
+    {
+        $cities = City::findAll([
+            'country' => $countryData['country'],
+        ]);
+
+        foreach ($cities as $city) {
+            $city->region = $countryData['region'];
+            $city->subregion = $countryData['subregion'];
+            $city->save();
+        }
+    }
+
 }

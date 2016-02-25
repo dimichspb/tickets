@@ -5,6 +5,9 @@ namespace common\models;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
+use yii\helpers\CurlHelper;
+use yii\components\ProgressBar;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "rate".
@@ -117,5 +120,84 @@ class Rate extends \yii\db\ActiveRecord
         return new ActiveDataProvider([
             'query' => Rate::getRatesByRequestId($requestId),
         ]);
+    }
+
+
+
+    public static function getRates()
+    {
+        $routesToUpdate = Route::getRoutesWithOldRate();
+
+        $activeRateService = ServiceType::findOne([
+            'status' => ServiceType::STATUS_ACTIVE,
+            'code' => 'DR',
+        ]);
+
+        if (!$activeRateService || !$routesToUpdate) {
+            return;
+        }
+
+        foreach ($activeRateService->endpoints  as $endpoint) {
+            Rate::getRatesFromService($endpoint, $routesToUpdate);
+        }
+    }
+
+    private static function getRatesFromService(Endpoint $endpoint, array $routesToUpdate)
+    {
+        switch ($endpoint->service) {
+            case 'AVS':
+                Rate::getRatesFromAVS($endpoint, $routesToUpdate);
+                break;
+            default:
+        }
+    }
+
+    private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
+    {
+        foreach ($routesToUpdate as $routeToUpdate) {
+            $curlAction = CurlHelper::get($endpoint->endpoint, [
+                'currency' => $routeToUpdate->currency,
+                'origin' => $routeToUpdate->origin_city,
+                'destination' => $routeToUpdate->destination_city,
+                'depart_date' => \Yii::$app->formatter->asDate($routeToUpdate->there_date, 'php:Y-m-d'),
+                'return_date' => \Yii::$app->formatter->asDate($routeToUpdate->back_date, 'php:Y-m-d'),
+                'token' => $endpoint->getService()->token,
+            ]);
+
+            $responseJson = $curlAction['response'];
+            $responseCode = $curlAction['responseCode'];
+
+            if ($responseCode !== 200) {
+                continue;
+            }
+            Rate::addRatesAVS($endpoint, $routeToUpdate, $responseJson);
+        }
+    }
+
+    private static function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
+    {
+        $data = Json::decode($dataJson);
+
+        foreach ($data['data'] as $destinationItemIndex => $destinationItemData) {
+            foreach ($destinationItemData as $destinationDataItem) {
+                $rate = new Rate();
+                $rate->route = $route->id;
+                $rate->origin_city = $route->origin_city;
+                $rate->destination_city = $destinationItemIndex;
+                $rate->there_date = \Yii::$app->formatter->asDatetime($destinationDataItem['departure_at'],'php:Y-m-d H:i:s');
+                $rate->back_date = \Yii::$app->formatter->asDatetime($destinationDataItem['return_at'],'php:Y-m-d H:i:s');
+                $rate->service = $endpoint->service;
+                $rate->airline = Airline::getAirlineByName($destinationDataItem['airline'])->id;
+                $rate->flight_number = (string)$destinationDataItem['flight_number'];
+                $rate->currency = $route->currency;
+                $rate->price = (float)$destinationDataItem['price'];
+
+                if ($rate->validate()) {
+                    $rate->save();
+                }
+            }
+
+        }
+
     }
 }

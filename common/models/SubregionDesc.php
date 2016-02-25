@@ -64,4 +64,34 @@ class SubregionDesc extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
     }
+
+    public static function addSubregionDescriptions(Subregion $subregion, array $subregionDataArray)
+    {
+        if (count($subregionDataArray)>0)
+        {
+            foreach ($subregionDataArray as $subregionDataIndex => $subregionDataValue) {
+                SubregionDesc::addSubregionDescription($subregion, $subregionDataIndex, $subregionDataValue);
+            }
+        }
+    }
+
+    private static function addSubregionDescription(Subregion $subregion, $subregionDataIndex, $subregionDataValue)
+    {
+        $language = Language::getLanguageByCode($subregionDataIndex);
+
+        $subregionDesc = SubregionDesc::findOne([
+            'subregion' => $subregion->code,
+            'language' => $language->code,
+        ]);
+
+        if (!$subregionDesc) {
+            $subregionDesc = new SubregionDesc();
+            $subregionDesc->subregion = $subregion->code;
+            $subregionDesc->language = $language->code;
+        }
+
+        $subregionDesc->name = $subregionDataValue;
+
+        return $subregionDesc->save();
+    }
 }

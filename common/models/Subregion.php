@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "subregion".
@@ -111,5 +112,66 @@ class Subregion extends \yii\db\ActiveRecord
         }
 
         return $subregion;
+    }
+
+    public static function addSubregionsToPlaces()
+    {
+        $subregions = Subregion::find()->all();
+
+        foreach($subregions as $subregion) {
+            if ($region = Region::getRegionByCode($subregion->region)) continue;
+            if ($parent = Place::getPlaceByRegionCode($region->code)) continue;
+
+            Place::addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
+                'parent' => $parent->id,
+            ]);
+        }
+    }
+
+    public static function uploadSubregions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Subregion::uploadSubregionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadSubregionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Subregion::addSubregion([
+                'code' => $item['code'],
+                'region' => $item['region'],
+                'name' => $item['name'],
+                'description' => $item['name_translations'],
+            ]);
+        }
+    }
+
+    private static function addSubregion(array $subregionData)
+    {
+        $subregion = Subregion::getSubregionByCode($subregionData['code']);
+
+        if (!$subregion) {
+            $subregion = new Subregion();
+            $subregion->code = $subregionData['code'];
+        }
+
+        $subregion->region = $subregionData['region'];
+        $subregion->name = $subregionData['name'];
+
+        $result = $subregion->save();
+
+        if ($result && isset($subregionData['description'])) {
+            SubregionDesc::addSubregionDescriptions($subregion, $subregionData['description']);
+        }
+
+        return $result;
     }
 }

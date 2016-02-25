@@ -62,4 +62,34 @@ class CityDesc extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
+
+    public static function addCityDescriptions(City $city, array $cityDataArray)
+    {
+        if (count($cityDataArray)>0)
+        {
+            foreach ($cityDataArray as $cityDataIndex => $cityDataValue) {
+                CityDesc::addCityDescription($city, $cityDataIndex, $cityDataValue);
+            }
+        }
+    }
+
+    private static function addCityDescription(City $city, $cityDataIndex, $cityDataValue)
+    {
+        $language = Language::getLanguageByCode($cityDataIndex);
+
+        $cityDesc = CityDesc::findOne([
+            'city' => $city->code,
+            'language' => $language->code,
+        ]);
+
+        if (!$cityDesc) {
+            $cityDesc = new CityDesc();
+            $cityDesc->city = $city->code;
+            $cityDesc->language = $language->code;
+        }
+
+        $cityDesc->name = $cityDataValue;
+
+        return $cityDesc->save();
+    }
 }

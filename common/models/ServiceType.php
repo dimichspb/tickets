@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\CurlHelper;
 
 /**
  * This is the model class for table "service_type".
@@ -53,5 +54,54 @@ class ServiceType extends \yii\db\ActiveRecord
     public function getEndpoints()
     {
         return $this->hasMany(Endpoint::className(), ['service_type' => 'code']);
+    }
+
+    public static function process()
+    {
+        $activeServiceTypes = ServiceType::find()
+            ->where(['status' => ServiceType::STATUS_ACTIVE])
+            ->orderBy('order')
+            ->all();
+
+        foreach ($activeServiceTypes as $activeServiceType) {
+            foreach ($activeServiceType->endpoints as $endpoint) {
+                $curlAction = CurlHelper::get($endpoint->endpoint);
+                $responseJson = $curlAction['response'];
+                $responseCode = $curlAction['responseCode'];
+
+                if ($responseCode !== 200) {
+                    continue;
+                }
+                ServiceType::uploadNewData($endpoint->service_type, $endpoint->service, $responseJson);
+            }
+        }
+    }
+
+    private static function uploadNewData($serviceType, $service, $dataJson)
+    {
+        switch ($serviceType) {
+            case 'RG':
+                Region::uploadRegions($service, $dataJson);
+                break;
+            case 'SR':
+                Subregion::uploadSubregions($service, $dataJson);
+                break;
+            case 'CN':
+                Country::uploadCountries($service, $dataJson);
+                break;
+            case 'CT':
+                City::uploadCities($service, $dataJson);
+                break;
+            case 'AP':
+                Airport::uploadAirports($service, $dataJson);
+                break;
+            case 'CR':
+                Country::uploadCountriesToRegions($service, $dataJson);
+                break;
+            case 'AL':
+                Airline::uploadAirlines($service, $dataJson);
+                break;
+            default:
+        }
     }
 }

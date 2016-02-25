@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "airline".
@@ -89,4 +90,53 @@ class Airline extends \yii\db\ActiveRecord
 
         return $airline;
     }
+
+    public static function uploadAirlines($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Airline::uploadAirlinesFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadAirlinesFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Airline::addAirline([
+                'name' => $item['name'],
+                'alias' => $item['alias'],
+                'iata' => $item['iata'],
+                'icao' => $item['icao'],
+                'callsign' => $item['callsign'],
+                'country' => $item['country'],
+                'is_active' => $item['is_active'],
+            ]);
+        }
+    }
+
+    private static function addAirline($airlineData)
+    {
+        $airline = Airline::getAirlineByName($airlineData['name']);
+
+        if (!$airline) {
+            $airline = new Airline();
+            $airline->name = $airlineData['name'];
+        }
+
+        $airline->alias = $airlineData['alias'];
+        $airline->iata = $airlineData['iata'];
+        $airline->icao = $airlineData['icao'];
+        $airline->callsign = $airlineData['callsign'];
+        $airline->country = Country::getCountryByName($airlineData['country'])? Country::getCountryByName($airlineData['country'])->code: NULL;
+        $airline->is_active = $airlineData['is_active'];
+
+        $result = $airline->save();
+
+        return $result;
+    }
+
 }

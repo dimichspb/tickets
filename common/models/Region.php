@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "region".
@@ -83,12 +84,62 @@ class Region extends \yii\db\ActiveRecord
         $region = Region::findOne([
                 'code' => $regionCode,
             ]);
-        if (!$region) {
-            $region = new Region();
-            $region->code = $regionCode;
-            $region->save();
-        }
 
         return $region;
+    }
+
+    public static function addRegionsToPlaces()
+    {
+        $regions = Region::find()->all();
+
+        foreach($regions as $region) {
+
+            Place::addNewPlace([
+                'region' => $region->code,
+            ]);
+        }
+    }
+
+    public static function uploadRegions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Region::uploadRegionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadRegionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Region::addRegion([
+                'code' => $item['code'],
+                'name' => $item['name'],
+                'description' => $item['name_translations'],
+            ]);
+        }
+    }
+
+    private static function addRegion($regionData)
+    {
+        $region = Region::getRegionByCode($regionData['code']);
+
+        if (!$region) {
+            $region = new Region();
+            $region->code = $regionData['code'];
+        }
+
+        $region->name = $regionData['name'];
+
+        $result = $region->save();
+
+        if ($result && isset($regionData['description'])) {
+            RegionDesc::addRegionDescriptions($region, $regionData['description']);
+        }
+
+        return $result;
     }
 }

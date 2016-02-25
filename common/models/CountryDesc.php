@@ -62,4 +62,34 @@ class CountryDesc extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
+
+    public static function addCountryDescriptions(Country $country, array $countryDataArray)
+    {
+        if (count($countryDataArray)>0)
+        {
+            foreach ($countryDataArray as $countryDataIndex => $countryDataValue) {
+                CountryDesc::addCountryDescription($country, $countryDataIndex, $countryDataValue);
+            }
+        }
+    }
+
+    private static function addCountryDescription(Country $country, $countryDataIndex, $countryDataValue)
+    {
+        $language = Language::getLanguageByCode($countryDataIndex);
+
+        $countryDesc = CountryDesc::findOne([
+            'country' => $country->code,
+            'language' => $language->code,
+        ]);
+
+        if (!$countryDesc) {
+            $countryDesc = new CountryDesc();
+            $countryDesc->country = $country->code;
+            $countryDesc->language = $language->code;
+        }
+
+        $countryDesc->name = $countryDataValue;
+
+        return $countryDesc->save();
+    }
 }

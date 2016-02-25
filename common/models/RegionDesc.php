@@ -64,4 +64,34 @@ class RegionDesc extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Region::className(), ['code' => 'region']);
     }
+
+    public static function addRegionDescriptions(Region $region, array $regionDataArray)
+    {
+        if (count($regionDataArray)>0)
+        {
+            foreach ($regionDataArray as $regionDataIndex => $regionDataValue) {
+                RegionDesc::addRegionDescription($region, $regionDataIndex, $regionDataValue);
+            }
+        }
+    }
+
+    private static function addRegionDescription(Region $region, $regionDataIndex, $regionDataValue)
+    {
+        $language = Language::getLanguageByCode($regionDataIndex);
+
+        $regionDesc = RegionDesc::findOne([
+            'region' => $region->code,
+            'language' => $language->code,
+        ]);
+
+        if (!$regionDesc) {
+            $regionDesc = new RegionDesc();
+            $regionDesc->region = $region->code;
+            $regionDesc->language = $language->code;
+        }
+
+        $regionDesc->name = $regionDataValue;
+
+        return $regionDesc->save();
+    }
 }

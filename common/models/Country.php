@@ -3,6 +3,7 @@
 namespace common\Models;
 
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "country".
@@ -137,5 +138,120 @@ class Country extends \yii\db\ActiveRecord
         ]);
 
         return $country;
+    }
+
+    public static function addCountriesToPlaces()
+    {
+        $countries = Country::find()->all();
+
+        foreach($countries as $country) {
+            if ($subregion = Subregion::getSubregionByCode($country->subregion)) continue;
+            if ($region = Region::getRegionByCode($subregion->region)) continue;
+            if ($parent = Place::getPlaceBySubregionCode($subregion->code)) continue;
+
+            Place::addNewPlace([
+                'region' => $region->code,
+                'subregion' => $subregion->code,
+                'country' => $country->code,
+                'parent' => $parent->id,
+            ]);
+        }
+    }
+
+    public static function uploadCountries($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Country::uploadCountriesFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadCountriesFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Country::addCountry([
+                'code' => $item['code'],
+                'name' => $item['name'],
+                'currency' => $item['currency'],
+                'description' => $item['name_translations'],
+            ]);
+        }
+    }
+
+    private static function addCountry($countryData)
+    {
+        $country = Country::getCountryByCode($countryData['code']);
+
+        if (!$country) {
+            $country = new Country();
+            $country->code = $countryData['code'];
+        }
+
+        $country->name = $countryData['name'];
+        $country->currency = !empty($countryData['currency'])? $countryData['currency']: NULL;
+
+        $result = $country->save();
+
+        if ($result && isset($countryData['description'])) {
+            CountryDesc::addCountryDescriptions($country, $countryData['description']);
+        }
+
+        return $result;
+    }
+
+    public static function uploadCountriesToRegions($service, $dataJson)
+    {
+        switch ($service) {
+            case 'AVS':
+                Country::uploadCountriesToRegionsFromAVS($dataJson);
+                break;
+            default:
+        }
+    }
+
+    private static function uploadCountriesToRegionsFromAVS($dataJson)
+    {
+        $dataArray = Json::decode($dataJson);
+
+        foreach ($dataArray as $item) {
+            Country::updateCountryRegion([
+                'code' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+
+            City::updateCitiesRegionsByCountry([
+                'country' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+
+            Airport::updateAirportsRegionsByCountry([
+                'country' => $item['country'],
+                'region' => $item['region'],
+                'subregion' => $item['subregion'],
+            ]);
+        }
+    }
+
+    private static function updateCountryRegion($countryData)
+    {
+        $country = Country::getCountryByCode($countryData['code']);
+
+        if (!$country) {
+            $country = new Country();
+            $country->code = $countryData['code'];
+        }
+
+        $country->region = $countryData['region'];
+        $country->subregion = $countryData['subregion'];
+
+        $result = $country->save();
+
+        return $result;
     }
 }

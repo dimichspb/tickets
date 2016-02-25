@@ -64,4 +64,34 @@ class AirportDesc extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
+
+    public static function addAirportDescriptions(Airport $airport, array $airportDataArray)
+    {
+        if (count($airportDataArray)>0)
+        {
+            foreach ($airportDataArray as $airportDataIndex => $airportDataValue) {
+                AirportDesc::addAirportDescription($airport, $airportDataIndex, $airportDataValue);
+            }
+        }
+    }
+
+    private static function addAirportDescription(Airport $airport, $airportDataIndex, $airportDataValue)
+    {
+        $language = Language::getLanguageByCode($airportDataIndex);
+
+        $airportDesc = AirportDesc::findOne([
+            'airport' => $airport->code,
+            'language' => $language->code,
+        ]);
+
+        if (!$airportDesc) {
+            $airportDesc = new AirportDesc();
+            $airportDesc->airport = $airport->code;
+            $airportDesc->language = $language->code;
+        }
+
+        $airportDesc->name = $airportDataValue;
+
+        return $airportDesc->save();
+    }
 }

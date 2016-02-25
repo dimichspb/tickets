@@ -244,4 +244,15 @@ class Place extends \yii\db\ActiveRecord
 
         return $citiesList;
     }
+
+    public static function addNewPlace(array $placeData)
+    {
+        $place = Place::findOne($placeData);
+        if (!$place) {
+            $place = new Place();
+            $place->setAttributes($placeData);
+            $place->save();
+        }
+        return $place;
+    }
 }

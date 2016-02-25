@@ -17,8 +17,8 @@ class RbacController extends \yii\console\Controller
     public function actionInit()
     {
         $this->actionAddCommonRoles();
-        $this->actionAddCountriesPermissions();
         $this->actionAddRequestsPermissions();
+        $this->actionAddRatesPermissions();
     }
 
     private function actionAddCommonRoles()
@@ -47,7 +47,7 @@ class RbacController extends \yii\console\Controller
             $auth->assign($this->adminRole, 1); // User with ID 1 has Admin role;
         }
     }
-    
+
     public function actionAddRequestsPermissions()
     {
         //getRequestsList permission

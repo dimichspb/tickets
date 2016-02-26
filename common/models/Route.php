@@ -89,11 +89,20 @@ class Route extends \yii\db\ActiveRecord
         return $this->hasMany(Request::className(), ['id' => 'request'])->viaTable('request_to_route', ['route' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getRates()
     {
         return $this->hasMany(Rate::className(), ['route' => 'id']);
     }
 
+    /**
+     * Method avoids saving similar Routes
+     *
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if ($insert) {
@@ -110,6 +119,11 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method returns Routes with not up-to-date Rate
+     *
+     * @return array
+     */
     public static function getRoutesWithOldRate()
     {
         $query = (Route::find()->select('`route`.*, count(`rate`.`id`) as `rates`')->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
@@ -121,6 +135,12 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method return Routes by the specified $requestId and with not up-to-date Rate
+     *
+     * @param $requestId
+     * @return array
+     */
     public static function getRoutesWithOldRateByRequestId($requestId)
     {
         $query = (Route::find()->select('`route`.*, `request_to_route`.*, count(`rate`.`id`) as `rates`')->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
@@ -132,6 +152,12 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds limited by $limit number of Routes of the specified $requestId
+     *
+     * @param $requestId
+     * @param $limit
+     */
     public static function createRoutes($requestId, $limit)
     {
         Route::setLimit($limit);
@@ -146,6 +172,11 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Routes of the particular $request
+     *
+     * @param Request $request
+     */
     private static function createRoutesByRequest(Request $request)
     {
         $originPlace = Place::getPlaceById($request->origin);
@@ -187,6 +218,15 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds particular Route
+     *
+     * @param Request $request
+     * @param City $originCity
+     * @param City $destinationCity
+     * @param \DateTime $thereDate
+     * @param \DateTime|null $backDate
+     */
     private static function createRoute(Request $request, City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
     {
         if ($backDate) {
@@ -218,11 +258,19 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method sets the limit of requests to providers
+     *
+     * @param $limit
+     */
     private static function setLimit($limit)
     {
         self::$limit = $limit;
     }
 
+    /**
+     * Method checks whether limit is exceed
+     */
     private static function checkLimit()
     {
         if (isset(self::$limit)) {

@@ -105,6 +105,12 @@ class Request extends \yii\db\ActiveRecord
         return Request::find()->all();
     }
 
+    /**
+     * Method returns Request object by the specified $requestId
+     *
+     * @param $requestId
+     * @return Request|null
+     */
     public static function getRequestById($requestId)
     {
         return Request::findOne($requestId);

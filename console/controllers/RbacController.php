@@ -14,6 +14,10 @@ class RbacController extends \yii\console\Controller
     protected $userRole;
     protected $adminRole;
 
+    /**
+     * Action adds all necessary roles and permissions
+     *
+     */
     public function actionInit()
     {
         $this->actionAddCommonRoles();
@@ -21,12 +25,21 @@ class RbacController extends \yii\console\Controller
         $this->actionAddRatesPermissions();
     }
 
+    /**
+     * Action adds common roles - User and Admin
+     *
+     */
     private function actionAddCommonRoles()
     {
         $this->addCommonUserRole();
         $this->addCommonAdminRole();
     }
 
+    /**
+     * Method adds common User role with the specified permissions
+     *
+     * @param array $permissions
+     */
     private function addCommonUserRole(array $permissions = [])
     {
         $auth = Yii::$app->authManager;
@@ -37,6 +50,11 @@ class RbacController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Method adds common Admin role with the specified permissions
+     *
+     * @param array $permissions
+     */
     private function addCommonAdminRole(array $permissions = [])
     {
         $auth = Yii::$app->authManager;
@@ -48,6 +66,10 @@ class RbacController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Action adds Requests roles and permissions
+     *
+     */
     public function actionAddRequestsPermissions()
     {
         //getRequestsList permission
@@ -89,6 +111,10 @@ class RbacController extends \yii\console\Controller
         $this->addRoleChild($this->adminRole, $requestsAdmin);
     }
 
+    /**
+     * Action adds Rates roles and permissions
+     *
+     */
     public function actionAddRatesPermissions()
     {
         //getRatesList permission
@@ -130,6 +156,13 @@ class RbacController extends \yii\console\Controller
         $this->addRoleChild($this->adminRole, $ratesAdmin);
     }
 
+    /**
+     * Method creates new Permission
+     *
+     * @param $permissionName
+     * @param string $permissionDesc
+     * @return null|Permission
+     */
     private function createPermission($permissionName, $permissionDesc = '')
     {
         $auth = Yii::$app->authManager;
@@ -149,10 +182,12 @@ class RbacController extends \yii\console\Controller
     }
 
     /**
+     * Method creates new Role with the specified $permissions
+     *
      * @param $roleName
      * @param array $permissions
      * @param string $roleDesc
-     * @return \yii\rbac\Role
+     * @return null|Role
      */
     private function createRole($roleName, array $permissions, $roleDesc = '')
     {
@@ -173,6 +208,12 @@ class RbacController extends \yii\console\Controller
         return $role;
     }
 
+    /**
+     * Method adds specified $permissions to the specified $role
+     *
+     * @param Role $role
+     * @param array $permissions
+     */
     private function addRolePermissions(Role $role, array $permissions)
     {
         $auth = Yii::$app->authManager;
@@ -184,6 +225,12 @@ class RbacController extends \yii\console\Controller
         }
     }
 
+    /**
+     * Method adds specified child to the specified $role
+     *
+     * @param Role $role
+     * @param $child
+     */
     private function addRoleChild(Role $role, $child)
     {
         $auth = Yii::$app->authManager;
@@ -194,6 +241,13 @@ class RbacController extends \yii\console\Controller
 
     }
 
+    /**
+     * Method check whether specified $role has specified $permissions
+     *
+     * @param Role $role
+     * @param Permission $permission
+     * @return bool
+     */
     private function checkRolePermission(Role $role, Permission $permission)
     {
         $auth = Yii::$app->authManager;
@@ -203,6 +257,13 @@ class RbacController extends \yii\console\Controller
         return in_array($permission, $rolePermissions);
     }
 
+    /**
+     * Method check whether specified $role has specified $child
+     *
+     * @param Role $role
+     * @param $child
+     * @return bool
+     */
     private function checkRoleChild(Role $role, $child)
     {
         $auth = Yii::$app->authManager;
@@ -212,6 +273,9 @@ class RbacController extends \yii\console\Controller
         return in_array($child, $roleChildren);
     }
 
+    /**
+     * Method removes all Roles and Permissions
+     */
     public function actionRemoveAll()
     {
         $auth = Yii::$app->authManager;

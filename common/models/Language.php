@@ -50,16 +50,17 @@ class Language extends \yii\db\ActiveRecord
         return $this->hasMany(CountryDesc::className(), ['language' => 'code']);
     }
 
+    /**
+     * Method returns Language object by the specified $languageCode
+     *
+     * @param $languageCode
+     * @return null|static
+     */
     public static function getLanguageByCode($languageCode)
     {
         $language = Language::findOne([
                 'code' => $languageCode,
             ]);
-        if (!$language) {
-            $language = new Language();
-            $language->code = $languageCode;
-            $language->save();
-        }
 
         return $language;
     }

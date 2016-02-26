@@ -12,14 +12,10 @@ use yii\helpers\Json;
  * @property string $name
  * @property string $coordinates
  * @property string $time_zone
- * @property string $region
- * @property string $subregion
- * @property string $country
- *
+ * @property Region $region
+ * @property Subregion $subregion
+ * @property Country $country
  * @property Airport[] $airports
- * @property Country $country0
- * @property Region $region0
- * @property Subregion $subregion0
  * @property CityDesc[] $cityDescs
  * @property Language[] $languages
  * @property Place[] $places
@@ -118,21 +114,26 @@ class City extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Place::className(), ['city' => 'code']);
     }
-    
+
+    /**
+     * Method returns City object by a specified $cityCode
+     *
+     * @param $cityCode
+     * @return City|null|static
+     */
     public static function getCityByCode($cityCode)
     {
         $city = City::findOne([
                 'code' => $cityCode,
             ]);
-        if (!$city) {
-            $city = new City();
-            $city->code = $cityCode;
-            $city->save();
-        }
 
         return $city;
     }
 
+    /**
+     * Method adds all Cities to Place table
+     *
+     */
     public static function addCitiesToPlaces()
     {
         $cities = City::find()->all();
@@ -153,6 +154,12 @@ class City extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Cities from provided JSON data depends on specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadCities($service, $dataJson)
     {
         switch ($service) {
@@ -163,6 +170,11 @@ class City extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Cities from provided JSON data based on AVS response structure
+     *
+     * @param $dataJson
+     */
     private static function uploadCitiesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -179,6 +191,12 @@ class City extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds City to DB
+     *
+     * @param $cityData
+     * @return bool
+     */
     private static function addCity($cityData)
     {
         $country = Country::getCountryByCode($cityData['country']);
@@ -204,6 +222,11 @@ class City extends \yii\db\ActiveRecord
         return $result;
     }
 
+    /**
+     * Method updates City's region and subregion attributes based on provided $countryData
+     *
+     * @param $countryData
+     */
     public static function updateCitiesRegionsByCountry($countryData)
     {
         $cities = City::findAll([

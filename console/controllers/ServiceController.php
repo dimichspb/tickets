@@ -12,48 +12,81 @@ use common\models\Route;
 use common\models\Rate;
 use common\models\ServiceType;
 
+/**
+ * This is console Controller for main Service actions.
+ * To be used in console or Cron
+ *
+ */
+
 class ServiceController extends Controller
 {
+    /**
+     * Process all services
+     */
     public function actionIndex()
     {
         ServiceType::process();
     }
 
+    /**
+     * Process Airlines service
+     */
     public function actionAirlines()
     {
         ServiceType::process('AL');
     }
 
+    /**
+     * Process Regions service
+     */
     public function actionRegions()
     {
         ServiceType::process('RG');
     }
 
+    /**
+     * Process Subregions service
+     */
     public function actionSubregions()
     {
         ServiceType::process('SR');
     }
 
+    /**
+     * Process Countries service
+     */
     public function actionCounties()
     {
         ServiceType::process('CN');
     }
 
+    /**
+     * Process Cities service
+     */
     public function actionCities()
     {
         ServiceType::process('CT');
     }
 
+    /**
+     * Process Airports service
+     */
     public function actionAirports()
     {
         ServiceType::process('AP');
     }
 
+    /**
+     * Process Countries-to-Regions service
+     */
     public function actionCountriesRegions()
     {
         ServiceType::process('CR');
     }
 
+    /**
+     * Add Regions, Subregions, Countries, Cities, Airports to Places
+     */
     public function actionPlaces()
     {
         Region::addRegionsToPlaces();
@@ -64,15 +97,29 @@ class ServiceController extends Controller
 
     }
 
+    /**
+     * Create limited number of Routes to all (or specified) Requests
+     *
+     * @param null $requestId
+     * @param int $limit
+     */
     public function actionRoutes($requestId = NULL, $limit = 1000)
     {
         Route::createRoutes($requestId, $limit);
     }
 
+    /**
+     * Get limited number of rates to all (or specified) Requests
+     *
+     * @param null $requestId
+     * @param int $limit
+     */
     public function actionRates($requestId = NULL, $limit = 100)
     {
         Rate::getRates($requestId, $limit);
     }
+
+    /** some stuff */
 
         /*
         public function actionMerge()

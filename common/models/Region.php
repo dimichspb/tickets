@@ -79,6 +79,12 @@ class Region extends \yii\db\ActiveRecord
         return $this->hasMany(Subregion::className(), ['region' => 'code'])->all();
     }
 
+    /**
+     * Method returns Region object by the specified $regionCode
+     *
+     * @param $regionCode
+     * @return Region|null
+     */
     public static function getRegionByCode($regionCode)
     {
         $region = Region::findOne([
@@ -88,6 +94,10 @@ class Region extends \yii\db\ActiveRecord
         return $region;
     }
 
+    /**
+     * Method adds all Regions to Place table
+     *
+     */
     public static function addRegionsToPlaces()
     {
         $regions = Region::find()->all();
@@ -100,6 +110,12 @@ class Region extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Regions from provided JSON data depending on specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadRegions($service, $dataJson)
     {
         switch ($service) {
@@ -110,6 +126,11 @@ class Region extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method upload Regions from provided JSON data based on AVS response structure
+     *
+     * @param $dataJson
+     */
     private static function uploadRegionsFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -123,6 +144,12 @@ class Region extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Region to DB
+     *
+     * @param $regionData
+     * @return bool
+     */
     private static function addRegion($regionData)
     {
         $region = Region::getRegionByCode($regionData['code']);

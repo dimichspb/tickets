@@ -9,12 +9,10 @@ use yii\helpers\Json;
  * This is the model class for table "subregion".
  *
  * @property string $code
- * @property string $region
+ * @property Region $region
  * @property string $name
- *
  * @property Airport[] $airports
  * @property City[] $cities
- * @property Region $region0
  * @property SubregionDesc[] $subregionDescs
  * @property Language[] $languages
  */
@@ -99,21 +97,25 @@ class Subregion extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Language::className(), ['code' => 'language'])->viaTable('subregion_desc', ['subregion' => 'code']);
     }
-    
+
+    /**
+     * Method returns Subregion object by the specified $subregionCode
+     *
+     * @param $subregionCode
+     * @return null|static
+     */
     public static function getSubregionByCode($subregionCode)
     {
         $subregion = Subregion::findOne([
                 'code' => $subregionCode,
             ]);
-        if (!$subregion) {
-            $subregion = new Subregion();
-            $subregion->code = $subregionCode;
-            $subregion->save();
-        }
 
         return $subregion;
     }
 
+    /**
+     * Method adds all Subregions to Place table
+     */
     public static function addSubregionsToPlaces()
     {
         $subregions = Subregion::find()->all();
@@ -130,6 +132,12 @@ class Subregion extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Subregions from provided JSON data depending of the specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadSubregions($service, $dataJson)
     {
         switch ($service) {
@@ -140,6 +148,11 @@ class Subregion extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Subregions from provided JSON data based on AVS response structure
+     *
+     * @param $dataJson
+     */
     private static function uploadSubregionsFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -154,6 +167,12 @@ class Subregion extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Subregion to DB
+     *
+     * @param array $subregionData
+     * @return bool
+     */
     private static function addSubregion(array $subregionData)
     {
         $subregion = Subregion::getSubregionByCode($subregionData['code']);

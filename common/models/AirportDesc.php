@@ -7,12 +7,10 @@ use Yii;
 /**
  * This is the model class for table "airport_desc".
  *
- * @property string $airport
- * @property string $language
+ * @property Airport $airport
+ * @property Language $language
  * @property string $name
  *
- * @property Airport $airport0
- * @property Language $language0
  */
 class AirportDesc extends \yii\db\ActiveRecord
 {
@@ -52,7 +50,7 @@ class AirportDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAirport0()
+    public function getAirport()
     {
         return $this->hasOne(Airport::className(), ['code' => 'airport']);
     }
@@ -60,11 +58,19 @@ class AirportDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLanguage0()
+    public function getLanguage()
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
 
+    /**
+     * Method adds all descriptions from provided $airportDataArray to the specified $airport
+     *
+     * TODO:: move to Airport class
+     *
+     * @param Airport $airport
+     * @param array $airportDataArray
+     */
     public static function addAirportDescriptions(Airport $airport, array $airportDataArray)
     {
         if (count($airportDataArray)>0)
@@ -75,6 +81,17 @@ class AirportDesc extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds particular description from provided $airportDataIndex and $airportDataValue to the
+     * specified $airport
+     *
+     * TODO:: move to Airport class
+     *
+     * @param Airport $airport
+     * @param $airportDataIndex
+     * @param $airportDataValue
+     * @return bool
+     */
     private static function addAirportDescription(Airport $airport, $airportDataIndex, $airportDataValue)
     {
         $language = Language::getLanguageByCode($airportDataIndex);

@@ -7,12 +7,9 @@ use Yii;
 /**
  * This is the model class for table "region_desc".
  *
- * @property string $region
- * @property string $language
+ * @property Region $region
+ * @property Language $language
  * @property string $name
- *
- * @property Language $language0
- * @property Region $region0
  */
 class RegionDesc extends \yii\db\ActiveRecord
 {
@@ -60,11 +57,19 @@ class RegionDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRegion0()
+    public function getRegion()
     {
         return $this->hasOne(Region::className(), ['code' => 'region']);
     }
 
+    /**
+     * Method adds all Region descriptions from provided $regionDataArray to the specified $region
+     *
+     * TODO:: move to Region class
+     *
+     * @param Region $region
+     * @param array $regionDataArray
+     */
     public static function addRegionDescriptions(Region $region, array $regionDataArray)
     {
         if (count($regionDataArray)>0)
@@ -75,6 +80,16 @@ class RegionDesc extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Region description from provided $regionDataIndex and $regionDataValue to the specified $region
+     *
+     * TODO:: move to Region class
+     *
+     * @param Region $region
+     * @param $regionDataIndex
+     * @param $regionDataValue
+     * @return bool
+     */
     private static function addRegionDescription(Region $region, $regionDataIndex, $regionDataValue)
     {
         $language = Language::getLanguageByCode($regionDataIndex);

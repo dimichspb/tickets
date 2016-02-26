@@ -16,7 +16,6 @@ use common\models\Rate;
 class RateController extends ActiveController
 {
     public $modelClass = 'common\models\Rate';
-    private $indexActionDetails;
 
     private $accessRules = [
         'index' => 'getRatesList',
@@ -52,28 +51,7 @@ class RateController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        //$this->indexActionDetails = $actions['index'];
-        //unset($actions['index']);
-        $actions['index']['prepareDataProvider'] = [new Rate(), 'getRatesByRequestIdDataProvider'];
+        $actions['index']['prepareDataProvider'] = [new Rate(), 'getRatesByRequestIdDataProvider']; // replacing default DataProvider
         return $actions;
     }
-/*
-    public function actionIndex()
-    {
-        $indexActionClassName = $this->indexActionDetails['class'];
-        $indexActionModelClass = $this->indexActionDetails['modelClass'];
-        $indexActionCheckAccess = $this->indexActionDetails['checkAccess'];
-        $indexActionScenario = $this->indexActionDetails['scenario'];
-
-        $indexAction = new $indexActionClassName('index', $this, [
-            'modelClass' => $indexActionModelClass,
-            'checkAccess' => $indexActionCheckAccess,
-            'scenario' => $indexActionScenario,
-        ]);
-
-
-        return $model;
-    }
-*/
-
 }

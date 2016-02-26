@@ -7,12 +7,9 @@ use Yii;
 /**
  * This is the model class for table "country_desc".
  *
- * @property string $country
- * @property string $language
+ * @property Country $country
+ * @property Language $language
  * @property string $name
- *
- * @property Country $country0
- * @property Language $language0
  */
 class CountryDesc extends \yii\db\ActiveRecord
 {
@@ -50,7 +47,7 @@ class CountryDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCountry0()
+    public function getCountry()
     {
         return $this->hasOne(Country::className(), ['code' => 'country']);
     }
@@ -58,11 +55,19 @@ class CountryDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLanguage0()
+    public function getLanguage()
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
 
+    /**
+     * Method adds all descriptions from the provided $countryDataArray to the specified $country
+     *
+     * TODO:: move to Country class
+     *
+     * @param Country $country
+     * @param array $countryDataArray
+     */
     public static function addCountryDescriptions(Country $country, array $countryDataArray)
     {
         if (count($countryDataArray)>0)
@@ -73,6 +78,16 @@ class CountryDesc extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds particular description to the specified $country using provided $countryDataIndex and $countryDataValue
+     *
+     * TODO:: move to Country class
+     *
+     * @param Country $country
+     * @param $countryDataIndex
+     * @param $countryDataValue
+     * @return bool
+     */
     private static function addCountryDescription(Country $country, $countryDataIndex, $countryDataValue)
     {
         $language = Language::getLanguageByCode($countryDataIndex);

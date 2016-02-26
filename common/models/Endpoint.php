@@ -7,12 +7,9 @@ use Yii;
 /**
  * This is the model class for table "endpoint".
  *
- * @property string $service
- * @property string $service_type
+ * @property Service $service
+ * @property ServiceType $service_type
  * @property string $endpoint
- *
- * @property Service $service0
- * @property ServiceType $serviceType
  */
 class Endpoint extends \yii\db\ActiveRecord
 {

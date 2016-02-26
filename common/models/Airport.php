@@ -120,21 +120,28 @@ class Airport extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Place::className(), ['airport' => 'code']);
     }
-    
+
+    /**
+     * Method returns Airport object by specified $airportCode
+     *
+     * @param $airportCode
+     * @return Airport|null
+     */
     public static function getAirportByCode($airportCode)
     {
         $airport = Airport::findOne([
             'code' => $airportCode,
         ]);
-        if (!$airport) {
-            $airport = new Airport();
-            $airport->code = $airportCode;
-            $airport->save();
-        }
 
         return $airport;
     }
 
+    /**
+     * Method returns City object of the Airport specified by $airportCode
+     *
+     * @param $airportCode
+     * @return City|null
+     */
     public static function getCityByCode($airportCode)
     {
         $airport = Airport::findOne([
@@ -146,6 +153,10 @@ class Airport extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds existing Airports to Place table
+     *
+     */
     public static function addAirportsToPlaces()
     {
         $airports = Airport::find()->all();
@@ -168,6 +179,12 @@ class Airport extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Airports from provided JSON data by specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadAirports($service, $dataJson)
     {
         switch ($service) {
@@ -178,6 +195,11 @@ class Airport extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Airports data from provided JSON data based on structure of AVS response
+     *
+     * @param $dataJson
+     */
     private static function uploadAirportsFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -195,6 +217,11 @@ class Airport extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds new Airport to DB
+     *
+     * @param $airportData
+     */
     private static function addAirport($airportData)
     {
         $country = Country::getCountryByCode($airportData['country']);
@@ -220,6 +247,11 @@ class Airport extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method sets Airports region and subregion attributes based on provided $countryData
+     *
+     * @param $countryData
+     */
     public static function updateAirportsRegionsByCountry($countryData)
     {
         $airports = Airport::findAll([

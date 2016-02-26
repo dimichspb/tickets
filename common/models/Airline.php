@@ -77,20 +77,27 @@ class Airline extends \yii\db\ActiveRecord
         return $this->hasMany(Rate::className(), ['airline' => 'id']);
     }
 
+    /**
+     * Method returns Airline object by specified $airlineName
+     *
+     * @param $airlineName
+     * @return Airline|null
+     */
     public static function getAirlineByName($airlineName)
     {
         $airline = Airline::findOne([
             'name' => $airlineName,
         ]);
-        if (!$airline) {
-            $airline = new Airline();
-            $airline->name = $airlineName;
-            $airline->save();
-        }
 
         return $airline;
     }
 
+    /**
+     * Method uploads Airlines data from provided JSON data file depends on specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadAirlines($service, $dataJson)
     {
         switch ($service) {
@@ -101,6 +108,11 @@ class Airline extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Airlines data from provided JSON data based on AVS response structure
+     *
+     * @param $dataJson
+     */
     private static function uploadAirlinesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -118,6 +130,12 @@ class Airline extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Airline data to DB
+     *
+     * @param $airlineData
+     * @return bool
+     */
     private static function addAirline($airlineData)
     {
         $airline = Airline::getAirlineByName($airlineData['name']);

@@ -99,7 +99,7 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRegion0()
+    public function getRegion()
     {
         return $this->hasOne(Region::className(), ['code' => 'region']);
     }
@@ -111,88 +111,87 @@ class Place extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
     }
-    
+
+    /**
+     * Method returns Place object by the specified $regionCode
+     *
+     * @param $regionCode
+     * @return Place|null
+     */
     public static function getPlaceByRegionCode($regionCode)
     {
         $place = Place::findOne([
             'region' => $regionCode,
         ]);
-        if (!$place) {
-            $region = Region::getRegionByCode($regionCode);
-            $place = new Place();
-            $place->region = $region->code;
-            $place->save();
-        }
 
         return $place;
     }
-    
+
+    /**
+     * Method returns Place object by the specified $subregionCode
+     *
+     * @param $subregionCode
+     * @return Place|null
+     */
     public static function getPlaceBySubregionCode($subregionCode)
     {
         $place = Place::findOne([
             'subregion' => $subregionCode,
         ]);
-        if (!$place) {
-            $subregion = Subregion::getSubregionByCode($subregionCode);
-            $place = new Place();
-            $place->subregion = $subregion->code;
-            $place->save();
-        }
 
         return $place;
     }
 
+    /**
+     * Method returns Place object by the specified $countryCode
+     *
+     * @param $countryCode
+     * @return Place|null
+     */
     public static function getPlaceByCountryCode($countryCode)
     {
         $place = Place::findOne([
             'country' => $countryCode,
         ]);
-        if (!$place) {
-            $country = Country::getCountryByCode($countryCode);
-            $place = new Place();
-            $place->country = $country->code;
-            $place->save();
-        }
 
         return $place;
     }
 
+    /**
+     * Method returns Place object by the specified $cityCode
+     *
+     * @param $cityCode
+     * @return Place|null
+     */
     public static function getPlaceByCityCode($cityCode)
     {
         $place = Place::findOne([
             'city' => $cityCode,
         ]);
-        if (!$place) {
-            $city = City::getCityByCode($cityCode);
-            $country = Country::getCountryByCode($city->country);
-            $place = new Place();
-            $place->city = $city->code;
-            $place->country = $country->code;
-            $place->save();
-        }
 
         return $place;
     }
 
+    /**
+     * Method returns Place object by the specified $airportCode
+     *
+     * @param $airportCode
+     * @return Place|null
+     */
     public static function getPlaceByAirportCode($airportCode)
     {
         $place = Place::findOne([
             'airport' => $airportCode,
         ]);
-        if (!$place) {
-            $airport = Airport::getAirportByCode($airportCode);
-            $city = City::getCityByCode($airport->city);
-            $country = Country::getCountryByCode($city->country);
-            $place = new Place();
-            $place->city = $city->code;
-            $place->country = $country->code;
-            $place->airport = $airport->code;
-            $place->save();
-        }
 
         return $place;
     }
 
+    /**
+     * Method returns the list of all Airports of the Place and its children
+     *
+     * @return array|Airport[]
+     */
     public function getAirports()
     {
         $airportsList = [];
@@ -201,21 +200,26 @@ class Place extends \yii\db\ActiveRecord
             $airportsList[] = $airport;
         } elseif ($this->city) {
             $city = City::getCityByCode($this->city);
-            $airportsList = $city->airports;
+            $airportsList = $city->getAirports();
         } elseif ($this->country) {
             $country = Country::getCountryByCode($this->country);
-            $airportsList = $country->airports;
+            $airportsList = $country->getAirports();
         } elseif ($this->subregion) {
             $subregion = Subregion::getSubregionByCode($this->subregion);
-            $airportsList = $subregion->airports;
+            $airportsList = $subregion->getAirports();
         } elseif ($this->region) {
             $region = Region::getRegionByCode($this->region);
-            $airportsList = $region->airports;
+            $airportsList = $region->getAirports();
         }
 
         return $airportsList;
     }
 
+    /**
+     * Method returns the list of all Cities of the Place and its children
+     *
+     * @return array|City[]
+     */
     public function getCities()
     {
         $citiesList = [];
@@ -239,9 +243,16 @@ class Place extends \yii\db\ActiveRecord
         return $citiesList;
     }
 
+    /**
+     * Method adds new Place by the provided $placeData array if it doesn't exist yet
+     *
+     * @param array $placeData
+     * @return Place|null
+     */
     public static function addNewPlace(array $placeData)
     {
         $place = Place::findOne($placeData);
+
         if (!$place) {
             $place = new Place();
             $place->setAttributes($placeData);
@@ -251,6 +262,8 @@ class Place extends \yii\db\ActiveRecord
     }
 
     /**
+     * Method returns Place object by the specified $id
+     *
      * @param $id
      * @return null|Place
      */

@@ -20,7 +20,6 @@ use yii\helpers\Json;
  * @property string $back_date
  * @property string $flight_number
  * @property string $price
- *
  * @property Route $route
  * @property Airline $airline
  * @property City $originCity
@@ -100,13 +99,20 @@ class Rate extends \yii\db\ActiveRecord
         return $this->hasOne(City::className(), ['city' => 'destination_city']);
     }
 
-
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getRoute()
     {
         return $this->hasOne(Route::className(), ['id' => 'route']);
     }
 
-
+    /**
+     * Method returns the list of all Rates by the specified $requestId
+     *
+     * @param $requestId
+     * @return \yii\db\ActiveQuery
+     */
     public static function getRatesByRequestId($requestId)
     {
         $result = Rate::find()->innerJoin('request_to_route', [
@@ -116,6 +122,12 @@ class Rate extends \yii\db\ActiveRecord
         return $result;
     }
 
+    /**
+     * Method returns ActiveDataProvided which contains all Rates by the Request ID specified in GET param 'request'
+     * for REST API response
+     *
+     * @return ActiveDataProvider
+     */
     public static function getRatesByRequestIdDataProvider()
     {
         $requestId = Yii::$app->request->get('request');
@@ -125,8 +137,12 @@ class Rate extends \yii\db\ActiveRecord
         ]);
     }
 
-
-
+    /**
+     * Method gets Rate data from providers by the specified $requestId. Number of requests is limited by $limit
+     *
+     * @param $requestId
+     * @param $limit
+     */
     public static function getRates($requestId, $limit)
     {
         Rate::setLimit($limit);
@@ -147,6 +163,12 @@ class Rate extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method gets Rates data of the specified routes which need to be updated from the specified $endpoint
+     *
+     * @param Endpoint $endpoint
+     * @param array $routesToUpdate
+     */
     private static function getRatesFromService(Endpoint $endpoint, array $routesToUpdate)
     {
         switch ($endpoint->service) {
@@ -157,6 +179,12 @@ class Rate extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method gets Rates data from AVS service
+     *
+     * @param Endpoint $endpoint
+     * @param array $routesToUpdate
+     */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
         foreach ($routesToUpdate as $routeToUpdate) {
@@ -181,6 +209,14 @@ class Rate extends \yii\db\ActiveRecord
         }
     }
 
+
+    /**
+     * Method adds Rates to DB from the provided JSON data based on AVS response structure
+     *
+     * @param Endpoint $endpoint
+     * @param Route $route
+     * @param $dataJson
+     */
     private static function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
     {
         $data = Json::decode($dataJson);
@@ -200,7 +236,6 @@ class Rate extends \yii\db\ActiveRecord
                 $rate->price = (float)$destinationDataItem['price'];
 
                 if ($rate->validate() && $rate->save()) {
-                    Console::stdout($rate->destination_city. PHP_EOL);
                     Rate::checkLimit();
                 }
             }
@@ -208,11 +243,19 @@ class Rate extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method sets the limit of requests to providers
+     *
+     * @param $limit
+     */
     private static function setLimit($limit)
     {
         self::$limit = $limit;
     }
 
+    /**
+     * Method checks whether limit is exceed
+     */
     private static function checkLimit()
     {
         if (isset(self::$limit)) {

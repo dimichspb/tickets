@@ -7,12 +7,9 @@ use Yii;
 /**
  * This is the model class for table "subregion_desc".
  *
- * @property string $subregion
- * @property string $language
+ * @property Subregion $subregion
+ * @property Language $language
  * @property string $name
- *
- * @property Language $language0
- * @property Subregion $subregion0
  */
 class SubregionDesc extends \yii\db\ActiveRecord
 {
@@ -52,7 +49,7 @@ class SubregionDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLanguage0()
+    public function getLanguage()
     {
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
@@ -60,11 +57,19 @@ class SubregionDesc extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSubregion0()
+    public function getSubregion()
     {
         return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
     }
 
+    /**
+     * Method adds all Subregion descriptions from provided $subregionDataArray to the specified $subregion
+     *
+     * TODO:: move to Subregion class
+     *
+     * @param Subregion $subregion
+     * @param array $subregionDataArray
+     */
     public static function addSubregionDescriptions(Subregion $subregion, array $subregionDataArray)
     {
         if (count($subregionDataArray)>0)
@@ -75,6 +80,16 @@ class SubregionDesc extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds description to the specified Subregion based on specified $subregionDataIndex and $subregionDataValue
+     *
+     * TODO:: move to Subregion class
+     *
+     * @param Subregion $subregion
+     * @param $subregionDataIndex
+     * @param $subregionDataValue
+     * @return bool
+     */
     private static function addSubregionDescription(Subregion $subregion, $subregionDataIndex, $subregionDataValue)
     {
         $language = Language::getLanguageByCode($subregionDataIndex);

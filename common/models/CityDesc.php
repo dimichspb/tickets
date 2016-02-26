@@ -63,6 +63,14 @@ class CityDesc extends \yii\db\ActiveRecord
         return $this->hasOne(Language::className(), ['code' => 'language']);
     }
 
+    /**
+     * Method adds all descriptions to the specified City
+     *
+     * TODO:: move to City class
+     *
+     * @param City $city
+     * @param array $cityDataArray
+     */
     public static function addCityDescriptions(City $city, array $cityDataArray)
     {
         if (count($cityDataArray)>0)
@@ -73,6 +81,16 @@ class CityDesc extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds particular description to the specified City using provided $cityDataIndex and $cityDataValue
+     *
+     * TODO:: move to City class
+     *
+     * @param City $city
+     * @param $cityDataIndex
+     * @param $cityDataValue
+     * @return bool
+     */
     private static function addCityDescription(City $city, $cityDataIndex, $cityDataValue)
     {
         $language = Language::getLanguageByCode($cityDataIndex);

@@ -10,14 +10,11 @@ use yii\helpers\Json;
  *
  * @property string $code
  * @property string $name
- * @property string $region
- * @property string $subregion
- * @property string $currency
- *
+ * @property Region $region
+ * @property Subregion $subregion
+ * @property Currency $currency
  * @property Airport[] $airports
  * @property City[] $cities
- * @property Region $region0
- * @property Subregion $subregion0
  * @property CountryDesc[] $countryDescs
  * @property Language[] $languages
  * @property Place[] $places
@@ -115,22 +112,28 @@ class Country extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Place::className(), ['country' => 'code']);
     }
-    
-    
+
+    /**
+     * Method returns Country object by specified $countryCode
+     *
+     * @param $countryCode
+     * @return Country|null
+     */
     public static function getCountryByCode($countryCode)
     {
         $country = Country::findOne([
                 'code' => $countryCode,
             ]);
-        if (!$country) {
-            $country = new Country();
-            $country->code = $countryCode;
-            $country->save();
-        }
 
         return $country;
     }
 
+    /**
+     * Method returns Country object by specified $countryName
+     *
+     * @param $countryName
+     * @return null|static
+     */
     public static function getCountryByName($countryName)
     {
         $country = Country::findOne([
@@ -140,6 +143,10 @@ class Country extends \yii\db\ActiveRecord
         return $country;
     }
 
+    /**
+     * Method adds all Countries to Place table
+     *
+     */
     public static function addCountriesToPlaces()
     {
         $countries = Country::find()->all();
@@ -158,6 +165,12 @@ class Country extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Countries from provided JSON data depending on specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadCountries($service, $dataJson)
     {
         switch ($service) {
@@ -168,6 +181,11 @@ class Country extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Countries from provided JSON data based on AVS response structure
+     *
+     * @param $dataJson
+     */
     private static function uploadCountriesFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -182,6 +200,12 @@ class Country extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method adds Country to DB
+     *
+     * @param $countryData
+     * @return bool
+     */
     private static function addCountry($countryData)
     {
         $country = Country::getCountryByCode($countryData['code']);
@@ -203,6 +227,12 @@ class Country extends \yii\db\ActiveRecord
         return $result;
     }
 
+    /**
+     * Method uploads Country-to-region relations from provided JSON data depending on specified $service code
+     *
+     * @param $service
+     * @param $dataJson
+     */
     public static function uploadCountriesToRegions($service, $dataJson)
     {
         switch ($service) {
@@ -213,6 +243,12 @@ class Country extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads Country-to-region relations from provided JSON data based on AVS response structure, and changes
+     * city's and airport's region and subregion attributes as well
+     *
+     * @param $dataJson
+     */
     private static function uploadCountriesToRegionsFromAVS($dataJson)
     {
         $dataArray = Json::decode($dataJson);
@@ -238,6 +274,12 @@ class Country extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method updates Region and Subregion attributes at the Country specified by $countryData's 'code' element
+     *
+     * @param $countryData
+     * @return bool
+     */
     private static function updateCountryRegion($countryData)
     {
         $country = Country::getCountryByCode($countryData['code']);

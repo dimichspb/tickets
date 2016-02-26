@@ -56,6 +56,11 @@ class ServiceType extends \yii\db\ActiveRecord
         return $this->hasMany(Endpoint::className(), ['service_type' => 'code']);
     }
 
+    /**
+     * Method processes all (or filtered) services
+     *
+     * @param string $filter
+     */
     public static function process($filter = '')
     {
         if (!empty($filter)) {
@@ -87,6 +92,13 @@ class ServiceType extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Method uploads JSON data depending on provided $serviceType code and $service code
+     *
+     * @param $serviceType
+     * @param $service
+     * @param $dataJson
+     */
     private static function uploadNewData($serviceType, $service, $dataJson)
     {
         switch ($serviceType) {
@@ -116,6 +128,8 @@ class ServiceType extends \yii\db\ActiveRecord
     }
 
     /**
+     * Method returns particular "Direct flights" serviceType
+     *
      * @return null|ServiceType
      */
     public static function directFlights()

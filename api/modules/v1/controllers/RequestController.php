@@ -16,7 +16,6 @@ use common\models\Rate;
 class RequestController extends ActiveController
 {
     public $modelClass = 'common\models\Request';
-    private $createActionDetails;
 
     private $accessRules = [
         'index' => 'getRequestsList',
@@ -48,36 +47,4 @@ class RequestController extends ActiveController
             throw new ForbiddenHttpException;
         }
     }
-
-    public function actions()
-    {
-        $actions = parent::actions();
-        //$this->createActionDetails = $actions['create'];
-        //unset($actions['create']);
-        return $actions;
-    }
-/*
-    public function actionCreate()
-    {
-        $createActionClassName = $this->createActionDetails['class'];
-        $createActionModelClass = $this->createActionDetails['modelClass'];
-        $createActionCheckAccess = $this->createActionDetails['checkAccess'];
-        $createActionScenario = $this->createActionDetails['scenario'];
-
-        $createAction = new $createActionClassName('create', $this, [
-            'modelClass' => $createActionModelClass,
-            'checkAccess' => $createActionCheckAccess,
-            'scenario' => $createActionScenario,
-        ]);
-
-        $model = $createAction->run();
-
-        if ($model->validate() && $model->save()) {
-            $model->createRoutes();
-            //Rate::getRates(); //save traffic
-        }
-
-        return $model;
-    }
-*/
 }

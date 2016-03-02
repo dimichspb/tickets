@@ -20,6 +20,7 @@ class m160301_091716_adding_email_mailing extends Migration
             ['EMAIL', 'FRNAME'],
             ['EMAIL', 'TONAME'],
             ['EMAIL', 'SUBJ'],
+            ['EMAIL', 'BODY'],
         ]);
     }
 

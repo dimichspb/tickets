@@ -26,6 +26,7 @@ class m160301_091732_adding_first_email_mailing extends Migration
             ['DRATE', 'EMAIL', 'FRNAME', '{from_name}', 0],
             ['DRATE', 'EMAIL', 'TONAME', '{user.firstname}', 0],
             ['DRATE', 'EMAIL', 'SUBJ', '{subject}', 0],
+            ['DRATE', 'EMAIL', 'BODY', '{header}{body}{footer}', 0],
         ]);
     }
 

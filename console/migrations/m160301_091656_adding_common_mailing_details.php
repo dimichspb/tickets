@@ -15,6 +15,7 @@ class m160301_091656_adding_common_mailing_details extends Migration
             ['FRNAME', 'Send from name'],
             ['TONAME', 'Send to name'],
             ['SUBJ', 'Subject'],
+            ['BODY', 'Body'],
         ]);
     }
 
@@ -34,6 +35,9 @@ class m160301_091656_adding_common_mailing_details extends Migration
         ]);
         $this->delete('mailing_detail', [
             'code' => 'SUBJ',
+        ]);
+        $this->delete('mailing_detail', [
+            'code' => 'BODY',
         ]);
     }
 }

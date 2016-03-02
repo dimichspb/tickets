@@ -119,6 +119,11 @@ class ServiceController extends Controller
         Rate::getRates($requestId, $limit);
     }
 
+    public function actionMailing()
+    {
+
+    }
+
     /** some stuff */
 
         /*

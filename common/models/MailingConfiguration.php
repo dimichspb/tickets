@@ -3,18 +3,18 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\Console;
 
 /**
  * This is the model class for table "mailing_configuration".
  *
  * @property string $create_date
- * @property string $mailing
  * @property string $mailing_type
  * @property string $mailing_detail
  * @property string $value
  * @property integer $status
  *
- * @property Mailing $mailing0
+ * @property Mailing $mailing
  * @property MailingDetail $mailingDetail
  * @property MailingType $mailingType
  */
@@ -61,9 +61,17 @@ class MailingConfiguration extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMailing0()
+    public function getMailing()
     {
         return $this->hasOne(Mailing::className(), ['code' => 'mailing']);
+    }
+
+    /**
+     * @return Mailing
+     */
+    public function getMailingOne()
+    {
+        return $this->getMailing()->one();
     }
 
     /**
@@ -80,5 +88,11 @@ class MailingConfiguration extends \yii\db\ActiveRecord
     public function getMailingType()
     {
         return $this->hasOne(MailingType::className(), ['code' => 'mailing_type']);
+    }
+
+    public function getValue(Language $language, array $subTablesArray = [])
+    {
+        $result = Variable::processValue($this->value, $this->getMailingOne(), $language, $subTablesArray);
+        return $result;
     }
 }

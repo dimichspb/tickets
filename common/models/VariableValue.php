@@ -7,13 +7,12 @@ use Yii;
 /**
  * This is the model class for table "variable_value".
  *
- * @property string $variable
  * @property integer $variable_scope
  * @property string $create_date
  * @property string $language
  * @property string $value
  *
- * @property Variable $variable0
+ * @property Variable $variable
  * @property VariableScope $variableScope
  */
 class VariableValue extends \yii\db\ActiveRecord
@@ -58,7 +57,7 @@ class VariableValue extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVariable0()
+    public function getVariable()
     {
         return $this->hasOne(Variable::className(), ['code' => 'variable']);
     }

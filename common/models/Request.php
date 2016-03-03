@@ -6,6 +6,8 @@ use Yii;
 use common\models\Airport;
 use common\models\Place;
 use common\models\Route;
+use yii\db\ActiveQuery;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "request".
@@ -18,6 +20,7 @@ use common\models\Route;
  * @property string $travel_period_start
  * @property string $travel_period_end
  * @property integer $status
+ * @property integer $mailing_processed
  *
  * @property Place $destination
  * @property Place $origin
@@ -65,6 +68,7 @@ class Request extends \yii\db\ActiveRecord
             'travel_period_start' => 'Travel period start',
             'travel_period_end' => 'Travel period end',
             'status' => 'Status',
+            'mailing_processed' => 'Processed for mailing',
         ];
     }
 
@@ -92,17 +96,57 @@ class Request extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getRoutes()
     {
         return $this->hasMany(Route::className(), ['id' => 'route'])->viaTable('request_to_route', ['request' => 'id']);
     }
 
     /**
+     * @return Route[]
+     */
+    public function getRoutesArray()
+    {
+        return $this->getRoutes()->all();
+    }
+    /**
      * @return array|Request[]
      */
     public static function getAllRequests()
     {
         return Request::find()->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getAllActiveRequests()
+    {
+        return Request::find()
+            ->where([
+                'status' => self::STATUS_ACTIVE,
+            ]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getRequestsToMail()
+    {
+        return Request::getAllActiveRequests()
+            ->andWhere([
+                'email' => 1,
+            ]);
+    }
+
+    /**
+     * @return Request[]
+     */
+    public static function getRequestsToMailArray()
+    {
+        return Request::getRequestsToMail()->all();
     }
 
     /**
@@ -115,4 +159,33 @@ class Request extends \yii\db\ActiveRecord
     {
         return Request::findOne($requestId);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRates()
+    {
+        return $this->hasMany(Rate::className(), ['route' => 'id'])->via('routes')->orderBy('price');
+    }
+
+    /*
+     * return integer;
+     */
+    public function isMailingProcessed()
+    {
+        return $this->mailing_processed;
+    }
+/*
+    public function getRatesByCreateDate(\DateTime $dateTime)
+    {
+        return $this
+            ->getRates()
+            ->where([
+                '>=', 'create_date', $dateTime->format('Y-m-d 00:00:00')
+            ])
+            ->andWhere([
+                '<',  'create_date', $dateTime->add(new \DateInterval('P1D'))->format('Y-m-d 00:00:00')
+            ]);
+    }
+*/
 }

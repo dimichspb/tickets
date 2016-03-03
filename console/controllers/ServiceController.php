@@ -11,6 +11,7 @@ use common\models\Airport;
 use common\models\Route;
 use common\models\Rate;
 use common\models\ServiceType;
+use common\models\Mailing;
 
 /**
  * This is console Controller for main Service actions.
@@ -121,7 +122,7 @@ class ServiceController extends Controller
 
     public function actionMailing()
     {
-
+        Mailing::process();
     }
 
     /** some stuff */

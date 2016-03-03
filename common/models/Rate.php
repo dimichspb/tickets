@@ -9,11 +9,13 @@ use yii\helpers\Console;
 use yii\helpers\CurlHelper;
 use yii\components\ProgressBar;
 use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "rate".
  *
  * @property integer $id
+ * @property string $create_date
  * @property integer $origin_city
  * @property integer $destination_city
  * @property string $there_date
@@ -108,21 +110,6 @@ class Rate extends \yii\db\ActiveRecord
     }
 
     /**
-     * Method returns the list of all Rates by the specified $requestId
-     *
-     * @param $requestId
-     * @return \yii\db\ActiveQuery
-     */
-    public static function getRatesByRequestId($requestId)
-    {
-        $result = Rate::find()->innerJoin('request_to_route', [
-            'request_to_route.route' => new Expression('`rate`.`route`'),
-            'request_to_route.request' => $requestId])->orderBy('price');
-
-        return $result;
-    }
-
-    /**
      * Method returns ActiveDataProvided which contains all Rates by the Request ID specified in GET param 'request'
      * for REST API response
      *
@@ -131,9 +118,11 @@ class Rate extends \yii\db\ActiveRecord
     public static function getRatesByRequestIdDataProvider()
     {
         $requestId = Yii::$app->request->get('request');
+        if (empty($requestId)) return;
+        $request = Request::getRequestById($requestId);
 
         return new ActiveDataProvider([
-            'query' => Rate::getRatesByRequestId($requestId),
+            'query' => $request->getRates(),
         ]);
     }
 

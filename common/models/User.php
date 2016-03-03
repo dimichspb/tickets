@@ -218,4 +218,31 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
+
+    /**
+     * @param $userId
+     * @return User
+     */
+    public static function getUserById($userId)
+    {
+        return User::findOne([
+            'id' => $userId
+        ]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguage()
+    {
+        return $this->hasOne(Language::className(), ['code' => 'language']);
+    }
+
+    /**
+     * @return Language
+     */
+    public function getLanguageOne()
+    {
+        return $this->getLanguage()->one();
+    }
 }

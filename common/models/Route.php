@@ -3,6 +3,8 @@
 namespace common\Models;
 
 use Yii;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 
 /**
@@ -278,4 +280,70 @@ class Route extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @param \DateTime $dateTime
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRatesByCreateDate(\DateTime $dateTime)
+    {
+        $nextDay = clone $dateTime;
+        $nextDay->add(new \DateInterval('P1D'));
+
+        $minRates = $this->getRates()->select('id, min(price)')->groupBy('YEAR(create_date), MONTH(create_date), DAY(create_date)');
+
+        $result = $this
+            ->getRates()
+            ->innerJoin([
+                'r' => $minRates
+            ], 'r.id = rate.id')
+            ->where([
+                '<=', 'rate.create_date', $nextDay->format('Y-m-d 00:00:00')
+            ])
+            ->orderBy([
+                'rate.create_date' => SORT_DESC,
+            ]);
+
+        return $result;
+
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     * @return Rate;
+     */
+    private function getBestRateByCreateDate(\DateTime $dateTime)
+    {
+        return $this->getRatesByCreateDate($dateTime)->one();
+    }
+
+    public function getBetterRate(\DateTime $dateTime, $returnEquals = false)
+    {
+        $previousDay = clone $dateTime;
+        $previousDay->sub(new \DateInterval('P1D'));
+
+        $currentDateTimeBestRate =
+            $this->getBestRateByCreateDate($dateTime);
+
+        $previousDateTimeBestRate =
+            $this->getBestRateByCreateDate($previousDay);
+
+        if (!isset($currentDateTimeBestRate->price)) {
+            return;
+        }
+
+        if (!isset($previousDateTimeBestRate->price)) {
+            return $currentDateTimeBestRate;
+        }
+
+        if ($currentDateTimeBestRate->price < $previousDateTimeBestRate->price) {
+            return $currentDateTimeBestRate;
+        }
+
+        if ($returnEquals && $currentDateTimeBestRate->price == $previousDateTimeBestRate->price) {
+            return $currentDateTimeBestRate;
+        }
+
+        return;
+
+    }
 }

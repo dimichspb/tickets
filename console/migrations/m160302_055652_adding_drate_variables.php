@@ -66,10 +66,36 @@ class m160302_055652_adding_drate_variables extends Migration
                 ['footer',      $lastInsertId,      'ru',           'Первая рассылка подвал'],
                 ['footer',      $lastInsertId,      'en',           'First mailing footer'],
             ]);
+
+        $this->insert('variable', [
+            'code' => 'from_name',
+            'name' => 'E-mail From Name',
+        ]);
+        $this->insert('variable_scope', [
+            'variable' => 'from_name',
+            'mailing' => 'DRATE',
+        ]);
+        $lastInsertId = $this->getDb()->getLastInsertID();
+        $this->batchInsert('variable_value',
+                ['variable',      'variable_scope',   'language',     'value'], [
+                ['from_name',     $lastInsertId,      'ru',           'Трэвел трэкер'],
+                ['from_name',     $lastInsertId,      'en',           'Travel tracker'],
+            ]);
+
     }
 
     public function down()
     {
+        $this->delete('variable_value', [
+            'variable' => 'from_name',
+        ]);
+        $this->delete('variable_scope', [
+            'variable' => 'from_name',
+        ]);
+        $this->delete('variable', [
+            'code' => 'from_name',
+        ]);
+
         $this->delete('variable_value', [
             'variable' => 'footer',
         ]);

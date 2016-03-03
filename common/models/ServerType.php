@@ -79,4 +79,9 @@ class ServerType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ServerToServerType::className(), ['server_type' => 'code']);
     }
+
+    public function getServers()
+    {
+        return $this->hasMany(Server::className(), ['code' => 'server'])->via('serverToServerTypes');
+    }
 }

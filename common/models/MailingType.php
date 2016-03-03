@@ -14,6 +14,7 @@ use Yii;
  * @property MailingDetailToMailingType[] $mailingDetailToMailingTypes
  * @property MailingDetail[] $mailingDetails
  * @property MailingToMailingType[] $mailingToMailingTypes
+ * @property ServerType $serverType
  */
 class MailingType extends \yii\db\ActiveRecord
 {
@@ -78,5 +79,10 @@ class MailingType extends \yii\db\ActiveRecord
     public function getMailingToMailingTypes()
     {
         return $this->hasMany(MailingToMailingType::className(), ['mailing_type' => 'code']);
+    }
+
+    public function getServerType()
+    {
+        return $this->hasOne(ServerType::className(), ['code' => 'server_type']);
     }
 }

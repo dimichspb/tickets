@@ -98,7 +98,7 @@ class Rate extends \yii\db\ActiveRecord
      */
     public function getDestinationCity()
     {
-        return $this->hasOne(City::className(), ['city' => 'destination_city']);
+        return $this->hasOne(City::className(), ['code' => 'destination_city']);
     }
 
     /**

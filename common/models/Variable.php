@@ -139,21 +139,35 @@ class Variable extends \yii\db\ActiveRecord
         if (preg_match_all($pattern, $value, $matches)) {
             foreach($matches[1] as $matchItem) {
                 if (strpos($matchItem, '.')) {
-                    if (count($subTablesArray)) {
-                        list($tableName, $fieldName) = explode('.', $matchItem, 2);
-                        $result = str_replace('{' . $matchItem . '}', $subTablesArray[$tableName]->$fieldName, $result);
-                    }
+                    $result = Variable::processSubtable($result, $matchItem, $subTablesArray);
                 } else {
-                    $value = Variable::getValue($matchItem, [
-                        'mailing' => $mailing->code,
-                    ], $language);
-                    $result = str_replace('{'. $matchItem . '}', $value, $result);
+                    $result = Variable::processVariable($result, $matchItem, $mailing, $language );
                 }
             }
             $result = Variable::processValue($result, $mailing, $language, $subTablesArray);
         }
 
         return $result;
+    }
+
+    private static function processVariable($text, $item, Mailing $mailing, Language $language)
+    {
+        $value = Variable::getValue($item, [
+            'mailing' => $mailing->code,
+        ], $language);
+
+        return str_replace('{'. $item . '}', isset($value)? $value: '', $text);
+    }
+
+    private static function processSubtable($text, $item, array $subTablesArray)
+    {
+        list($tableName, $fieldName) = explode('.', $item, 2);
+        echo $tableName . '/'. $fieldName . PHP_EOL;
+        var_dump($subTablesArray[$tableName]);
+        $value = isset($subTablesArray[$tableName]) && isset($subTablesArray[$tableName][$fieldName])?
+            ($subTablesArray[$tableName][$fieldName]):
+            '';
+        return str_replace('{' . $item . '}', $value, $text);
     }
 
 }

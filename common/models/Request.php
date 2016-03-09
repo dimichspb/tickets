@@ -175,6 +175,22 @@ class Request extends \yii\db\ActiveRecord
     {
         return $this->mailing_processed;
     }
+
+    /**
+     * @return User
+     */
+    public function getUserOne()
+    {
+        return $this->getUser()->one();
+    }
+
+    /**
+     * @return Language
+     */
+    public function getUserLanguage()
+    {
+        return $this->getUserOne()->getLanguageOne();
+    }
 /*
     public function getRatesByCreateDate(\DateTime $dateTime)
     {

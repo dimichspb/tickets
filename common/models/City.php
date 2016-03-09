@@ -240,4 +240,15 @@ class City extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @param $languageCode
+     * @return CityDesc
+     */
+    public function getCityDescByLanguage(Language $language)
+    {
+        return $this->getCityDescs()->where([
+            'language' => $language->code,
+        ])->one();
+    }
+
 }

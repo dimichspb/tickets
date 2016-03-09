@@ -134,15 +134,36 @@ class Mailing extends \yii\db\ActiveRecord
         $requests = Request::getRequestsToMailArray();
 
         foreach ($requests as $request) {
+            echo 'request: ' , $request->id, PHP_EOL;
             $routes = $request->getRoutesArray();
+            $betterRates = [];
             foreach ($routes as $route) {
                 if ($rate = $route->getBetterRate($today, !$request->isMailingProcessed())) {
-                    $this->addToQueue(User::getUserById($request->user), [
-                        'rate1' => $rate,
-                        'rate2' => $rate,
-                        'rate3' => $rate,
-                    ]);
+                    $betterRates[] = [
+                        'origin_city' => $rate->originCity->getCityDescByLanguage($request->getUserLanguage())->name,
+                        'destination_city' => $rate->destinationCity->getCityDescByLanguage($request->getUserLanguage())->name,
+                        'there_date' => $rate->there_date,
+                        'back_date' => $rate->back_date,
+                        'airline' => $rate->airline,
+                        'flight' => $rate->flight_number,
+                        'currency' => $rate->currency,
+                        'price' => $rate->price,
+                    ];
                 }
+            }
+            if (count($betterRates)) {
+                ArrayHelper::multisort($betterRates, ['price', 'destination_city', 'origin_city'], SORT_DESC);
+                $betterRates = ArrayHelper::index($betterRates, function ($element) {
+                    return $element['origin_city'] . '-' . $element['destination_city'];
+                });
+                $this->addToQueue(User::getUserById($request->user), [
+                    'allrates' => [
+                        'data' => serialize($betterRates),
+                    ],
+                    'rate1' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                    'rate2' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                    'rate3' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                ]);
             }
         }
     }
@@ -166,8 +187,11 @@ class Mailing extends \yii\db\ActiveRecord
             $queueDetail->mailing_queue = $queue->id;
             $queueDetail->mailing_detail = $mailingDetail->code;
             $queueDetail->value = $mailingConfiguration->getValue($user->getLanguageOne(), ArrayHelper::merge([
-                'user' => $user,
-                ], $details));
+                'user' => [
+                    'first_name' => $user->first_name,
+                    'email' => $user->email,
+                ],
+            ], $details));
             $queueDetail->save();
         }
     }

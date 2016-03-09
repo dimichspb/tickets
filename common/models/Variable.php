@@ -130,9 +130,9 @@ class Variable extends \yii\db\ActiveRecord
 
     public static function processValue($value, Mailing $mailing, Language $language, array $subTablesArray)
     {
-        $result = $value;
+        $result = Variable::processLoops($value, $subTablesArray);
 
-        $pattern = "/\{([A-Za-z0-9\.\_]+)\}/";
+        $pattern = '/\{\$([A-Za-z0-9\.\_]+)\}/';
 
         $matches = [];
 
@@ -156,18 +156,40 @@ class Variable extends \yii\db\ActiveRecord
             'mailing' => $mailing->code,
         ], $language);
 
-        return str_replace('{'. $item . '}', isset($value)? $value: '', $text);
+        return str_replace('{$'. $item . '}', isset($value)? $value: '', $text);
     }
 
     private static function processSubtable($text, $item, array $subTablesArray)
     {
         list($tableName, $fieldName) = explode('.', $item, 2);
-        echo $tableName . '/'. $fieldName . PHP_EOL;
-        var_dump($subTablesArray[$tableName]);
         $value = isset($subTablesArray[$tableName]) && isset($subTablesArray[$tableName][$fieldName])?
             ($subTablesArray[$tableName][$fieldName]):
             '';
-        return str_replace('{' . $item . '}', $value, $text);
+        return str_replace('{$' . $item . '}', $value, $text);
     }
 
+    private static function processLoops($text, array &$subTablesArray)
+    {
+        $pattern = '/{foreach \$(\w+) as \$(\w+) => \$(\w+)}([^{]*+(?:{(?!\/?foreach)[^{]*)*+){\/foreach}/';
+
+        $matches = [];
+
+        while (preg_match_all($pattern, $text, $matches)) {
+            foreach ($matches[1] as $index => $arrayName) {
+                if (isset($subTablesArray[$arrayName]) && is_array($subTablesArray[$arrayName])) {
+                    $newText = '';
+                    foreach ($subTablesArray[$arrayName] as $subTable) {
+                        $i = isset($i)? $i + 1: 0;
+                        $itemName = $matches[3][$index];
+                        $newItemName = $itemName  . $i;
+                        $subTablesArray[$newItemName] = $subTable;
+                        $newText .= str_replace('$' . $itemName . '.', '$' . $newItemName . '.', $matches[4][$index]);
+                    }
+                }
+            }
+            $text = str_replace($matches[0][$index], $newText, $text);
+        }
+
+        return $text;
+    }
 }

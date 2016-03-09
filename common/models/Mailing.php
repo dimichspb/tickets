@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use yii\debug\models\search\Mail;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -157,12 +156,13 @@ class Mailing extends \yii\db\ActiveRecord
                     return $element['origin_city'] . '-' . $element['destination_city'];
                 });
                 $this->addToQueue(User::getUserById($request->user), [
+                    'rates' => $betterRates,
                     'allrates' => [
                         'data' => serialize($betterRates),
                     ],
-                    'rate1' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
-                    'rate2' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
-                    'rate3' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                    //'rate1' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                    //'rate2' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
+                    //'rate3' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
                 ]);
             }
         }

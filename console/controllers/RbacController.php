@@ -23,6 +23,7 @@ class RbacController extends \yii\console\Controller
         $this->actionAddCommonRoles();
         $this->actionAddRequestsPermissions();
         $this->actionAddRatesPermissions();
+        $this->actionAddPlacesPermissions();
     }
 
     /**
@@ -154,6 +155,51 @@ class RbacController extends \yii\console\Controller
         //Admin role
         $this->addCommonAdminRole();
         $this->addRoleChild($this->adminRole, $ratesAdmin);
+    }
+
+    /**
+     * Action adds Places roles and permissions
+     *
+     */
+    public function actionAddPlacesPermissions()
+    {
+        //getPlacesList permission
+        $getPlacesList = $this->createPermission('getPlacesList', 'Get Places list permission');
+
+        //getPlaceDetails permission
+        $getPlaceDetails = $this->createPermission('getPlaceDetails', 'Get Place details permission');
+
+        //createPlace permission
+        $createPlaceDetails = $this->createPermission('createPlaceDetails', 'Create Place details permission');
+
+        //updatePlace permission
+        $updatePlaceDetails = $this->createPermission('updatePlaceDetails', 'Update Place details permission');
+
+        //deletePlace permission
+        $deletePlaceDetails = $this->createPermission('deletePlaceDetails', 'Delete Place details permission');
+
+        //placesUser role
+        $placesUser = $this->createRole('placesUser', [
+            $getPlaceDetails,
+            $getPlacesList,
+        ], 'Places user role');
+
+        //placesAdmin role
+        $placesAdmin = $this->createRole('placesAdmin', [
+            $createPlaceDetails,
+            $updatePlaceDetails,
+            $deletePlaceDetails,
+        ], 'Places admin role');
+
+        $this->addRoleChild($placesAdmin, $placesUser);
+
+        //User role
+        $this->addCommonUserRole();
+        $this->addRoleChild($this->userRole, $placesUser);
+
+        //Admin role
+        $this->addCommonAdminRole();
+        $this->addRoleChild($this->adminRole, $placesAdmin);
     }
 
     /**

@@ -70,4 +70,17 @@ class ServerDetail extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ServerType::className(), ['code' => 'server_type'])->viaTable('server_detail_to_server_type', ['server_detail' => 'code']);
     }
+
+    /**
+     * @param $code
+     * @return ServerDetail
+     */
+    public static function getServerDetailByCode($code)
+    {
+        return ServerDetail::find()
+            ->where([
+                'code' => $code,
+            ])
+            ->one();
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\MailingQueue;
 use yii\console\Controller;
 use common\models\Region;
 use common\models\Subregion;
@@ -123,6 +124,19 @@ class ServiceController extends Controller
     public function actionMailing()
     {
         Mailing::process();
+    }
+
+    public function actionSend()
+    {
+        $mailingQueue = MailingQueue::getActive();
+        foreach($mailingQueue as $mailingQueueItem) {
+            $this->stdout('Sending: ' . $mailingQueueItem->id . '...');
+            if ($mailingQueueItem->send()) {
+                $this->stdout('Done!' . PHP_EOL);
+            } else {
+                $this->stdout('Error!' . PHP_EOL);
+            }
+        }
     }
 
     /** some stuff */

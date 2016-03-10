@@ -67,6 +67,19 @@ class Server extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param ServerDetail $serverDetail
+     * @return ServerConfiguration
+     */
+    public function getServerConfiguration(ServerDetail $serverDetail)
+    {
+        return $this->getServerConfigurations()
+            ->where([
+                'server_detail' => $serverDetail->code,
+            ])
+            ->one();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getServerToServerTypes()
@@ -79,7 +92,7 @@ class Server extends \yii\db\ActiveRecord
      */
     public function getServerTypes()
     {
-        return $this->hasMany(ServerType::className(), ['server' => 'server_type'])->via('serverToServerTypes');
+        return $this->hasMany(ServerType::className(), ['code' => 'server_type'])->via('serverToServerTypes');
     }
 
     /**
@@ -97,5 +110,66 @@ class Server extends \yii\db\ActiveRecord
     public static function getServer(MailingType $mailingType)
     {
         return $mailingType->serverType->getServers()->one();
+    }
+
+    public function getHost()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('HOST'))->value;
+    }
+
+    public function getPort()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('PORT'))->value;
+    }
+
+    public function getEncryption()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('CRYP'))->value;
+    }
+
+    public function getUsername()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('USER'))->value;
+    }
+
+    public function getPassword()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('PASS'))->value;
+    }
+
+    public function getAuth()
+    {
+        return $this->getServerConfiguration(ServerDetail::getServerDetailByCode('AUTH'))->value;
+    }
+
+    public function sendSMTP(MailingQueue $mailingQueue)
+    {
+        $transport = \Swift_SmtpTransport::newInstance($this->getHost(), $this->getPort(), $this->getEncryption());
+
+        if ($this->getAuth() === 'true') {
+            $transport
+                ->setUsername($this->getUsername())
+                ->setPassword($this->getPassword());
+        }
+
+        $mailer = \Swift_Mailer::newInstance($transport);
+
+        $message = \Swift_Message::newInstance($mailingQueue->getSubject())
+            ->setFrom([
+                $mailingQueue->getFromAddress() => $mailingQueue->getFromName()
+            ])
+            ->setTo([
+                $mailingQueue->getToAddress() => $mailingQueue->getToName()
+            ])
+            ->setBody($mailingQueue->getBody());
+
+        try {
+            $result = $mailer->send($message);
+            MailingQueueLog::log($mailingQueue, 'Success, result: ' . $result? 'true': 'false');
+        } catch (\Swift_TransportException $e) {
+            MailingQueueLog::log($mailingQueue, $e->getMessage());
+        }
+
+        return isset($result)? $result: false;
     }
 }

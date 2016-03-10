@@ -2,8 +2,10 @@
 
 namespace common\models;
 
+use common\models\Server;
 use Yii;
-use yii\debug\models\search\Mail;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Console;
 
 /**
  * This is the model class for table "mailing_queue".
@@ -20,6 +22,12 @@ use yii\debug\models\search\Mail;
  */
 class MailingQueue extends \yii\db\ActiveRecord
 {
+    const STATUS_ACTIVE = 0;
+    const STATUS_INACTIVE = 1;
+    const STATUS_DELETED = 2;
+    const STATUS_SENT = 3;
+    const STATUS_ERROR = 4;
+
     /**
      * @inheritdoc
      */
@@ -104,11 +112,29 @@ class MailingQueue extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return Server
+     */
+    public function getServerOne()
+    {
+        return $this->getServer()->one();
+    }
+
+    public function getServerType()
+    {
+        return $this->getServerOne()->getServerType();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user']);
+    }
+
+    public function getUserOne()
+    {
+        return $this->getUser()->one();
     }
 
     /**
@@ -173,6 +199,71 @@ class MailingQueue extends \yii\db\ActiveRecord
     public function getMailingConfiguration(MailingDetail $mailingDetail)
     {
         return $this->getMailingConfigurations()->where(['mailing_detail' => $mailingDetail->code])->one();
+    }
+
+    /**
+     * @return MailingQueue[]
+     */
+    public static function getActive()
+    {
+        return MailingQueue::find()
+            ->where([
+                'status' => self::STATUS_ACTIVE,
+            ])
+            ->all();
+    }
+
+    /**
+     * @param MailingDetail $mailingDetail
+     * @return MailingQueueDetail
+     */
+    public function getMailingQueueDetail(MailingDetail $mailingDetail)
+    {
+        return $this->getMailingQueueDetails()
+            ->where([
+               'mailing_detail' => $mailingDetail->code,
+            ])
+            ->one();
+    }
+
+    public function getFromName()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('FRNAME'))->value;
+    }
+
+    public function getFromAddress()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('FRMAIL'))->value;
+    }
+
+    public function getToName()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('TONAME'))->value;
+    }
+
+    public function getToAddress()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('TOMAIL'))->value;
+    }
+
+    public function getSubject()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('SUBJ'))->value;
+    }
+
+    public function getBody()
+    {
+        return $this->getMailingQueueDetail(MailingDetail::getMailingDetailByCode('BODY'))->value;
+    }
+
+    public function send()
+    {
+        switch ($this->getServerType()->code) {
+            case 'SMTP':
+                return $this->getServerOne()->sendSMTP($this);
+                break;
+            default:
+        }
     }
 
 }

@@ -25,7 +25,7 @@ class m160229_140428_adding_first_smtp_server_configuration extends Migration
             ['FSMTP', 'SMTP', 'USER', 'username', 0],
             ['FSMTP', 'SMTP', 'PASS', 'password', 0],
             ['FSMTP', 'SMTP', 'AUTH', 'true', 0],
-            ['FSMTP', 'SMTP', 'PORT', '25', 0],
+            ['FSMTP', 'SMTP', 'PORT', '465', 0],
         ]);
     }
 

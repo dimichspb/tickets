@@ -70,4 +70,17 @@ class MailingDetail extends \yii\db\ActiveRecord
     {
         return $this->hasMany(MailingType::className(), ['code' => 'mailing_type'])->viaTable('mailing_detail_to_mailing_type', ['mailing_detail' => 'code']);
     }
+
+    /**
+     * @param $code
+     * @return MailingDetail
+     */
+    public static function getMailingDetailByCode($code)
+    {
+        return MailingDetail::find()
+            ->where([
+                'code' => $code,
+            ])
+            ->one();
+    }
 }

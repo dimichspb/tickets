@@ -13,5 +13,20 @@ return [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => false,
+            'rules' => [
+                '/' => 'site/index',
+                'done' => 'site/done',
+            ],
+        ],
+    ],
+    'modules' => [
+        'datecontrol' =>  [
+            'class' => '\kartik\datecontrol\Module',
+            'ajaxConversion' => false,
+        ]
     ],
 ];

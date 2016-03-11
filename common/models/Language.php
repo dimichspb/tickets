@@ -54,7 +54,7 @@ class Language extends \yii\db\ActiveRecord
      * Method returns Language object by the specified $languageCode
      *
      * @param $languageCode
-     * @return null|static
+     * @return Language
      */
     public static function getLanguageByCode($languageCode)
     {
@@ -63,5 +63,11 @@ class Language extends \yii\db\ActiveRecord
             ]);
 
         return $language;
+    }
+
+    public static function getLanguageByRequestString()
+    {
+        $lString = Yii::$app->request->get('l')? Yii::$app->request->get('l'): Yii::$app->params['default_language'];
+        return Language::getLanguageByCode($lString);
     }
 }

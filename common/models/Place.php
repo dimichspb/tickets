@@ -3,6 +3,10 @@
 namespace common\Models;
 
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\BaseActiveRecord;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -20,6 +24,18 @@ use Yii;
  */
 class Place extends \yii\db\ActiveRecord
 {
+    public function fields()
+    {
+        return [
+            'id',
+            'name' => function (Place $model) {
+                $placeName = $model->getPlaceName();
+                return $placeName? $placeName: null;
+            },
+        ];
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -67,6 +83,14 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getAirportDesc()
+    {
+        return $this->hasMany(AirportDesc::className(), ['airport' => 'code'])->via('airport');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCity()
     {
         return $this->hasOne(City::className(), ['code' => 'city']);
@@ -75,9 +99,25 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getCityDesc()
+    {
+        return $this->hasMany(CityDesc::className(), ['city' => 'code'])->via('city');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCountry()
     {
         return $this->hasOne(Country::className(), ['code' => 'country']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountryDesc()
+    {
+        return $this->hasMany(CountryDesc::className(), ['country' => 'code'])->via('country');
     }
 
     /**
@@ -107,9 +147,25 @@ class Place extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getRegionDesc()
+    {
+        return $this->hasMany(RegionDesc::className(), ['region' => 'code'])->via('region');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getSubregion()
     {
         return $this->hasOne(Subregion::className(), ['code' => 'subregion']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubregionDesc()
+    {
+        return $this->hasMany(SubregionDesc::className(), ['subregion' => 'code'])->via('subregion');
     }
 
     /**
@@ -270,5 +326,207 @@ class Place extends \yii\db\ActiveRecord
     public static function getPlaceById($id)
     {
         return Place::findOne($id);
+    }
+
+    public static function getPlacesByStringDataProvider()
+    {
+        $qString = Yii::$app->request->get('q');
+
+        $places = Place::getPlaceByString($qString);
+
+        return new ActiveDataProvider([
+            'query' => $places,
+        ]);
+
+    }
+
+    /**
+     * @param $qString
+     * @return \yii\db\ActiveQuery
+     */
+    public static function getPlaceByString($qString)
+    {
+        if (!$qString) {
+            return Place::find();
+        }
+
+        $language = Language::getLanguageByRequestString();
+
+        $result = Place::find()
+            ->leftJoin('region_desc', ['`region_desc`.`region`' => new Expression('`place`.`region`'), '`region_desc`.`language`' => $language->code])
+            ->leftJoin('subregion_desc', ['`subregion_desc`.`subregion`' => new Expression('`place`.`subregion`'), '`subregion_desc`.`language`' => $language->code])
+            ->leftJoin('country_desc', ['`country_desc`.`country`' => new Expression('`place`.`country`'), '`country_desc`.`language`' => $language->code])
+            ->leftJoin('city_desc', ['`city_desc`.`city`' => new Expression('`place`.`city`'), '`city_desc`.`language`' => $language->code])
+            ->leftJoin('airport_desc', ['`airport_desc`.`airport`' => new Expression('`place`.`airport`'), '`airport_desc`.`language`' => $language->code])
+
+            ->andFilterWhere(['or',
+                ['like', '`region_desc`.`name`', $qString],
+                ['like', '`subregion_desc`.`name`', $qString],
+                ['like', '`country_desc`.`name`', $qString],
+                ['like', '`city_desc`.`name`', $qString],
+                ['like', '`city_desc`.`city`', $qString],
+                ['like', '`airport_desc`.`name`', $qString],
+            ])
+            ->andWhere('`place`.`airport` IS NULL');
+        //var_dump($result->createCommand()->rawSql);
+        return $result;
+
+    }
+
+    public function getPlaceName()
+    {
+        $result = $this->getPlaceDescOne();
+
+        $name = isset($result->name)? $result->name: null;
+        $city = isset($result->city)? ' (' .$result->city. ')': null;
+
+        return $name . $city;
+    }
+
+    /**
+     * @param Language $language
+     * @return \yii\db\ActiveQuery
+     */
+    private function getAirportDescByLanguage(Language $language)
+    {
+        $result = $this->getAirportDesc()
+            ->where([
+                'language' => $language->code,
+            ]);
+
+        if (!$result->count()) {
+            $result = $this->getAirportDesc();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Language $language
+     * @return \yii\db\ActiveQuery
+     */
+    private function getCityDescByLanguage(Language $language)
+    {
+        $result = $this->getCityDesc()
+            ->where([
+                'language' => $language->code,
+            ]);
+        if (!$result->count()) {
+            $result = $this->getCityDesc();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Language $language
+     * @return \yii\db\ActiveQuery
+     */
+    private function getCountryDescByLanguage(Language $language)
+    {
+        $result = $this->getCountryDesc()
+            ->where([
+                'language' => $language->code,
+            ]);
+        if (!$result->count()) {
+            $result = $this->getCountryDesc();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Language $language
+     * @return \yii\db\ActiveQuery
+     */
+    private function getSubregionDescByLanguage(Language $language)
+    {
+        $result = $this->getSubregionDesc()
+            ->where([
+                'language' => $language->code,
+            ]);
+        if (!$result->count()) {
+            $result = $this->getSubregionDesc();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Language $language
+     * @return \yii\db\ActiveQuery
+     */
+    private function getRegionDescByLanguage(Language $language)
+    {
+        $result = $this->getRegionDesc()
+            ->where([
+                'language' => $language->code,
+            ]);
+        if (!$result->count()) {
+            $result = $this->getRegionDesc();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Language $language
+     * @return AirportDesc
+     */
+    private function getAirportDescOneByLanguage(Language $language)
+    {
+        return $this->getAirportDescByLanguage($language)->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return CityDesc
+     */
+    private function getCityDescOneByLanguage(Language $language)
+    {
+        return $this->getCityDescByLanguage($language)->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return CountryDesc
+     */
+    private function getCountryDescOneByLanguage(Language $language)
+    {
+        return $this->getCountryDescByLanguage($language)->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return SubregionDesc
+     */
+    private function getSubregionDescOneByLanguage(Language $language)
+    {
+        return $this->getSubregionDescByLanguage($language)->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return RegionDesc
+     */
+    private function getRegionDescOneByLanguage(Language $language)
+    {
+        return $this->getRegionDescByLanguage($language)->one();
+    }
+
+
+    private function getPlaceDescOne()
+    {
+        return $this->getPlaceDesc()->one();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlaceDesc()
+    {
+        $language = Language::getLanguageByRequestString();
+
+        if (isset($this->airport)) return $this->getAirportDescByLanguage($language);
+        if (isset($this->city)) return $this->getCityDescByLanguage($language);
+        if (isset($this->country)) return $this->getCountryDescByLanguage($language);
+        if (isset($this->subregion)) return $this->getSubregionDescByLanguage($language);
+        return $this->getRegionDescByLanguage($language);
+
     }
 }

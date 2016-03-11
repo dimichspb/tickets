@@ -3,39 +3,140 @@
 /* @var $this yii\web\View */
 
 use kartik\widgets\Typeahead;
-use yii\helpers\Url;
+use kartik\widgets\ActiveForm;
+use kartik\field\FieldRange;
+use kartik\datecontrol\DateControl;
+use yii\helpers\Html;
 
-$this->title = 'My Yii Application';
+$this->title = 'Tickets Tracker';
 ?>
 <div class="site-index">
 
-    <div class="jumbotron">
+    <div class="body-content text-center">
         <h1>Congratulations!</h1>
 
-        <p class="lead">You are in one step to get best air fares!</p>
+        <p class="lead">You are in one step to get the best air fares!</p>
 
-        <?php
-        echo Typeahead::widget([
-            'name' => 'country',
-            'options' => ['placeholder' => 'Filter as you type ...'],
-            'pluginOptions' => ['highlight'=>true],
-            'dataset' => [
-                [
-                    'datumTokenizer' => "Bloodhound.tokenizers.obj.whitespace('value')",
-                    'display' => 'id',
-                    'remote' => [
-                        'url' => '//api.frontend.dev/v1/places?access-token=Te5qwM9G9-HFsCf6vQpyOlTqrzVfjOMl&q=%QUERY',
-                        'wildcard' => '%QUERY'
-                    ]
-                ]
-            ]
-        ]);
-        ?>
+        <?php $form = ActiveForm::begin(['id' => 'form-request']); ?>
 
-        <p><a class="btn btn-lg btn-success" href="#">Request</a></p>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <?php echo '<label class="control-label">Origin</label>'; ?>
+                <?= Typeahead::widget([
+                        'name' => 'origin_text',
+                        //'label' => 'Origin',
+                        'options' => [
+                            'placeholder' => 'Where are you from ...',
+                        ],
+                        'pluginOptions' => [
+                            'highlight' => true,
+                        ],
+                        'pluginEvents' => [
+                            'typeahead:select' => 'function(data, item) {document.getElementById("request-origin").value = item.id; }',
+                        ],
+                        'scrollable' => true,
+                        'dataset' => [
+                            [
+                                'display' => 'name',
+                                'value' => 'id',
+                                'remote' => [
+                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?q=%QUERY',
+                                    'wildcard' => '%QUERY'
+                                ],
+                            ],
+                        ],
+                    ]);
+                ?>
+                <?= $form->field($model, 'origin')->hiddenInput()->label(false);?>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <?php echo '<label class="control-label">Destination</label>';?>
+                <?= Typeahead::widget([
+                        'name' => 'destination_text',
+                        //'label' => 'Destination',
+                        'options' => [
+                            'placeholder' => 'Where are you going to ...',
+                        ],
+                        'pluginOptions' => [
+                            'highlight' => true,
+                        ],
+                        'pluginEvents' => [
+                            'typeahead:select' => 'function(data, item) {document.getElementById("request-destination").value = item.id; }',
+                        ],
+                        'scrollable' => true,
+                        'dataset' => [
+                            [
+                                'display' => 'name',
+                                'value' => 'id',
+                                'remote' => [
+                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?q=%QUERY',
+                                    'wildcard' => '%QUERY',
+                                ],
+                            ],
+                        ],
+                    ])
+                ?>
+                <?= $form->field($model, 'destination')->hiddenInput()->label(false);?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <?php
+                $layout = <<< HTML
+                    <span class="input-group-addon kv-date-calendar hidden-xs" title="Select date"><i class="glyphicon glyphicon-calendar"></i></span>
+                    {remove}
+                    {input}
+HTML;
+
+                echo FieldRange::widget([
+                    'form' => $form,
+                    'model' => $model,
+                    'label' => 'Flight date range',
+                    'attribute1' => 'there_start_date',
+                    'attribute2' => 'there_end_date',
+                    'type' => FieldRange::INPUT_WIDGET,
+                    'widgetClass' => DateControl::className(),
+                    'widgetOptions1' => [
+                        'saveFormat'=>'php:Y-m-d',
+                        'displayFormat' => 'php:Y-m-d',
+                        'options'=>[
+                            'pluginOptions' => ['autoclose' => true,],
+                            'layout' => $layout,
+                        ],
+                    ],
+                    'widgetOptions2' => [
+                        'saveFormat'=>'php:Y-m-d',
+                        'displayFormat' => 'php:Y-m-d',
+                        'options'=>[
+                            'pluginOptions' => ['autoclose' => true,],
+                            'layout' => $layout,
+                        ],
+                    ],
+                ]);
+                ?>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <?= FieldRange::widget([
+                    'form' => $form,
+                    'model' => $model,
+                    'label' => 'Travel period range',
+                    'attribute1' => 'travel_period_start',
+                    'attribute2' => 'travel_period_end',
+                    'type' => FieldRange::INPUT_SPIN,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <?= Html::submitButton('Track now!', ['class' => 'btn btn-lg btn-success', 'name' => 'signup-button']) ?>
+                </div>
+            </div>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+
     </div>
 
-    <div class="body-content">
-
-    </div>
 </div>

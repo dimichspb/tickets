@@ -22,7 +22,7 @@ class SignupFormTest extends DbTestCase
 
         $user = $model->signup();
 
-        $this->assertInstanceOf('common\models\User', $user, 'user should be valid');
+        $this->assertInstanceOf('common\Models\User', $user, 'user should be valid');
 
         expect('username should be correct', $user->username)->equals('some_username');
         expect('email should be correct', $user->email)->equals('some_email@example.com');

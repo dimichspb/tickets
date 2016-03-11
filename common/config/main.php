@@ -7,7 +7,7 @@ return [
         ],
         'user' => [
             'class' => 'yii\web\User',
-            'identityClass' => 'common\models\User',
+            'identityClass' => 'common\Models\User',
             'enableAutoLogin' => true,
         ],
         'authManager' => [

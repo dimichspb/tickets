@@ -2,7 +2,7 @@
 
 namespace common\Models;
 
-use common\models\Server;
+use common\Models\Server;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Console;

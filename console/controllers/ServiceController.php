@@ -2,17 +2,17 @@
 
 namespace console\controllers;
 
-use common\models\MailingQueue;
+use common\Models\MailingQueue;
 use yii\console\Controller;
-use common\models\Region;
-use common\models\Subregion;
-use common\models\Country;
-use common\models\City;
-use common\models\Airport;
-use common\models\Route;
-use common\models\Rate;
-use common\models\ServiceType;
-use common\models\Mailing;
+use common\Models\Region;
+use common\Models\Subregion;
+use common\Models\Country;
+use common\Models\City;
+use common\Models\Airport;
+use common\Models\Route;
+use common\Models\Rate;
+use common\Models\ServiceType;
+use common\Models\Mailing;
 
 /**
  * This is console Controller for main Service actions.

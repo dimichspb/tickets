@@ -3,9 +3,9 @@
 namespace common\Models;
 
 use Yii;
-use common\models\Airport;
-use common\models\Place;
-use common\models\Route;
+use common\Models\Airport;
+use common\Models\Place;
+use common\Models\Route;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
 

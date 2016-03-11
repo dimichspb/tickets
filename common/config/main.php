@@ -14,10 +14,4 @@ return [
             'class' => 'yii\rbac\DbManager',
         ],
     ],
-    'modules' => [
-        'datecontrol' =>  [
-            'class' => '\kartik\datecontrol\Module',
-            'ajaxConversion' => false,
-        ]
-    ],
 ];

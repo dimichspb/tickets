@@ -1,11 +1,11 @@
 <?php
 
-namespace common\Models;
+namespace common\models;
 
 use Yii;
-use common\Models\Airport;
-use common\Models\Place;
-use common\Models\Route;
+use common\models\Airport;
+use common\models\Place;
+use common\models\Route;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
 

@@ -10,12 +10,12 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
-use common\Models\Rate;
+use common\models\Rate;
 
 
 class RequestController extends ActiveController
 {
-    public $modelClass = 'common\Models\Request';
+    public $modelClass = 'common\models\Request';
 
     private $accessRules = [
         'index' => 'getRequestsList',

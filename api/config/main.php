@@ -18,7 +18,7 @@ return [
     ],
     'components' => [
         'user' => [
-            'identityClass' => 'common\Models\User',
+            'identityClass' => 'common\models\User',
             'enableAutoLogin' => false,
             'enableSession' => false,
             'loginUrl' => null,

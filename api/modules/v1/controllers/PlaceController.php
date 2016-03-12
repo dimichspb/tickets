@@ -5,13 +5,13 @@ namespace api\modules\v1\controllers;
 use Yii;
 use yii\rest\ActiveController;
 use yii\web\Response;
-use common\Models\Place;
+use common\models\Place;
 use yii\data\ActiveDataProvider;
 
 
 class PlaceController extends ActiveController
 {
-    public $modelClass = 'common\Models\Place';
+    public $modelClass = 'common\models\Place';
 
     public function behaviors()
     {

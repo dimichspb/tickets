@@ -1,8 +1,8 @@
 <?php
 
-namespace common\Models;
+namespace common\models;
 
-use common\Models\Server;
+use common\models\Server;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Console;

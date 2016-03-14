@@ -162,11 +162,12 @@ class Airport extends \yii\db\ActiveRecord
         $airports = Airport::find()->all();
 
         foreach ($airports as $airport) {
-            if ($city = City::getCityByCode($airport->city)) continue;
-            if ($country = Country::getCountryByCode($city->country)) continue;
-            if ($subregion = Subregion::getSubregionByCode($country->subregion)) continue;
-            if ($region = Region::getRegionByCode($subregion->region)) continue;
-            if ($parent = Place::getPlaceByCityCode($city->code)) continue;
+            var_dump($airport->code);
+            if (!$city = City::getCityByCode($airport->city)) continue;
+            if (!$country = Country::getCountryByCode($city->country)) continue;
+            if (!$subregion = Subregion::getSubregionByCode($country->subregion)) continue;
+            if (!$region = Region::getRegionByCode($subregion->region)) continue;
+            if (!$parent = Place::getPlaceByCityCode($city->code)) continue;
 
             Place::addNewPlace([
                 'region' => $region->code,

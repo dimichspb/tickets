@@ -139,10 +139,11 @@ class City extends \yii\db\ActiveRecord
         $cities = City::find()->all();
 
         foreach($cities as $city) {
-            if ($country = Country::getCountryByCode($city->country)) continue;
-            if ($subregion = Subregion::getSubregionByCode($country->subregion)) continue;
-            if ($region = Region::getRegionByCode($subregion->region)) continue;
-            if ($parent = Place::getPlaceByCountryCode($country->code)) continue;
+            var_dump($city->code);
+            if (!$country = Country::getCountryByCode($city->country)) continue;
+            if (!$subregion = Subregion::getSubregionByCode($country->subregion)) continue;
+            if (!$region = Region::getRegionByCode($subregion->region)) continue;
+            if (!$parent = Place::getPlaceByCountryCode($country->code)) continue;
 
             Place::addNewPlace([
                 'region' => $region->code,

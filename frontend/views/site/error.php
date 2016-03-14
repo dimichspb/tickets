@@ -10,18 +10,12 @@ use yii\helpers\Html;
 $this->title = $name;
 ?>
 <div class="site-error">
+    <div class="body-content text-center">
+        <h1><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <p class="lead">Seems like I've lost the page you are looking for!</p>
 
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
+        <?= Html::a('New request', ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
+
     </div>
-
-    <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
-
 </div>

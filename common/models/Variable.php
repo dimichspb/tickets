@@ -95,12 +95,12 @@ class Variable extends \yii\db\ActiveRecord
             ->getVariableValues()
             ->innerJoin([
                 'vs' => $variableScopes,
-                ] ,'`vs`.`variable` = `variable_value`.`variable`')
+                ] ,'`vs`.`variable` = `variable_value`.`variable` AND `vs`.`id` = `variable_value`.`variable_scope`')
             ->andWhere([
                 '`variable_value`.`language`' => $language->code,
-            ])->one();
+            ]);
 
-        return $result;
+        return $result->one();
     }
 
     public static function getValue($variableCode, array $scope, Language $language)
@@ -174,10 +174,12 @@ class Variable extends \yii\db\ActiveRecord
 
         $matches = [];
 
+        $newText = '';
+
         while (preg_match_all($pattern, $text, $matches)) {
+
             foreach ($matches[1] as $index => $arrayName) {
                 if (isset($subTablesArray[$arrayName]) && is_array($subTablesArray[$arrayName])) {
-                    $newText = '';
                     foreach ($subTablesArray[$arrayName] as $subTable) {
                         $i = isset($i)? $i + 1: 0;
                         $itemName = $matches[3][$index];
@@ -186,8 +188,9 @@ class Variable extends \yii\db\ActiveRecord
                         $newText .= str_replace('$' . $itemName . '.', '$' . $newItemName . '.', $matches[4][$index]);
                     }
                 }
+                $text = str_replace($matches[0][$index], $newText, $text);
             }
-            $text = str_replace($matches[0][$index], $newText, $text);
+
         }
 
         return $text;

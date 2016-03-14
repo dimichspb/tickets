@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\debug\models\search\Mail;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -160,14 +161,17 @@ class Mailing extends \yii\db\ActiveRecord
                     'allrates' => [
                         'data' => serialize($betterRates),
                     ],
-                    //'rate1' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
-                    //'rate2' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
-                    //'rate3' => ($betterRate = array_shift($betterRates)) ? $betterRate : null,
                 ]);
             }
         }
     }
 
+    /**
+     * @param User $user
+     * @param array $details
+     * @param \DateTime|null $plannedDate
+     * @return MailingQueue
+     */
     public function addToQueue(User $user, array $details, \DateTime $plannedDate = null)
     {
         $server = Server::getServer($this->getMailingType());
@@ -186,14 +190,17 @@ class Mailing extends \yii\db\ActiveRecord
             $queueDetail = new MailingQueueDetail();
             $queueDetail->mailing_queue = $queue->id;
             $queueDetail->mailing_detail = $mailingDetail->code;
+
             $queueDetail->value = $mailingConfiguration->getValue($user->getLanguageOne(), ArrayHelper::merge([
                 'user' => [
                     'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
                     'email' => $user->email,
                 ],
             ], $details));
             $queueDetail->save();
         }
+        return $queue;
     }
 
     public function needToProcess()
@@ -216,5 +223,16 @@ class Mailing extends \yii\db\ActiveRecord
     public function getMailingType()
     {
         return $this->getMailingTypes()->one();
+    }
+
+    /**
+     * @param $mailingCode
+     * @return Mailing
+     */
+    public static function getMailingByCode($mailingCode)
+    {
+        return Mailing::find()->where([
+                'code' => $mailingCode,
+            ])->one();
     }
 }

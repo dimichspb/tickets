@@ -7,6 +7,12 @@ return [
             'showScriptName' => false,
             'rules' => [
                 '/' => 'site/index',
+				'done' => 'site/done',
+				'error' => 'site/error',
+                'login' => 'site/login',
+                'logout' => 'site/logout',
+		        'signup' => 'site/signup',
+		        'request' => 'site/request',
 
                 '<_c:[\w\-]+>/<_a:[\w\-]+>' => '<_c>/<_a>',
                 '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',

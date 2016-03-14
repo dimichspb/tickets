@@ -8,18 +8,16 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-$this->title = 'Request has been sent';
+$this->title = 'Well done!';
 ?>
 <div class="site-done">
+    <div class="body-content text-center">
+        <h1><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <p class="lead">Relax while I'm doing my work!</p>
 
-    <div class="alert alert-success">
-        <p>
-            Everything is fine!!!
-        </p>
+        <?= Html::a('New request', ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
+
     </div>
-
-    <?= Html::a('New request', Url::to(['site/index'])); ?>
 
 </div>

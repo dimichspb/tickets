@@ -5,14 +5,16 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\Html;
 use yii\web\IdentityInterface;
 
 /**
  * User model
  *
  * @property integer $id
- * @property string $username
- * @property string first_name,
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $language
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
@@ -54,6 +56,31 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['auth_key', 'email'], 'required'],
+            [['status', 'created_at', 'updated_at'], 'integer'],
+            [['first_name', 'last_name', 'password_hash', 'password_reset_token', 'email', 'access_token'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['language'], 'string', 'max' => 5],
+            [['email'], 'unique'],
+            [['password_reset_token'], 'unique']
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'auth_key' => 'Auth Key',
+            'password_hash' => 'Password Hash',
+            'password_reset_token' => 'Password Reset Token',
+            'email' => 'Email',
+            'status' => 'Status',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'access_token' => 'Access Token',
+            'language' => 'Language',
         ];
     }
 
@@ -76,12 +103,23 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param string $username
+     * @param string $email
+     * @return User
+     */
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Finds user by username
+     *
+     * @param string $authKey
      * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByAuthKey($authKey)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['auth_key' => $authKey, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -213,8 +251,13 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function beforeSave($insert)
     {
+        $today = new \DateTime();
+        $this->updated_at = $today->format('Y-m-d H:i:s');
+        $this->language = 'en';
+        $this->setPassword('');
         if ($insert) {
             $this->generateAccessToken(); //Set access_token before save new user
+            $this->created_at = $today->format('Y-m-d H:i:s');
         }
         return parent::beforeSave($insert);
     }
@@ -245,4 +288,40 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->getLanguage()->one();
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMailingQueues()
+    {
+        return $this->hasMany(MailingQueue::className(), ['user' => 'id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequests()
+    {
+        return $this->hasMany(Request::className(), ['user' => 'id']);
+    }
+
+    public function sendSignupEmail()
+    {
+        $mailing = Mailing::getMailingByCode('SGNUP');
+        //var_dump($this->language);
+        //die();
+        $mailingQueue = $mailing->addToQueue($this, [
+            'link' => Html::a('TicketTracker.com', 'http://' . Yii::$app->params['frontend']['domain']),
+        ]);
+        return $mailingQueue->send();
+    }
+
+    public function sendLoginEmail()
+    {
+        $mailing = Mailing::getMailingByCode('LOGIN');
+        $mailingQueue = $mailing->addToQueue($this, [
+            'link' => Html::a('TicketTracker.com', 'http://' . Yii::$app->params['frontend']['domain']),
+        ]);
+        return $mailingQueue->send();
+    }
+
 }

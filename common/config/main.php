@@ -13,14 +13,8 @@ return [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'enableStrictParsing' => false,
-            'rules' => [
-                '/' => 'site/index',
-                'done' => 'site/done',
-            ],
+	'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
         ],
     ],
     'modules' => [

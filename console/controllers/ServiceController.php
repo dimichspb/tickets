@@ -91,11 +91,21 @@ class ServiceController extends Controller
      */
     public function actionPlaces()
     {
+        $this->stdout('Adding regions to places...');
         Region::addRegionsToPlaces();
+        $this->stdout('done!' . PHP_EOL);
+        $this->stdout('Adding subregions to places...');
         Subregion::addSubregionsToPlaces();
+        $this->stdout('done!' . PHP_EOL);
+        $this->stdout('Adding countries to places...');
         Country::addCountriesToPlaces();
+        $this->stdout('done!' . PHP_EOL);
+        $this->stdout('Adding cities to places...');
         City::addCitiesToPlaces();
+        $this->stdout('done!' . PHP_EOL);
+        $this->stdout('Adding airports to places...');
         Airport::addAirportsToPlaces();
+        $this->stdout('done!' . PHP_EOL);
 
     }
 

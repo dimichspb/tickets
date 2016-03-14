@@ -70,12 +70,12 @@ class ServiceType extends \yii\db\ActiveRecord
                     'status' => ServiceType::STATUS_ACTIVE,
                     'code' => $filter,
                 ])
-                ->andWhere(['<>', 'code', 'DR'])
                 ->orderBy('order')
                 ->all();
         } else {
             $activeServiceTypes = ServiceType::find()
                 ->where(['status' => ServiceType::STATUS_ACTIVE])
+                ->andWhere(['<>', 'code', 'DR'])
                 ->orderBy('order')
                 ->all();
         }

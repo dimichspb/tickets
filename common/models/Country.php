@@ -152,7 +152,6 @@ class Country extends \yii\db\ActiveRecord
         $countries = Country::find()->all();
 
         foreach($countries as $country) {
-            var_dump($country->code);
             if (!$subregion = Subregion::getSubregionByCode($country->subregion)) continue;
             if (!$region = Region::getRegionByCode($subregion->region)) continue;
             if (!$parent = Place::getPlaceBySubregionCode($subregion->code)) continue;

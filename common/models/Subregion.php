@@ -121,7 +121,6 @@ class Subregion extends \yii\db\ActiveRecord
         $subregions = Subregion::find()->all();
 
         foreach($subregions as $subregion) {
-            var_dump($subregion->code);
             if (!$region = Region::getRegionByCode($subregion->region)) continue;
             if (!$parent = Place::getPlaceByRegionCode($region->code)) continue;
 

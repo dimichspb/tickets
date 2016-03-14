@@ -81,9 +81,6 @@ class ServiceType extends \yii\db\ActiveRecord
 
         foreach ($activeServiceTypes as $activeServiceType) {
             foreach ($activeServiceType->endpoints as $endpoint) {
-                //$curlAction = CurlHelper::get($endpoint->endpoint);
-                //$responseJson = $curlAction['response'];
-                //$responseCode = $curlAction['responseCode'];
                 if (!filter_var($endpoint->endpoint, FILTER_VALIDATE_URL)) {
                     $endpoint->endpoint = dirname(Yii::$app->basePath) . $endpoint->endpoint;
                 }
@@ -91,10 +88,6 @@ class ServiceType extends \yii\db\ActiveRecord
                     continue;
                 }
 
-                //if ($responseCode !== 200) {
-                //    continue;
-                //}
-                var_dump($responseJson);
                 ServiceType::uploadNewData($endpoint->service_type, $endpoint->service, $responseJson);
             }
         }

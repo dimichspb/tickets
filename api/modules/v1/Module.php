@@ -8,7 +8,7 @@ class Module extends \yii\base\Module
 
     public function init()
     {
+        \Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');
         parent::init();
-
     }
 }

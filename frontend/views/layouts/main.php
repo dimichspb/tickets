@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Ticket tracker',
+        'brandLabel' => '<span class="glyphicon glyphicon-plane"></span>&nbsp;&nbsp;&nbsp;' . Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-default navbar-fixed-top',

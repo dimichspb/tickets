@@ -8,7 +8,7 @@ use kartik\field\FieldRange;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Html;
 
-$this->title = 'Tickets Tracker';
+$this->title = Yii::$app->name;
 ?>
 <div class="site-index">
 
@@ -89,7 +89,7 @@ HTML;
                 echo FieldRange::widget([
                     'form' => $form,
                     'model' => $model,
-                    'label' => Yii::t('app', 'Flight date range'),
+                    'label' => Yii::t('app', 'Flight dates range'),
                     'attribute1' => 'there_start_date',
                     'attribute2' => 'there_end_date',
                     'type' => FieldRange::INPUT_WIDGET,

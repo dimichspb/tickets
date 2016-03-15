@@ -33,7 +33,7 @@ class TranslationController extends Controller {
             'Where are you from ...' => ['ru' => 'Откуда Вы хотите вылетать...'],
             'Where are you going to ...' => ['ru' => 'Куда Вы направляетесь'],
             'Flight dates range' => ['ru' => 'Интервал дат вылета'],
-            'Travel period range' => ['ru' => 'Продолжительность пребывания'],
+            'Travel period range' => ['ru' => 'Продолжительность пребывания, дней'],
 
             'Track now!' => ['ru' => 'Найти лучшие цены!'],
             'Send' => ['ru' => 'Отправить'],

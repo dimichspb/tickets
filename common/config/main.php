@@ -1,5 +1,6 @@
 <?php
 return [
+    'name' => 'Ticket Tracker',
     'language' => 'en',
     'bootstrap' => ['langManager'],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',

@@ -161,7 +161,7 @@ class Server extends \yii\db\ActiveRecord
             ->setTo([
                 $mailingQueue->getToAddress() => $mailingQueue->getToName()
             ])
-            ->setBody($mailingQueue->getBody());
+            ->setBody($mailingQueue->getBody(), 'text/html');
 
         try {
             $result = $mailer->send($message);

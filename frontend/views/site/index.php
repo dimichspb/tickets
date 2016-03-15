@@ -39,7 +39,7 @@ $this->title = 'Tickets Tracker';
                                 'display' => 'name',
                                 'value' => 'id',
                                 'remote' => [
-                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?q=%QUERY',
+                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?l=' . Yii::$app->language . '&q=%QUERY',
                                     'wildcard' => '%QUERY'
                                 ],
                             ],
@@ -67,7 +67,7 @@ $this->title = 'Tickets Tracker';
                                 'display' => 'name',
                                 'value' => 'id',
                                 'remote' => [
-                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?q=%QUERY',
+                                    'url' => '//'.Yii::$app->params['api']['domain'].'/'.Yii::$app->params['api']['currentVersion'].'/places?l=' . Yii::$app->language . '&q=%QUERY',
                                     'wildcard' => '%QUERY',
                                 ],
                             ],

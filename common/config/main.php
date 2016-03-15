@@ -1,5 +1,7 @@
 <?php
 return [
+    'language' => 'en',
+    'bootstrap' => ['langManager'],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [
@@ -15,6 +17,9 @@ return [
         ],
 	'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
+        ],
+        'langManager' => [
+            'class' => 'yii\components\LangManager',
         ],
     ],
     'modules' => [

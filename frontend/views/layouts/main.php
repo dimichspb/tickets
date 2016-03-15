@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use common\models\Language;
 
 AppAsset::register($this);
 ?>
@@ -34,21 +35,23 @@ AppAsset::register($this);
             'class' => 'navbar-default navbar-fixed-top',
         ],
     ]);
+
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => '<span class="glyphicon glyphicon-home"></span> Home', 'url' => ['/site/index']],
     ];
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => '<span class="glyphicon glyphicon-plus"></span> Signup', 'url' => ['/site/signup']];
+        $menuItems[] = ['label' => '<span class="glyphicon glyphicon-user"></span> Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = [
-            'label' => 'Logout',
-            'url' => ['/site/logout'],
-            'linkOptions' => ['data-method' => 'post']
-        ];
+        $menuItems[] = ['label' => '<span class="glyphicon glyphicon-off"></span> Logout', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']];
     }
+    $menuItems[] = [
+        'label' => '<span class="glyphicon glyphicon-globe"></span> ' . Language::defaultLabel(),
+        'items' => Language::labelsList(),
+    ];
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
+        'encodeLabels' => false,
         'items' => $menuItems,
     ]);
     NavBar::end();

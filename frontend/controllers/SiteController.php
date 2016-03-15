@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Language;
 use Yii;
 use common\models\LoginForm;
 use common\models\Request;
@@ -9,12 +10,14 @@ use frontend\models\ResetPasswordForm;
 use common\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\base\InvalidParamException;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Html;
 use common\models\User;
+use yii\web\Session;
 
 /**
  * Site controller
@@ -159,5 +162,17 @@ class SiteController extends Controller
     {
         Yii::$app->session->setFlash('error', 'You are successfully logged out');
         return $this->render(['error']);
+    }
+
+    public function actionLang()
+    {
+        $languageCode = Yii::$app->request->get('lang');
+
+        $languages = Language::getLanguagesArray();
+        if ($languageCode && ArrayHelper::keyExists($languageCode, $languages)) {
+            $session = new Session();
+            $session->set('language', $languageCode);
+        }
+        return $this->goBack();
     }
 }

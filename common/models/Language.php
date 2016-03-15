@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\bootstrap\Html;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "language".
@@ -69,5 +71,79 @@ class Language extends \yii\db\ActiveRecord
     {
         $lString = Yii::$app->request->get('l')? Yii::$app->request->get('l'): Yii::$app->params['default_language'];
         return Language::getLanguageByCode($lString);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getLanguagesArray()
+    {
+        $result = [
+            'en' => [
+                'label' => 'English',
+            ],
+            'ru' => [
+                'label' => 'Russian',
+            ],
+        ];
+        return $result;
+    }
+
+    public static function getDefault()
+    {
+        return Language::get(Yii::$app->language);
+    }
+
+    public static function getDefaultCode()
+    {
+        return Yii::$app->language;
+    }
+
+    public static function get($languageCode = '')
+    {
+        if (!is_string($languageCode)) {
+            var_dump($languageCode);
+            die();
+        }
+        if ($languageCode === '') {
+            $languageCode = Language::getDefaultCode();;
+        }
+
+        $languages = Language::getLanguagesArray();
+        return $languages[$languageCode];
+    }
+
+    public static function label($languageCode = '')
+    {
+        $language = Language::get($languageCode);
+        return $language['label'];
+    }
+
+    public static function defaultLabel()
+    {
+        return Language::label();
+    }
+
+    public static function select($languageCode = '')
+    {
+        if ($languageCode === '') {
+            $languageCode = Language::getDefaultCode();
+        }
+
+        $languages = Language::getLanguagesArray();
+        unset($languages[$languageCode]);
+        return $languages;
+    }
+
+    public static function labelsList($languageCode = '')
+    {
+        $result = [];
+        $languages = Language::select($languageCode);
+        foreach ($languages as $languageCode => $languageData) {
+            $result[] = [
+                'label' => Html::a($languageData['label'], '/' . $languageCode),
+            ];
+        }
+        return $result;
     }
 }

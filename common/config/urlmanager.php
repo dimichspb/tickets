@@ -13,6 +13,7 @@ return [
                 'logout' => 'site/logout',
 		        'signup' => 'site/signup',
 		        'request' => 'site/request',
+				'<lang:[\w\-]{2}>' => 'site/lang',
 
                 '<_c:[\w\-]+>/<_a:[\w\-]+>' => '<_c>/<_a>',
                 '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',

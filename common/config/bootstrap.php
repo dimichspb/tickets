@@ -7,3 +7,4 @@ Yii::setAlias('api', dirname(dirname(__DIR__)) . '/api'); // add api alias
 
 Yii::$classMap['yii\helpers\CurlHelper'] = '@common/components/CurlHelper.php';
 Yii::$classMap['yii\components\ProgressBar'] = '@common/components/ProgressBar.php';
+Yii::$classMap['yii\components\LangManager'] = '@common/components/LangManager.php';

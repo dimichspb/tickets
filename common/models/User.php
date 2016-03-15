@@ -253,11 +253,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $today = new \DateTime();
         $this->updated_at = $today->format('Y-m-d H:i:s');
-        $this->language = 'en';
         $this->setPassword('');
         if ($insert) {
             $this->generateAccessToken(); //Set access_token before save new user
             $this->created_at = $today->format('Y-m-d H:i:s');
+            $this->language = Yii::$app->language;
         }
         return parent::beforeSave($insert);
     }

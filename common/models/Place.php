@@ -369,8 +369,10 @@ class Place extends \yii\db\ActiveRecord
                 ['like', '`city_desc`.`city`', $qString],
                 ['like', '`airport_desc`.`name`', $qString],
             ])
-            ->andWhere('`place`.`airport` IS NULL');
-        //var_dump($result->createCommand()->rawSql);
+            ->andWhere('`place`.`airport` IS NULL')
+            ->orderBy([
+                '`airport_desc`.`name`' => SORT_ASC,
+            ]);
         return $result;
 
     }

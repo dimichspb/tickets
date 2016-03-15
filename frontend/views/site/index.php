@@ -13,19 +13,19 @@ $this->title = 'Tickets Tracker';
 <div class="site-index">
 
     <div class="body-content text-center">
-        <h1>Congratulations!</h1>
+        <h1><?= Yii::t('app', 'Congratulations!'); ?></h1>
 
-        <p class="lead">You are in one step to get the best air fares!</p>
+        <p class="lead"><?= Yii::t('app', 'You are in one step to get the best air fares!'); ?></p>
 
         <?php $form = ActiveForm::begin(['id' => 'form-request']); ?>
 
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <?php echo '<label class="control-label">Origin</label>'; ?>
+                <?php echo '<label class="control-label">'.Yii::t('app', 'Origin').'</label>'; ?>
                 <?= Typeahead::widget([
                         'name' => 'origin_text',
                         'options' => [
-                            'placeholder' => 'Where are you from ...',
+                            'placeholder' => Yii::t('app', 'Where are you from ...'),
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
@@ -49,11 +49,11 @@ $this->title = 'Tickets Tracker';
                 <?= $form->field($model, 'origin')->hiddenInput()->label(false);?>
             </div>
             <div class="col-md-6 col-sm-12">
-                <?php echo '<label class="control-label">Destination</label>';?>
+                <?php echo '<label class="control-label">'.Yii::t('app', 'Destination').'</label>';?>
                 <?= Typeahead::widget([
                         'name' => 'destination_text',
                         'options' => [
-                            'placeholder' => 'Where are you going to ...',
+                            'placeholder' => Yii::t('app', 'Where are you going to ...'),
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
@@ -89,7 +89,7 @@ HTML;
                 echo FieldRange::widget([
                     'form' => $form,
                     'model' => $model,
-                    'label' => 'Flight date range',
+                    'label' => Yii::t('app', 'Flight date range'),
                     'attribute1' => 'there_start_date',
                     'attribute2' => 'there_end_date',
                     'type' => FieldRange::INPUT_WIDGET,
@@ -117,7 +117,7 @@ HTML;
                 <?= FieldRange::widget([
                     'form' => $form,
                     'model' => $model,
-                    'label' => 'Travel period range',
+                    'label' => Yii::t('app', 'Travel period range'),
                     'attribute1' => 'travel_period_start',
                     'attribute2' => 'travel_period_end',
                     'type' => FieldRange::INPUT_SPIN,
@@ -128,7 +128,7 @@ HTML;
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
-                    <?= Html::submitButton('Track now!', ['class' => 'btn btn-lg btn-success', 'name' => 'signup-button']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Track now!'), ['class' => 'btn btn-lg btn-success', 'name' => 'signup-button']) ?>
                 </div>
             </div>
         </div>

@@ -21,6 +21,14 @@ return [
         'langManager' => [
             'class' => 'yii\components\LangManager',
         ],
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\DBMessageSource',
+                    'sourceLanguage' => 'en',
+                ],
+            ],
+        ],
     ],
     'modules' => [
         'datecontrol' =>  [

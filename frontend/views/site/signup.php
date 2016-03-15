@@ -16,9 +16,9 @@ $session = Yii::$app->session;
         <h1><?= Html::encode($this->title) ?></h1>
 
         <?php if($session->has('newRequestId')):?>
-        <p>I need your e-mail to send search results:</p>
+        <p><?= Yii::t('app', 'I need your e-mail to send search results:'); ?></p>
         <?php else: ?>
-        <p>Please fill out the following fields to signup:</p>
+        <p><?= Yii::t('app', 'Please fill out the following fields to signup:'); ?></p>
         <?php endif?>
         <div class="row">
             <div class="col-xs-12 col-md-10 col-lg-6 col-md-offset-1 col-lg-offset-3">
@@ -27,7 +27,7 @@ $session = Yii::$app->session;
                 <?= $form->field($model, 'email') ?>
 
                 <div class="form-group">
-                    <?= Html::a('More details', '#', ['data-toggle'=>'collapse', 'data-target'=>'#more-details']); ?>
+                    <?= Html::a(Yii::t('app', 'More details'), '#', ['data-toggle'=>'collapse', 'data-target'=>'#more-details']); ?>
                 </div>
 
                 <div id="more-details" class="form-group collapse">
@@ -37,7 +37,7 @@ $session = Yii::$app->session;
                 </div>
 
                 <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-lg btn-primary', 'name' => 'signup-button']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Signup'), ['class' => 'btn btn-lg btn-primary', 'name' => 'signup-button']) ?>
                 </div>
 
                 <?php ActiveForm::end(); ?>

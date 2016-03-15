@@ -41,10 +41,10 @@ class SiteController extends Controller
 
             if ($request->validate() && $request->save()) {
                 if (Yii::$app->getUser()->isGuest) {
-                    Yii::$app->session->setFlash('success', 'Please signup or ' . Html::a('login', ['site/login']) . ' before request to let me know your email');
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Please signup or login before request to let me know where to send search results'));
                     return $this->redirect(['site/signup']);
                 }
-                Yii::$app->session->setFlash('success', 'The request has been placed successfully');
+                Yii::$app->session->setFlash('success', Yii::t('app', 'The request has been placed successfully'));
                 return $this->redirect(['site/done']);
             }
         }
@@ -97,7 +97,7 @@ class SiteController extends Controller
                 }
                 if (Yii::$app->getUser()->login($user)) {
                     $session->remove('newRequestId');
-                    Yii::$app->session->setFlash('success', 'You are successfully logged in');
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'You are successfully logged in'));
                     return $this->redirect(['site/done']);
                 }
             }
@@ -123,7 +123,7 @@ class SiteController extends Controller
 
         if (Yii::$app->request->get('auth_key')) {
             if ($model->login()) {
-                Yii::$app->session->setFlash('success', 'You are successfully logged in');
+                Yii::$app->session->setFlash('success', Yii::t('app', 'You are successfully logged in'));
                 return $this->goBack();
             } else {
                 return $this->redirect(['site/error']);
@@ -134,10 +134,10 @@ class SiteController extends Controller
             if ($model->validate()) {
                 if ($user = User::findByEmail($model->email)) {
                     $user->sendLoginEmail();
-                    Yii::$app->session->setFlash('success', 'The authorization email has been sent');
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'The authorization email has been sent'));
                     return $this->redirect(['site/index']);
                 }
-                Yii::$app->session->setFlash('error', 'Could not find user with specified email');
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not find user with specified email'));
             }
         }
 
@@ -154,13 +154,13 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-        Yii::$app->session->setFlash('success', 'You are successfully logged out');
+        Yii::$app->session->setFlash('success', Yii::t('app', 'You are successfully logged out'));
         return $this->goHome();
     }
 
     public function actionError()
     {
-        Yii::$app->session->setFlash('error', 'You are successfully logged out');
+        Yii::$app->session->setFlash('error', Yii::t('app', 'You are successfully logged out'));
         return $this->render(['error']);
     }
 

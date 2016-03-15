@@ -83,7 +83,7 @@ class Language extends \yii\db\ActiveRecord
                 'label' => 'English',
             ],
             'ru' => [
-                'label' => 'Russian',
+                'label' => 'Русский',
             ],
         ];
         return $result;

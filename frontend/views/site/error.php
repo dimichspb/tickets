@@ -13,9 +13,9 @@ $this->title = $name;
     <div class="body-content text-center">
         <h1><?= Html::encode($this->title) ?></h1>
 
-        <p class="lead">Seems like I've lost the page you are looking for!</p>
+        <p class="lead"><?= Yii::t('app', 'Seems like I\'ve lost the page you are looking for!'); ?></p>
 
-        <?= Html::a('New request', ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
+        <?= Html::a(Yii::t('app', 'New request'), ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
 
     </div>
 </div>

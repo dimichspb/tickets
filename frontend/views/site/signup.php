@@ -21,7 +21,7 @@ $session = Yii::$app->session;
         <p>Please fill out the following fields to signup:</p>
         <?php endif?>
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-xs-12 col-md-10 col-lg-6 col-md-offset-1 col-lg-offset-3">
                 <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
                 <?= $form->field($model, 'email') ?>

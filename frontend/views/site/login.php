@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <p>I need to know your email to send link to login:</p>
 
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-xs-12 col-md-10 col-lg-6 col-md-offset-1 col-lg-offset-3">
                 <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
                 <?= $form->field($model, 'email') ?>

@@ -24,7 +24,6 @@ $this->title = 'Tickets Tracker';
                 <?php echo '<label class="control-label">Origin</label>'; ?>
                 <?= Typeahead::widget([
                         'name' => 'origin_text',
-                        //'label' => 'Origin',
                         'options' => [
                             'placeholder' => 'Where are you from ...',
                         ],
@@ -53,7 +52,6 @@ $this->title = 'Tickets Tracker';
                 <?php echo '<label class="control-label">Destination</label>';?>
                 <?= Typeahead::widget([
                         'name' => 'destination_text',
-                        //'label' => 'Destination',
                         'options' => [
                             'placeholder' => 'Where are you going to ...',
                         ],

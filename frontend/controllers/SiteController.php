@@ -38,7 +38,7 @@ class SiteController extends Controller
 
             if ($request->validate() && $request->save()) {
                 if (Yii::$app->getUser()->isGuest) {
-                    Yii::$app->session->setFlash('success', 'Please signup or ' . Html::a('login', ['site/login']) . 'before request to let me know your email');
+                    Yii::$app->session->setFlash('success', 'Please signup or ' . Html::a('login', ['site/login']) . ' before request to let me know your email');
                     return $this->redirect(['site/signup']);
                 }
                 Yii::$app->session->setFlash('success', 'The request has been placed successfully');

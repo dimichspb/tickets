@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "variable".
@@ -141,7 +142,7 @@ class Variable extends \yii\db\ActiveRecord
                 if (strpos($matchItem, '.')) {
                     $result = Variable::processSubtable($result, $matchItem, $subTablesArray);
                 } else {
-                    $result = Variable::processVariable($result, $matchItem, $mailing, $language );
+                    $result = Variable::processVariable($result, $matchItem, $subTablesArray, $mailing, $language );
                 }
             }
             $result = Variable::processValue($result, $mailing, $language, $subTablesArray);
@@ -150,11 +151,15 @@ class Variable extends \yii\db\ActiveRecord
         return $result;
     }
 
-    private static function processVariable($text, $item, Mailing $mailing, Language $language)
+    private static function processVariable($text, $item, array $subTablesArray, Mailing $mailing, Language $language)
     {
-        $value = Variable::getValue($item, [
-            'mailing' => $mailing->code,
-        ], $language);
+        if (ArrayHelper::keyExists($item, $subTablesArray)) {
+            $value = $subTablesArray[$item];
+        } else {
+            $value = Variable::getValue($item, [
+                'mailing' => $mailing->code,
+            ], $language);
+        }
 
         return str_replace('{$'. $item . '}', isset($value)? $value: '', $text);
     }

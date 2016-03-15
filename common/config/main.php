@@ -24,7 +24,7 @@ return [
         'i18n' => [
             'translations' => [
                 'app*' => [
-                    'class' => 'yii\i18n\DBMessageSource',
+                    'class' => 'yii\i18n\DbMessageSource',
                     'sourceLanguage' => 'en',
                 ],
             ],

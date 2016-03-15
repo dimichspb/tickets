@@ -7,7 +7,7 @@ use yii\base\BootstrapInterface;
 use yii\web\Session;
 use Yii;
 
-class langManager extends Component implements BootstrapInterface
+class LangManager extends Component implements BootstrapInterface
 {
     public function bootstrap($app)
     {

@@ -2,8 +2,9 @@
 
 namespace console\controllers;
 
-use common\models\MailingQueue;
 use yii\console\Controller;
+use yii\helpers\Json;
+use common\models\MailingQueue;
 use common\models\Region;
 use common\models\Subregion;
 use common\models\Country;
@@ -149,16 +150,14 @@ class ServiceController extends Controller
         }
     }
 
-    /** some stuff */
 
-        /*
         public function actionMerge()
         {
             $rootDir = dirname(dirname(dirname(__DIR__)));
 
-            $firstJSONFile = $rootDir . '\APIFake\data\subregions.json';
-            $secondJSONFile = $rootDir . '\APIFake\data\subregions_desc.json';
-            $newJSONFile = $rootDir . '\APIFake\data\subregion.json';
+            $firstJSONFile = $rootDir . '\APIFake\data\regions.json';
+            $secondJSONFile = $rootDir . '\APIFake\data\regions_desc.json';
+            $newJSONFile = $rootDir . '\APIFake\data\region.json';
 
 
 
@@ -187,6 +186,6 @@ class ServiceController extends Controller
             //var_dump($firstJSONArray);
             file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
         }
-        */
+
     
 }

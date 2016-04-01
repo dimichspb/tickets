@@ -141,11 +141,11 @@ class Rate extends \yii\db\ActiveRecord
             $routesToUpdate = Route::getRoutesWithOldRate();
         }
 
-        var_dump($routesToUpdate);
+        //var_dump($routesToUpdate);
 
         $activeRateService = ServiceType::directFlights();
 
-        var_dump($activeRateService);
+        //var_dump($activeRateService);
 
         if (!$activeRateService || !$routesToUpdate) {
             return;
@@ -191,6 +191,8 @@ class Rate extends \yii\db\ActiveRecord
                 $routeToUpdate->save();
                 continue;
             }
+
+            var_dump($routeToUpdate);
 
             $requestData = [
                 'currency' => $routeToUpdate->currency,

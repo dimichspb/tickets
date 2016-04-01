@@ -139,12 +139,17 @@ class ServiceController extends Controller
 
     public function actionSend()
     {
+        $today = new \DateTime();
         $mailingQueue = MailingQueue::getActive();
         foreach($mailingQueue as $mailingQueueItem) {
             $this->stdout('Sending: ' . $mailingQueueItem->id . '...');
             if ($mailingQueueItem->send()) {
+                $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
+                $mailingQueueItem->status = MailingQueue::STATUS_SENT;
                 $this->stdout('Done!' . PHP_EOL);
             } else {
+                $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
+                $mailingQueueItem->status = MailingQueue::STATUS_ERROR;
                 $this->stdout('Error!' . PHP_EOL);
             }
         }

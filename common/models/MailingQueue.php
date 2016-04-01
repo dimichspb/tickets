@@ -209,6 +209,7 @@ class MailingQueue extends \yii\db\ActiveRecord
         return MailingQueue::find()
             ->where([
                 'status' => self::STATUS_ACTIVE,
+                'processed_date' => null,
             ])
             ->all();
     }

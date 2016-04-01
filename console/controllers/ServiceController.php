@@ -127,7 +127,7 @@ class ServiceController extends Controller
      * @param null $requestId
      * @param int $limit
      */
-    public function actionRates($requestId = NULL, $limit = 100)
+    public function actionRates($requestId = NULL, $limit = 10)
     {
         Rate::getRates($requestId, $limit);
     }
@@ -149,7 +149,7 @@ class ServiceController extends Controller
             }
         }
     }
-
+/*
 
         public function actionMerge()
         {
@@ -187,5 +187,6 @@ class ServiceController extends Controller
             file_put_contents($newJSONFile, JSON::encode($firstJSONArray));
         }
 
-    
+ */
+
 }

@@ -146,10 +146,12 @@ class ServiceController extends Controller
             if ($mailingQueueItem->send()) {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_SENT;
+                $mailingQueue->save();
                 $this->stdout('Done!' . PHP_EOL);
             } else {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_ERROR;
+                $mailingQueue->save();
                 $this->stdout('Error!' . PHP_EOL);
             }
         }

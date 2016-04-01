@@ -141,7 +141,11 @@ class Rate extends \yii\db\ActiveRecord
             $routesToUpdate = Route::getRoutesWithOldRate();
         }
 
+        var_dump($routesToUpdate);
+
         $activeRateService = ServiceType::directFlights();
+
+        var_dump($activeRateService);
 
         if (!$activeRateService || !$routesToUpdate) {
             return;

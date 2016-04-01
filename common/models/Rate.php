@@ -256,6 +256,7 @@ class Rate extends \yii\db\ActiveRecord
                 if ($rate->validate() && $rate->save()) {
                     Rate::checkLimit();
                 }
+                var_dump($rate);
             }
         }
     }

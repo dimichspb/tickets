@@ -7,6 +7,14 @@ class m160401_135452_edit_variable_mailing_body extends Migration
 {
     public function up()
     {
+        $scopeId = (new \yii\db\Query())
+            ->select('id')
+            ->from('variable_scope')
+            ->where([
+                'variable' => 'body',
+                'mailing' => 'DRATE',
+            ])->one();
+
         $this->update('variable_value',[
             'value' => '
 First mailing body
@@ -17,7 +25,7 @@ First mailing body
 '
         ],[
             'variable' => 'body',
-            'variable_scope' => '7',
+            'variable_scope' => $scopeId,
             'language' => 'en',
         ]);
 
@@ -31,7 +39,7 @@ First mailing body
 '
         ],[
             'variable' => 'body',
-            'variable_scope' => '7',
+            'variable_scope' => $scopeId,
             'language' => 'ru',
         ]);
     }

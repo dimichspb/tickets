@@ -150,7 +150,6 @@ class Rate extends \yii\db\ActiveRecord
         //var_dump(ArrayHelper::toArray($routesToUpdate));
 
         foreach ($activeRateService->endpoints  as $endpoint) {
-            var_dump(ArrayHelper::toArray($endpoint));
             Rate::getRatesFromService($endpoint, $routesToUpdate);
         }
     }
@@ -175,20 +174,30 @@ class Rate extends \yii\db\ActiveRecord
      * Method gets Rates data from AVS service
      *
      * @param Endpoint $endpoint
-     * @param array $routesToUpdate
+     * @param Route[] $routesToUpdate
      */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
+        $today = new \DateTime();
         foreach ($routesToUpdate as $routeToUpdate) {
+            $thereDate = new \DateTime($routeToUpdate->there_date);
+            $backDate = new \DateTime($routeToUpdate->back_date);
+            if ($thereDate <= $today || $backDate <= $today) {
+                $routeToUpdate->status = 1;
+                $routeToUpdate->save();
+                continue;
+            }
 
-            $curlAction = CurlHelper::get($endpoint->endpoint, [
+            $requestData = [
                 'currency' => $routeToUpdate->currency,
                 'origin' => $routeToUpdate->origin_city,
                 'destination' => $routeToUpdate->destination_city,
                 'depart_date' => \Yii::$app->formatter->asDate($routeToUpdate->there_date, 'php:Y-m-d'),
                 'return_date' => \Yii::$app->formatter->asDate($routeToUpdate->back_date, 'php:Y-m-d'),
                 'token' => $endpoint->getService()->token,
-            ]);
+            ];
+
+            $curlAction = CurlHelper::get($endpoint->endpoint, $requestData);
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
@@ -197,7 +206,6 @@ class Rate extends \yii\db\ActiveRecord
                 continue;
             }
             Rate::addRatesAVS($endpoint, $routeToUpdate, $responseJson);
-
         }
     }
 
@@ -212,6 +220,12 @@ class Rate extends \yii\db\ActiveRecord
     private static function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
     {
         $data = Json::decode($dataJson);
+
+        if (count($data['data']) === 0) {
+            $route->status = 1;
+            $route->save();
+            return;
+        }
 
         foreach ($data['data'] as $destinationItemIndex => $destinationItemData) {
             foreach ($destinationItemData as $destinationDataItem) {
@@ -231,7 +245,6 @@ class Rate extends \yii\db\ActiveRecord
                     Rate::checkLimit();
                 }
             }
-
         }
     }
 

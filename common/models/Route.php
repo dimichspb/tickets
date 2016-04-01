@@ -16,7 +16,7 @@ use yii\helpers\Console;
  * @property string $there_date
  * @property string $back_date
  * @property string $currency
- *
+ * @property integer $status
  * @property City $destinationCity
  * @property City $originCity
  */
@@ -56,6 +56,7 @@ class Route extends \yii\db\ActiveRecord
             'there_date' => 'There Date',
             'back_date' => 'Back Date',
             'currency' => 'Currency',
+            'status' => 'Status',
         ];
     }
 
@@ -115,10 +116,11 @@ class Route extends \yii\db\ActiveRecord
                 'back_date' => $this->back_date,
                 'currency' => $this->currency,
             ]);
-            if (!$route) {
-                return parent::beforeSave($insert);
+            if ($route) {
+                return;
             }
         }
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -130,7 +132,7 @@ class Route extends \yii\db\ActiveRecord
     {
         $query = (Route::find()->select('`route`.*, count(`rate`.`id`) as `rates`')->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
 
-        $result = $query->all();
+        $result = $query->where(['route.status' => '0'])->all();
 
         if (count($result) > 0) {
             return($result);
@@ -147,7 +149,7 @@ class Route extends \yii\db\ActiveRecord
     {
         $query = (Route::find()->select('`route`.*, `request_to_route`.*, count(`rate`.`id`) as `rates`')->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
 
-        $result = $query->all();
+        $result = $query->where(['route.status' => '0'])->all();
 
         if (count($result) > 0) {
             return($result);

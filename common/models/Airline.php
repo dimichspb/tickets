@@ -93,6 +93,21 @@ class Airline extends \yii\db\ActiveRecord
     }
 
     /**
+     * Method returns Airline object by specified $iata
+     *
+     * @param $airlineIATA
+     * @return Airline|null
+     */
+    public static function getAirlineByIATA($airlineIATA)
+    {
+        $airline = Airline::findOne([
+            'iata' => $airlineIATA,
+        ]);
+
+        return $airline;
+    }
+
+    /**
      * Method uploads Airlines data from provided JSON data file depends on specified $service code
      *
      * @param $service

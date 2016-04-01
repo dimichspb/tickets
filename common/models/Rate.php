@@ -248,7 +248,7 @@ class Rate extends \yii\db\ActiveRecord
                 $rate->there_date = \Yii::$app->formatter->asDatetime($destinationDataItem['departure_at'],'php:Y-m-d H:i:s');
                 $rate->back_date = \Yii::$app->formatter->asDatetime($destinationDataItem['return_at'],'php:Y-m-d H:i:s');
                 $rate->service = $endpoint->service;
-                $rate->airline = Airline::getAirlineByName($destinationDataItem['airline'])->id;
+                $rate->airline = Airline::getAirlineByIATA($destinationDataItem['airline'])->id;
                 $rate->flight_number = (string)$destinationDataItem['flight_number'];
                 $rate->currency = $route->currency;
                 $rate->price = (float)$destinationDataItem['price'];

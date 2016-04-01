@@ -192,7 +192,7 @@ class Rate extends \yii\db\ActiveRecord
                 continue;
             }
 
-            var_dump($routeToUpdate);
+            //var_dump($routeToUpdate);
 
             $requestData = [
                 'currency' => $routeToUpdate->currency,
@@ -203,10 +203,14 @@ class Rate extends \yii\db\ActiveRecord
                 'token' => $endpoint->getService()->token,
             ];
 
+            var_dump($requestData);
+
             $curlAction = CurlHelper::get($endpoint->endpoint, $requestData);
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
+
+            var_dump($responseJson);
 
             if ($responseCode !== 200) {
                 continue;

@@ -147,7 +147,7 @@ class Rate extends \yii\db\ActiveRecord
             return;
         }
 
-        var_dump(ArrayHelper::toArray($routesToUpdate));
+        //var_dump(ArrayHelper::toArray($routesToUpdate));
 
         foreach ($activeRateService->endpoints  as $endpoint) {
             var_dump(ArrayHelper::toArray($endpoint));

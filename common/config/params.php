@@ -4,14 +4,14 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'default_language' => 'ru',
     'api' => [
-        'domain' => 'api.frontend.dev',
+        'domain' => 'api.qotit.com',
         'currentVersion' => 'v1',
     ],
     'frontend' => [
-        'domain' => 'frontend.dev',
+        'domain' => 'front.qotit.com',
     ],
     'backend' => [
-        'backend' => 'backend.dev',
+        'backend' => 'back.qotit.com',
     ],
     // format settings for displaying each date attribute (ICU format example)
     'dateControlDisplay' => [

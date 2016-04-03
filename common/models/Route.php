@@ -171,6 +171,8 @@ class Route extends \yii\db\ActiveRecord
             $requests = Request::getAllRequests();
         }
 
+        var_dump($requests);
+
         foreach ($requests as $request) {
             Route::createRoutesByRequest($request);
         }

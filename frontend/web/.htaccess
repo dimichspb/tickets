@@ -1,5 +1,4 @@
-Order Allow,Deny
-Allow from all
+Require all granted
 
 AddDefaultCharset utf-8
 

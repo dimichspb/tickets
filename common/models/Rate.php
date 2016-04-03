@@ -203,14 +203,14 @@ class Rate extends \yii\db\ActiveRecord
                 'token' => $endpoint->getService()->token,
             ];
 
-            var_dump($requestData);
+            //var_dump($requestData);
 
             $curlAction = CurlHelper::get($endpoint->endpoint, $requestData);
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
 
-            var_dump($responseJson);
+            //var_dump($responseJson);
 
             if ($responseCode !== 200) {
                 continue;
@@ -231,7 +231,7 @@ class Rate extends \yii\db\ActiveRecord
     {
         $data = Json::decode($dataJson);
 
-        var_dump($dataJson);
+        //var_dump($dataJson);
 
         if (count($data['data']) === 0) {
             $route->status = 1;
@@ -256,7 +256,7 @@ class Rate extends \yii\db\ActiveRecord
                 if ($rate->validate() && $rate->save()) {
                     Rate::checkLimit();
                 }
-                var_dump($rate);
+                //var_dump($rate);
             }
         }
     }

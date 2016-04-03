@@ -172,7 +172,7 @@ class Route extends \yii\db\ActiveRecord
         }
 
         foreach ($requests as $request) {
-            echo "Request: ", $request->id, PHP_EOL;
+            //echo "Request: ", $request->id, PHP_EOL;
             Route::createRoutesByRequest($request);
         }
     }

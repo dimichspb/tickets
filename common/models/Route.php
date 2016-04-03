@@ -171,9 +171,8 @@ class Route extends \yii\db\ActiveRecord
             $requests = Request::getAllRequests();
         }
 
-        var_dump($requests);
-
         foreach ($requests as $request) {
+            echo "Request: ", $request->id, PHP_EOL;
             Route::createRoutesByRequest($request);
         }
     }
@@ -259,7 +258,9 @@ class Route extends \yii\db\ActiveRecord
         }
 
         if ($route->validate() && $route->save()) {
-            $route->link('requests', $request);
+            if (!$route->getRequests()->exists()) {
+                $route->link('requests', $request);
+            }
             Route::checkLimit();
         }
     }

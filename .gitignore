@@ -3,7 +3,7 @@
 .vscode
 
 # yii console command
-/yii
+#/yii
 
 # phpstorm project files
 .idea

@@ -173,7 +173,7 @@ class Variable extends \yii\db\ActiveRecord
         return str_replace('{$' . $item . '}', $value, $text);
     }
 
-    private static function processLoopsOld($text, array &$subTablesArray)
+    private static function processLoops($text, array &$subTablesArray)
     {
         var_dump($text);
         $pattern = '/{foreach \$(\w+) as \$(\w+) => \$(\w+)}([^{]*+(?:{(?!\/?foreach)[^{]*)*+){\/foreach}/';

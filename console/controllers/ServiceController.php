@@ -3,6 +3,7 @@
 namespace console\controllers;
 
 use yii\console\Controller;
+use yii\helpers\Console;
 use yii\helpers\Json;
 use common\models\MailingQueue;
 use common\models\Region;
@@ -142,18 +143,19 @@ class ServiceController extends Controller
         $today = new \DateTime();
         $mailingQueue = MailingQueue::getActive();
         foreach($mailingQueue as $mailingQueueItem) {
-            $this->stdout('Sending: ' . $mailingQueueItem->id . '...');
+            $log = ('Sending: ' . $mailingQueueItem->id . '...');
             if ($mailingQueueItem->send()) {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_SENT;
                 $mailingQueueItem->save();
-                $this->stdout('Done!' . PHP_EOL);
+                $log .= ('Done!');
             } else {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_ERROR;
                 $mailingQueueItem->save();
-                $this->stdout('Error!' . PHP_EOL);
+                $log .=('Error!');
             }
+            Console::stdout($log . PHP_EOL);
         }
     }
 /*

@@ -135,7 +135,7 @@ class Mailing extends \yii\db\ActiveRecord
         $requests = Request::getRequestsToMailArray();
 
         foreach ($requests as $request) {
-            Console::stdout('request: ' . $request->id. '...');
+            $log = ('request: ' . $request->id. '...');
             $betterRates = [];
             /*
             $routes = $request->getRoutesArray();
@@ -170,7 +170,7 @@ class Mailing extends \yii\db\ActiveRecord
 */
             $betterRates = $request->getBetterRates();
             if (count($betterRates)) {
-                Console::stdout('better rates: ');
+                $log .= ('better rates: ');
                 //ArrayHelper::multisort($betterRates, ['price', 'destination_city', 'origin_city'], SORT_DESC);
                 //$betterRates = ArrayHelper::index($betterRates, function ($element) {
                 //    return $element['origin_city'] . '-' . $element['destination_city'];
@@ -190,12 +190,12 @@ class Mailing extends \yii\db\ActiveRecord
                     $requestMailingRate->rate = $rate->id;
                     //var_dump($requestMailingRate->attributes);
                     $requestMailingRate->save();
-                    Console::stdout($rate->price. ',');
+                    $log .= ($rate->price. ',');
                 }
             } else {
-                Console::stdout('no better rates');
+                $log .= ('no better rates');
             }
-            Console::stdout(PHP_EOL);
+            Console::stdout($log . PHP_EOL);
         }
     }
 

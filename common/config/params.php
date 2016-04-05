@@ -3,17 +3,6 @@ use kartik\datecontrol\Module;
 return [
     'user.passwordResetTokenExpire' => 3600,
     'default_language' => 'ru',
-    'api' => [
-        //'domain' => 'api.qotit.com',
-        'domain' => 'api.frontend.dev',
-        'currentVersion' => 'v1',
-    ],
-    'frontend' => [
-        'domain' => 'front.qotit.com',
-    ],
-    'backend' => [
-        'backend' => 'back.qotit.com',
-    ],
     // format settings for displaying each date attribute (ICU format example)
     'dateControlDisplay' => [
         Module::FORMAT_DATE => 'dd-MM-yyyy',

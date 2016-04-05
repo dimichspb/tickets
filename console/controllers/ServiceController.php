@@ -117,7 +117,7 @@ class ServiceController extends Controller
      * @param null $requestId
      * @param int $limit
      */
-    public function actionRoutes($requestId = NULL, $limit = 1000)
+    public function actionRoutes($requestId = NULL, $limit = 10000)
     {
         Route::createRoutes($requestId, $limit);
     }

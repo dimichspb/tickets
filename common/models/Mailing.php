@@ -179,18 +179,55 @@ class Mailing extends \yii\db\ActiveRecord
                 $bestRatesByOrigin = ArrayHelper::index($betterRates, 'origin_city');
                 $bestRatesByDestination = ArrayHelper::index($betterRates, 'destination_city');
 
-                //var_dump($bestRatesByPrice);
-                //var_dump($bestRatesByOrigin);
-                //var_dump($bestRatesByDestination);
+                $bestPrice1 = isset($bestRatesByPrice[0])? array_keys($bestRatesByPrice)[0]: '';
+                $bestPrices1 = isset($bestRatesByPrice[0])? array_slice($bestRatesByPrice[0], 0, 3): [];
+
+                $bestPrice2 = isset($bestRatesByPrice[1])? array_keys($bestRatesByPrice)[1]: '';
+                $bestPrices2 = isset($bestRatesByPrice[1])? array_slice($bestRatesByPrice[1], 0, 3): [];
+
+                $bestPrice3 = isset($bestRatesByPrice[2])? array_keys($bestRatesByPrice)[2]: '';
+                $bestPrices3 = isset($bestRatesByPrice[2])? array_slice($bestRatesByPrice[2], 0, 3): [];
+
+
+                $bestOrigin1 = isset($bestRatesByOrigin[0])? array_keys($bestRatesByOrigin)[0]: '';
+                $bestOrigins1 = isset($bestRatesByOrigin[0])? array_slice($bestRatesByOrigin[0], 0, 3): [];
+
+                $bestOrigin2 = isset($bestRatesByOrigin[1])? array_keys($bestRatesByOrigin)[1]: '';
+                $bestOrigins2 = isset($bestRatesByOrigin[1])? array_slice($bestRatesByOrigin[1], 0, 3): [];
+
+                $bestOrigin3 = isset($bestRatesByOrigin[2])? array_keys($bestRatesByOrigin)[2]: '';
+                $bestOrigins3 = isset($bestRatesByOrigin[2])? array_slice($bestRatesByOrigin[2], 0, 3): [];
+
+
+                $bestDestination1 = isset($bestRatesByDestination[0])? array_keys($bestRatesByDestination)[0]: '';
+                $bestDestinations1 = isset($bestRatesByDestination[0])? array_slice($bestRatesByDestination[0], 0, 3): [];
+
+                $bestDestination2 = isset($bestRatesByDestination[1])? array_keys($bestRatesByDestination)[1]: '';
+                $bestDestinations2 = isset($bestRatesByDestination[1])? array_slice($bestRatesByDestination[1], 0, 3): [];
+
+                $bestDestination3 = isset($bestRatesByDestination[2])? array_keys($bestRatesByDestination)[2]: '';
+                $bestDestinations3 = isset($bestRatesByDestination[2])? array_slice($bestRatesByDestination[2], 0, 3): [];
 
                 $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
-                    'rates' => $betterRates,
-                    'bestPrice' => $bestRatesByPrice,
-                    'bestOrigin' => $bestRatesByOrigin,
-                    'bestDestination' => $bestRatesByDestination,
-                    //'allrates' => [
-                    //    'data' => serialize($betterRates),
-                    //],
+                    'allRates' => $betterRates,
+                    'bestPrice1' => $bestPrice1,
+                    'bestPrices1' => $bestPrices1,
+                    'bestPrice2' => $bestPrice2,
+                    'bestPrices2' => $bestPrices2,
+                    'bestPrice3' => $bestPrice3,
+                    'bestPrices3' => $bestPrices3,
+                    'bestOrigin1' => $bestOrigin1,
+                    'bestOrigins1' => $bestOrigins1,
+                    'bestOrigin2' => $bestOrigin2,
+                    'bestOrigins2' => $bestOrigins2,
+                    'bestOrigin3' => $bestOrigin3,
+                    'bestOrigins3' => $bestOrigins3,
+                    'bestDestination1' => $bestDestination1,
+                    'bestDestinations1' => $bestDestinations1,
+                    'bestDestination2' => $bestDestination2,
+                    'bestDestinations2' => $bestDestinations2,
+                    'bestDestination3' => $bestDestination3,
+                    'bestDestinations3' => $bestDestinations3,
                 ]);
                 foreach ($betterRates as $rate) {
                     $requestMailingRate = new RequestMailingRate();

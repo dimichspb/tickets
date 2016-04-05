@@ -164,6 +164,7 @@ class Server extends \yii\db\ActiveRecord
             ->setBody($mailingQueue->getBody(), 'text/html');
 
         try {
+            //var_dump($message->getBody());
             $result = $mailer->send($message);
             MailingQueueLog::log($mailingQueue, 'Success, result: ' . $result? 'true': 'false');
         } catch (\Swift_TransportException $e) {

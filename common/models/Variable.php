@@ -173,8 +173,9 @@ class Variable extends \yii\db\ActiveRecord
         return str_replace('{$' . $item . '}', $value, $text);
     }
 
-    private static function processLoops($text, array &$subTablesArray)
+    private static function processLoopsOld($text, array &$subTablesArray)
     {
+        var_dump($text);
         $pattern = '/{foreach \$(\w+) as \$(\w+) => \$(\w+)}([^{]*+(?:{(?!\/?foreach)[^{]*)*+){\/foreach}/';
 
         $matches = [];
@@ -192,12 +193,12 @@ class Variable extends \yii\db\ActiveRecord
                         $subTablesArray[$newItemName] = $subTable;
                         $newText .= str_replace('$' . $itemName . '.', '$' . $newItemName . '.', $matches[4][$index]);
                     }
+                    $text = str_replace($matches[0][$index], $newText, $text);
                 }
-                $text = str_replace($matches[0][$index], $newText, $text);
             }
-
+            var_dump($text);
+            die();
         }
-
         return $text;
     }
 }

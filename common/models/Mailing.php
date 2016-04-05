@@ -171,24 +171,32 @@ class Mailing extends \yii\db\ActiveRecord
             $betterRates = $request->getBetterRates();
             if (count($betterRates)) {
                 $log .= ('better rates: ');
-                //ArrayHelper::multisort($betterRates, ['price', 'destination_city', 'origin_city'], SORT_DESC);
+
                 //$betterRates = ArrayHelper::index($betterRates, function ($element) {
                 //    return $element['origin_city'] . '-' . $element['destination_city'];
                 //});
+                $bestRatesByPrice = $betterRates;
+                $bestRatesByOrigin = $betterRates;
+                $bestRatesByDestination = $betterRates;
+
+                ArrayHelper::multisort($bestRatesByPrice, ['price', 'destination_city', 'origin_city'], SORT_DESC);
+                ArrayHelper::multisort($bestRatesByOrigin, ['origin_city', 'price', 'destination_city'], SORT_DESC);
+                ArrayHelper::multisort($bestRatesByDestination, ['destination_city', 'price', 'origin_city'], SORT_DESC);
+
                 $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
                     'rates' => $betterRates,
-                    'allrates' => [
-                        'data' => serialize($betterRates),
-                    ],
+                    'bestPrice' => $bestRatesByPrice,
+                    'bestOrigin' => $bestRatesByOrigin,
+                    'bestDestination' => $bestRatesByDestination,
+                    //'allrates' => [
+                    //    'data' => serialize($betterRates),
+                    //],
                 ]);
-                //var_dump($betterRates);
                 foreach ($betterRates as $rate) {
-                    //var_dump($rate);
                     $requestMailingRate = new RequestMailingRate();
                     $requestMailingRate->request = $request->id;
                     $requestMailingRate->mailing_queue = $mailingQueue->id;
                     $requestMailingRate->rate = $rate->id;
-                    //var_dump($requestMailingRate->attributes);
                     $requestMailingRate->save();
                     $log .= ($rate->price. ',');
                 }

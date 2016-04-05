@@ -210,12 +210,9 @@ class Request extends \yii\db\ActiveRecord
         $mailedRates = $this->getMailedRatesAll();
         $mailedRatesMin = count($mailedRates)? min(ArrayHelper::map($mailedRates, 'id', 'price')): null;
 
-        //var_dump($mailedRatesMin);
-
         $betterRates = array_filter($allRates, function (Rate $rate) use ($mailedRatesMin) {
             return is_null($mailedRatesMin) || $rate->price < $mailedRatesMin;
         });
-//var_dump($betterRates);
 
         return $betterRates;
     }

@@ -237,7 +237,6 @@ class Route extends \yii\db\ActiveRecord
      */
     private static function createRoute(Request $request, City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
     {
-        Route::checkLimit();
         if ($backDate) {
             $route = Route::findOne([
                 'origin_city' => $originCity->code,
@@ -254,6 +253,7 @@ class Route extends \yii\db\ActiveRecord
         }
 
         if (!$route) {
+            Route::checkLimit();
             $route = new Route();
             $route->origin_city = $originCity->code;
             $route->destination_city = $destinationCity->code;

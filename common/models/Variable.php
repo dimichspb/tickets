@@ -195,8 +195,6 @@ class Variable extends \yii\db\ActiveRecord
                     $text = str_replace($matches[0][$index], $newText, $text);
                 }
             }
-            var_dump($text);
-            die();
         }
         return $text;
     }

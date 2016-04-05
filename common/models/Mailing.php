@@ -175,13 +175,9 @@ class Mailing extends \yii\db\ActiveRecord
                 //$betterRates = ArrayHelper::index($betterRates, function ($element) {
                 //    return $element['origin_city'] . '-' . $element['destination_city'];
                 //});
-                $bestRatesByPrice = $betterRates;
-                $bestRatesByOrigin = $betterRates;
-                $bestRatesByDestination = $betterRates;
-
-                ArrayHelper::multisort($bestRatesByPrice, ['price', 'destination_city', 'origin_city'], SORT_DESC);
-                ArrayHelper::multisort($bestRatesByOrigin, ['origin_city', 'price', 'destination_city'], SORT_DESC);
-                ArrayHelper::multisort($bestRatesByDestination, ['destination_city', 'price', 'origin_city'], SORT_DESC);
+                $bestRatesByPrice = ArrayHelper::index($betterRates, 'price');
+                $bestRatesByOrigin = ArrayHelper::index($betterRates, 'origin_city');
+                $bestRatesByDestination = ArrayHelper::index($betterRates, 'destination_city');
 
                 $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
                     'rates' => $betterRates,

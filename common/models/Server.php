@@ -152,6 +152,8 @@ class Server extends \yii\db\ActiveRecord
                 ->setPassword($this->getPassword());
         }
 
+        var_dump($mailingQueue->id);
+
         $mailer = \Swift_Mailer::newInstance($transport);
 
         $message = \Swift_Message::newInstance($mailingQueue->getSubject())

@@ -192,8 +192,8 @@ class Variable extends \yii\db\ActiveRecord
                         $subTablesArray[$newItemName] = $subTable;
                         $newText .= str_replace('$' . $itemName . '.', '$' . $newItemName . '.', $matches[4][$index]);
                     }
-                    $text = str_replace($matches[0][$index], $newText, $text);
                 }
+                $text = str_replace($matches[0][$index], $newText, $text);
             }
         }
         return $text;

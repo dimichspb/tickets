@@ -172,7 +172,6 @@ class Route extends \yii\db\ActiveRecord
         }
 
         foreach ($requests as $request) {
-            //echo "Request: ", $request->id, PHP_EOL;
             Route::createRoutesByRequest($request);
         }
     }
@@ -184,6 +183,7 @@ class Route extends \yii\db\ActiveRecord
      */
     private static function createRoutesByRequest(Request $request)
     {
+        $log = "Request: " . $request->id . '...';
         $originPlace = Place::getPlaceById($request->origin);
         $destinationPlace = Place::getPlaceById($request->destination);
 
@@ -213,14 +213,17 @@ class Route extends \yii\db\ActiveRecord
                         foreach ($travelPeriodRange as $traverPeriodItem) {
                             $backDate = clone $thereDate;
                             $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
-                            Route::createRoute($request, $originCity, $destinationCity, $thereDate, $backDate);
+                            $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate, $backDate);
+                            $log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
                         }
                     } else {
-                        Route::createRoute($request, $originCity, $destinationCity, $thereDate);
+                        $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate);
+                        $log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
                     }
                 }
             }
         }
+        Console::stdout($log . PHP_EOL);
     }
 
     /**
@@ -260,6 +263,7 @@ class Route extends \yii\db\ActiveRecord
         if ($route->validate() && $route->save()) {
             if (!$route->getRequests()->where(['id' => $request->id])->exists()) {
                 $route->link('requests', $request);
+                return $route;
             }
             Route::checkLimit();
         }

@@ -141,17 +141,11 @@ class Rate extends \yii\db\ActiveRecord
             $routesToUpdate = Route::getRoutesWithOldRate();
         }
 
-        //var_dump($routesToUpdate);
-
         $activeRateService = ServiceType::directFlights();
-
-        //var_dump($activeRateService);
 
         if (!$activeRateService || !$routesToUpdate) {
             return;
         }
-
-        //var_dump(ArrayHelper::toArray($routesToUpdate));
 
         foreach ($activeRateService->endpoints  as $endpoint) {
             Rate::getRatesFromService($endpoint, $routesToUpdate);
@@ -192,8 +186,6 @@ class Rate extends \yii\db\ActiveRecord
                 continue;
             }
 
-            //var_dump($routeToUpdate);
-
             $requestData = [
                 'currency' => $routeToUpdate->currency,
                 'origin' => $routeToUpdate->origin_city,
@@ -203,14 +195,10 @@ class Rate extends \yii\db\ActiveRecord
                 'token' => $endpoint->getService()->token,
             ];
 
-            //var_dump($requestData);
-
             $curlAction = CurlHelper::get($endpoint->endpoint, $requestData);
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
-
-            //var_dump($responseJson);
 
             if ($responseCode !== 200) {
                 continue;
@@ -229,9 +217,8 @@ class Rate extends \yii\db\ActiveRecord
      */
     private static function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
     {
+        $log = 'Route: ' . $route->id . '...';
         $data = Json::decode($dataJson);
-
-        //var_dump($dataJson);
 
         if (count($data['data']) === 0) {
             $route->status = 1;
@@ -254,11 +241,12 @@ class Rate extends \yii\db\ActiveRecord
                 $rate->price = (float)$destinationDataItem['price'];
 
                 if ($rate->validate() && $rate->save()) {
+                    $log .= 'Rate ' . $rate->id . ', ';
                     Rate::checkLimit();
                 }
-                //var_dump($rate);
             }
         }
+        Console::stdout($log . PHP_EOL);
     }
 
     /**

@@ -179,6 +179,10 @@ class Mailing extends \yii\db\ActiveRecord
                 $bestRatesByOrigin = ArrayHelper::index($betterRates, 'origin_city');
                 $bestRatesByDestination = ArrayHelper::index($betterRates, 'destination_city');
 
+                var_dump($bestRatesByPrice);
+                var_dump($bestRatesByOrigin);
+                var_dump($bestRatesByDestination);
+
                 $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
                     'rates' => $betterRates,
                     'bestPrice' => $bestRatesByPrice,

@@ -128,7 +128,7 @@ class ServiceController extends Controller
      * @param null $requestId
      * @param int $limit
      */
-    public function actionRates($requestId = NULL, $limit = 100)
+    public function actionRates($requestId = NULL, $limit = 1000)
     {
         Rate::getRates($requestId, $limit);
     }

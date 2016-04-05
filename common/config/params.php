@@ -4,7 +4,8 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'default_language' => 'ru',
     'api' => [
-        'domain' => 'api.qotit.com',
+        //'domain' => 'api.qotit.com',
+        'domain' => 'api.frontend.dev',
         'currentVersion' => 'v1',
     ],
     'frontend' => [

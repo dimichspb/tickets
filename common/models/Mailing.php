@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\debug\models\search\Mail;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Console;
 
 /**
  * This is the model class for table "mailing".
@@ -134,9 +135,10 @@ class Mailing extends \yii\db\ActiveRecord
         $requests = Request::getRequestsToMailArray();
 
         foreach ($requests as $request) {
-            echo 'request: ' , $request->id, PHP_EOL;
-            $routes = $request->getRoutesArray();
+            Console::stdout('request: ' . $request->id. '...');
             $betterRates = [];
+            /*
+            $routes = $request->getRoutesArray();
             foreach ($routes as $route) {
                 if ($rate = $route->getBetterRate($today, !$request->isMailingProcessed())) {
                     $betterRates[] = [
@@ -151,18 +153,49 @@ class Mailing extends \yii\db\ActiveRecord
                     ];
                 }
             }
+
+            foreach ($request->getBetterRates() as $rate) {
+                $betterRates[] = [
+                    'id' => $rate->id,
+                    'origin_city' => $rate->originCity->getCityDescByLanguage($request->getUserLanguage())->name,
+                    'destination_city' => $rate->destinationCity->getCityDescByLanguage($request->getUserLanguage())->name,
+                    'there_date' => $rate->there_date,
+                    'back_date' => $rate->back_date,
+                    'airline' => $rate->airline,
+                    'flight' => $rate->flight_number,
+                    'currency' => $rate->currency,
+                    'price' => $rate->price,
+                ];
+            }
+*/
+            $betterRates = $request->getBetterRates();
             if (count($betterRates)) {
-                ArrayHelper::multisort($betterRates, ['price', 'destination_city', 'origin_city'], SORT_DESC);
-                $betterRates = ArrayHelper::index($betterRates, function ($element) {
-                    return $element['origin_city'] . '-' . $element['destination_city'];
-                });
-                $this->addToQueue(User::getUserById($request->user), [
+                Console::stdout('better rates: ');
+                //ArrayHelper::multisort($betterRates, ['price', 'destination_city', 'origin_city'], SORT_DESC);
+                //$betterRates = ArrayHelper::index($betterRates, function ($element) {
+                //    return $element['origin_city'] . '-' . $element['destination_city'];
+                //});
+                $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
                     'rates' => $betterRates,
                     'allrates' => [
                         'data' => serialize($betterRates),
                     ],
                 ]);
+                //var_dump($betterRates);
+                foreach ($betterRates as $rate) {
+                    //var_dump($rate);
+                    $requestMailingRate = new RequestMailingRate();
+                    $requestMailingRate->request = $request->id;
+                    $requestMailingRate->mailing_queue = $mailingQueue->id;
+                    $requestMailingRate->rate = $rate->id;
+                    //var_dump($requestMailingRate->attributes);
+                    $requestMailingRate->save();
+                    Console::stdout($rate->price. ',');
+                }
+            } else {
+                Console::stdout('no better rates');
             }
+            Console::stdout(PHP_EOL);
         }
     }
 

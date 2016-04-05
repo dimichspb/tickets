@@ -8,6 +8,7 @@ use common\models\Place;
 use common\models\Route;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "request".
@@ -190,6 +191,49 @@ class Request extends \yii\db\ActiveRecord
     public function getUserLanguage()
     {
         return $this->getUserOne()->getLanguageOne();
+    }
+
+    /**
+     * @return Rate[]
+     */
+    public function getRatesAll()
+    {
+        return $this->getRates()->all();
+    }
+
+    /**
+     * @return Rate[]
+     */
+    public function getBetterRates()
+    {
+        $allRates = $this->getRatesAll();
+        $mailedRates = $this->getMailedRatesAll();
+        $mailedRatesMin = count($mailedRates)? min(ArrayHelper::map($mailedRates, 'id', 'price')): null;
+
+        //var_dump($mailedRatesMin);
+
+        $betterRates = array_filter($allRates, function (Rate $rate) use ($mailedRatesMin) {
+            return is_null($mailedRatesMin) || $rate->price < $mailedRatesMin;
+        });
+//var_dump($betterRates);
+
+        return $betterRates;
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getMailedRates()
+    {
+        return $this->hasMany(Rate::className(), ['id' => 'rate'])->viaTable('request_mailing_rate', ['request' => 'id']);
+    }
+
+    /**
+     * @return Rate[]
+     */
+    public function getMailedRatesAll()
+    {
+        return $this->getMailedRates()->all();
     }
 /*
     public function getRatesByCreateDate(\DateTime $dateTime)

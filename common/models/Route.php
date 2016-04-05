@@ -258,7 +258,7 @@ class Route extends \yii\db\ActiveRecord
         }
 
         if ($route->validate() && $route->save()) {
-            if (!$route->getRequests()->exists()) {
+            if (!$route->getRequests()->where(['id' => $request->id])->exists()) {
                 $route->link('requests', $request);
             }
             Route::checkLimit();

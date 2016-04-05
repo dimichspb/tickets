@@ -175,7 +175,6 @@ class Variable extends \yii\db\ActiveRecord
 
     private static function processLoops($text, array &$subTablesArray)
     {
-        var_dump($text);
         $pattern = '/{foreach \$(\w+) as \$(\w+) => \$(\w+)}([^{]*+(?:{(?!\/?foreach)[^{]*)*+){\/foreach}/';
 
         $matches = [];

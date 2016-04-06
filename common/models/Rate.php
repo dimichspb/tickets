@@ -94,11 +94,45 @@ class Rate extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return City
+     */
+    public function getOriginCityOne()
+    {
+        return $this->getOriginCity()->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return string
+     */
+    public function getOriginCityName(Language $language)
+    {
+        return $this->getOriginCityOne()->getCityDescByLanguage($language)->name;
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getDestinationCity()
     {
         return $this->hasOne(City::className(), ['code' => 'destination_city']);
+    }
+
+    /**
+     * @return City
+     */
+    public function getDestinationCityOne()
+    {
+        return $this->getDestinationCity()->one();
+    }
+
+    /**
+     * @param Language $language
+     * @return string
+     */
+    public function getDestinationCityName(Language $language)
+    {
+        return $this->getDestinationCityOne()->getCityDescByLanguage($language)->name;
     }
 
     /**

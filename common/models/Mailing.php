@@ -136,47 +136,22 @@ class Mailing extends \yii\db\ActiveRecord
 
         foreach ($requests as $request) {
             $log = ('request: ' . $request->id. '...');
-            $betterRates = [];
-            /*
-            $routes = $request->getRoutesArray();
-            foreach ($routes as $route) {
-                if ($rate = $route->getBetterRate($today, !$request->isMailingProcessed())) {
-                    $betterRates[] = [
-                        'origin_city' => $rate->originCity->getCityDescByLanguage($request->getUserLanguage())->name,
-                        'destination_city' => $rate->destinationCity->getCityDescByLanguage($request->getUserLanguage())->name,
-                        'there_date' => $rate->there_date,
-                        'back_date' => $rate->back_date,
-                        'airline' => $rate->airline,
-                        'flight' => $rate->flight_number,
-                        'currency' => $rate->currency,
-                        'price' => $rate->price,
-                    ];
-                }
-            }
 
-            foreach ($request->getBetterRates() as $rate) {
-                $betterRates[] = [
-                    'id' => $rate->id,
-                    'origin_city' => $rate->originCity->getCityDescByLanguage($request->getUserLanguage())->name,
-                    'destination_city' => $rate->destinationCity->getCityDescByLanguage($request->getUserLanguage())->name,
-                    'there_date' => $rate->there_date,
-                    'back_date' => $rate->back_date,
-                    'airline' => $rate->airline,
-                    'flight' => $rate->flight_number,
-                    'currency' => $rate->currency,
-                    'price' => $rate->price,
-                ];
-            }
-*/
             $betterRates = $request->getBetterRates();
             if (count($betterRates)) {
                 $log .= ('better rates: ');
 
-                //$betterRates = ArrayHelper::index($betterRates, function ($element) {
-                //    return $element['origin_city'] . '-' . $element['destination_city'];
-                //});
-                $bestRatesByPrice = array_slice(ArrayHelper::index($betterRates, null, 'price'), 0, 3);
-                $bestRatesByOriginDestination = array_slice(ArrayHelper::index($betterRates, null, ['origin_city','destination_city']),0,3);
+                $bestRatesByPrice = array_slice(ArrayHelper::index($betterRates, null, function($rate) {
+                    return $rate->price . ' ' . $rate->currency;
+                }), 0, 3);
+                $bestRatesByOriginDestination = array_slice(ArrayHelper::index($betterRates, null, [
+                    function (Rate $rate) use ($request) {
+                        return $rate->getOriginCityName($request->getUserLanguage());
+                    },
+                    function (Rate $rate) use ($request) {
+                        return $rate->getDestinationCityName($request->getUserLanguage());
+                    }
+                ]),0,3);
 
                 $i = 0;
                 $bestPricesIndex = [];
@@ -186,9 +161,6 @@ class Mailing extends \yii\db\ActiveRecord
                     $bestPricesRates[] = array_slice($rates, 0, 3);
                     $i++;
                 }
-
-                //var_dump(ArrayHelper::toArray($bestPricesIndex));
-                //var_dump(ArrayHelper::toArray($bestPricesRates));
 
                 $i = 0;
                 $bestOriginsIndex = [];
@@ -318,18 +290,4 @@ class Mailing extends \yii\db\ActiveRecord
             ])->one();
     }
 
-    public function dumpArray(array $array)
-    {
-        echo PHP_EOL, '------', PHP_EOL;
-        foreach ($array as $index => $item) {
-            echo $index, ':', PHP_EOL;
-            if (is_array($item)) {
-                foreach ($item as $subindex => $subitem) {
-                    echo  "\t", $subindex, '=>', isset($subitem->price)? $subitem->price: 'no price', PHP_EOL;
-                }
-            } else {
-                echo "\t", isset($item->price)? $item->price: 'no price', PHP_EOL;
-            }
-        }
-    }
 }

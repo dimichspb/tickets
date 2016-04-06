@@ -241,7 +241,7 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param $languageCode
+     * @param Language $language
      * @return CityDesc
      */
     public function getCityDescByLanguage(Language $language)

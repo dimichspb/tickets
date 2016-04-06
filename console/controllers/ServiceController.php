@@ -143,19 +143,19 @@ class ServiceController extends Controller
         $today = new \DateTime();
         $mailingQueue = MailingQueue::getActive();
         foreach($mailingQueue as $mailingQueueItem) {
-            $log = ('Sending: ' . $mailingQueueItem->id . '...');
+            Console::stdout('Sending: ' . $mailingQueueItem->id . '...');
             if ($mailingQueueItem->send()) {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_SENT;
                 $mailingQueueItem->save();
-                $log .= ('Done!');
+                Console::stdout('Done!');
             } else {
                 $mailingQueueItem->processed_date = $today->format('Y-m-d H:i:s');
                 $mailingQueueItem->status = MailingQueue::STATUS_ERROR;
                 $mailingQueueItem->save();
-                $log .=('Error!');
+                Console::stdout('Error!');
             }
-            Console::stdout($log . PHP_EOL);
+            Console::stdout(PHP_EOL);
         }
     }
 /*

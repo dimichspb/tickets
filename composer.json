@@ -9,7 +9,7 @@
         "issues": "https://github.com/dimichspb/yii2-api-auth/issues?state=open",
         "source": "https://github.com/dimichspb/yii2-api-auth"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.6",

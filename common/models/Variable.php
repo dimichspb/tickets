@@ -179,21 +179,20 @@ class Variable extends \yii\db\ActiveRecord
 
         $matches = [];
 
-        $newText = '';
-
         while (preg_match_all($pattern, $text, $matches)) {
 
             foreach ($matches[1] as $index => $arrayName) {
                 if (isset($subTablesArray[$arrayName]) && is_array($subTablesArray[$arrayName])) {
+                    $newText = '';
                     foreach ($subTablesArray[$arrayName] as $subTable) {
-                        $i = isset($i)? $i + 1: 0;
+                        $i = isset($i)? $i + 1: 1;
                         $itemName = $matches[3][$index];
                         $newItemName = $itemName  . $i;
                         $subTablesArray[$newItemName] = $subTable;
                         $newText .= str_replace('$' . $itemName . '.', '$' . $newItemName . '.', $matches[4][$index]);
                     }
+                    $text = str_replace($matches[0][$index], $newText, $text);
                 }
-                $text = str_replace($matches[0][$index], $newText, $text);
             }
         }
         return $text;

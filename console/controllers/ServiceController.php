@@ -133,7 +133,7 @@ class ServiceController extends Controller
         Rate::process($requestId, $limit);
     }
 
-    public function actionMailing($requestId = null, $limit = 20)
+    public function actionMailing($requestId = null, $limit = 100)
     {
         Mailing::process($requestId, $limit);
     }

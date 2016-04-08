@@ -112,7 +112,7 @@ class Mailing extends \yii\db\ActiveRecord
         return Mailing::getActive()->all();
     }
 
-    public static function process()
+    public static function process($requestId = null, $limit = 1000)
     {
         $mailings = Mailing::getActiveArray();
 
@@ -121,7 +121,7 @@ class Mailing extends \yii\db\ActiveRecord
 
             switch ($mailing->code) {
                 case 'DRATE':
-                    $mailing->processDRate();
+                    $mailing->processDRate($requestId, $limit);
                     break;
                 default:
 
@@ -129,14 +129,18 @@ class Mailing extends \yii\db\ActiveRecord
         }
     }
 
-    private function processDRate()
+    private function processDRate($requestId = null, $limit = 1000)
     {
-        $requests = Request::getRequestsToMailArray();
+        if ($requestId) {
+            $requests = [Request::getRequestById($requestId)];
+        } else {
+            $requests = Request::getRequestsToMailArray();
+        }
 
         foreach ($requests as $request) {
             $log = ('request: ' . $request->id. '...');
 
-            $betterRates = $request->getBetterRates();
+            $betterRates = $request->getBetterRates($limit);
             if (count($betterRates)) {
                 $log .= ('better rates: ');
 

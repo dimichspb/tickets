@@ -24,7 +24,8 @@ use yii\db\Query;
  * @property string $travel_period_end
  * @property integer $status
  * @property integer $mailing_processed
- * @property integer $offset
+ * @property integer $route_offset
+ * @property integer $rate_offset
  *
  * @property Place $destination
  * @property Place $origin
@@ -374,11 +375,16 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param integer $limit
      * @return \yii\db\ActiveQuery
      */
-    public function getRates()
+    public function getRates($limit = null)
     {
-        return $this->hasMany(Rate::className(), ['route' => 'id'])->via('routes')->orderBy('price');
+        $result = $this->hasMany(Rate::className(), ['route' => 'id'])->via('routes')->orderBy('price');
+        if ($limit) {
+            $result->limit($limit)->offset($this->rate_offset);
+        }
+        return $result;
     }
 
     /*
@@ -406,19 +412,30 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param integer $limit
      * @return Rate[]
      */
-    public function getRatesAll()
+    public function getRatesAll($limit = null)
     {
-        return $this->getRates()->all();
+        $result = $this->getRates($limit)->all();
+
+        if (count($result) === 0) {
+            $this->rate_offset = 0;
+        } else {
+            $this->rate_offset = $this->rate_offset + count($result);
+        }
+        $this->update(false, ['rate_offset']);
+
+        return $result;
     }
 
     /**
+     * @param integer $limit
      * @return array
      */
-    public function getBetterRates()
+    public function getBetterRates($limit = 1000)
     {
-        $allRates = $this->getRatesAll();
+        $allRates = $this->getRatesAll($limit);
         Console::stdout('All rates: ' . count($allRates). PHP_EOL);
         $mailedRates = $this->getMailedRatesAll();
         Console::stdout('Mailed rates: ' . count($mailedRates). PHP_EOL);
@@ -429,7 +446,8 @@ class Request extends \yii\db\ActiveRecord
         });
 
         Console::stdout('Better rates: ' . count($betterRates). PHP_EOL);
-        return ArrayHelper::toArray($betterRates);
+
+        return $betterRates;
     }
 
     /**
@@ -504,7 +522,7 @@ class Request extends \yii\db\ActiveRecord
                 'travel_period.request' => $this->id,
             ])
             ->limit($limit)
-            ->offset($this->offset);
+            ->offset($this->route_offset);
 
         foreach ($query->all() as $row) {
             $originCity = City::getCityByCode($row['originCity']);
@@ -516,8 +534,8 @@ class Request extends \yii\db\ActiveRecord
             }
         }
 
-        $this->offset = $this->offset + $routesCreated;
-        $this->update(false, ['offset']);
+        $this->route_offset = $this->route_offset + $routesCreated;
+        $this->update(false, ['route_offset']);
         return $routesCreated;
     }
 

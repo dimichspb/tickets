@@ -166,13 +166,13 @@ class Rate extends \yii\db\ActiveRecord
      * @param $requestId
      * @param $limit
      */
-    public static function getRates($requestId, $limit)
+    public static function process($requestId, $limit = 1000)
     {
         Rate::setLimit($limit);
         if ($requestId) {
-            $routesToUpdate = Route::getRoutesWithOldRateByRequestId($requestId);
+            $routesToUpdate = Route::getRoutesWithOldRateByRequestId($requestId, $limit);
         } else {
-            $routesToUpdate = Route::getRoutesWithOldRate();
+            $routesToUpdate = Route::getRoutesWithOldRate($limit);
         }
 
         $activeRateService = ServiceType::directFlights();

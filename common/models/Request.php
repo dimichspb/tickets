@@ -380,10 +380,19 @@ class Request extends \yii\db\ActiveRecord
      */
     public function getRates($limit = null)
     {
-        $result = $this->hasMany(Rate::className(), ['route' => 'id'])->via('routes')->orderBy('price');
+        //$result = $this->hasMany(Rate::className(), ['route' => 'id'])->via('routes')->orderBy('price');
+
+        $result = Rate::find()
+            ->innerJoin('route', ['route.id' => new Expression('`rate`.`route`')])
+            ->innerJoin('request_to_route', ['request_to_route.route' => new Expression('`route`.`id`')])
+            ->innerJoin('request', ['request.id' => new Expression('`request_to_route`.`request`')])
+            ->where(['request.id' => $this->id]);
+
         if ($limit) {
             $result->limit($limit)->offset($this->rate_offset);
         }
+
+        //var_dump($result->createCommand()->rawSql);
         return $result;
     }
 
@@ -438,7 +447,7 @@ class Request extends \yii\db\ActiveRecord
         $mailedRates = $this->getMailedRatesAll($limit);
         Console::stdout('mailed rates: ' . count($mailedRates));
 
-        $allRates = $this->getRates(count($mailedRates))->offset(0)->orderBy('price')->all();
+        $allRates = $this->getRates(count($mailedRates)? count($mailedRates): $limit)->offset(0)->orderBy('price')->all();
 
         Console::stdout(', all rates: ' . count($allRates));
 

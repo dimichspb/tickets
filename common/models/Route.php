@@ -126,11 +126,17 @@ class Route extends \yii\db\ActiveRecord
     /**
      * Method returns Routes with not up-to-date Rate
      *
+     * @param integer $limit
      * @return array
      */
-    public static function getRoutesWithOldRate()
+    public static function getRoutesWithOldRate($limit = 100)
     {
-        $query = (Route::find()->select('`route`.*, count(`rate`.`id`) as `rates`')->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
+        $query = Route::find()
+            ->select('`route`.*, count(`rate`.`id`) as `rates`')
+            ->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')
+            ->groupBy('`route`.`id`')
+            ->limit($limit)
+            ->having('`rates` = 0');
 
         $result = $query->where(['route.status' => '0'])->all();
 
@@ -142,12 +148,19 @@ class Route extends \yii\db\ActiveRecord
     /**
      * Method return Routes by the specified $requestId and with not up-to-date Rate
      *
-     * @param $requestId
+     * @param integer $requestId
+     * @param integer $limit
      * @return array
      */
-    public static function getRoutesWithOldRateByRequestId($requestId)
+    public static function getRoutesWithOldRateByRequestId($requestId, $limit = 100)
     {
-        $query = (Route::find()->select('`route`.*, `request_to_route`.*, count(`rate`.`id`) as `rates`')->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')->groupBy('`route`.`id`')->having('`rates` = 0'));
+        $query = Route::find()
+            ->select('`route`.*, `request_to_route`.*, count(`rate`.`id`) as `rates`')
+            ->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)
+            ->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')
+            ->groupBy('`route`.`id`')
+            ->limit($limit)
+            ->having('`rates` = 0');
 
         $result = $query->where(['route.status' => '0'])->all();
 
@@ -206,6 +219,8 @@ class Route extends \yii\db\ActiveRecord
             $travelPeriodRange = NULL;
         }
 
+        $routesCreated = 0;
+
         foreach ($originCitiesList as $originCity) {
             foreach ($destinationCitiesList as $destinationCity) {
                 foreach ($thereDatesList as $thereDate) {
@@ -214,15 +229,18 @@ class Route extends \yii\db\ActiveRecord
                             $backDate = clone $thereDate;
                             $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
                             $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate, $backDate);
-                            $log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
+                            //$log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
+                            if ($route) $routesCreated++;
                         }
                     } else {
                         $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate);
-                        $log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
+                        //$log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
+                        if ($route) $routesCreated++;
                     }
                 }
             }
         }
+        $log .= $routesCreated . ' routes';
         Console::stdout($log . PHP_EOL);
     }
 
@@ -234,6 +252,7 @@ class Route extends \yii\db\ActiveRecord
      * @param City $destinationCity
      * @param \DateTime $thereDate
      * @param \DateTime|null $backDate
+     * @return Route
      */
     private static function createRoute(Request $request, City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
     {

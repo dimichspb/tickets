@@ -9,6 +9,7 @@ use common\models\Route;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Console;
 
 /**
  * This is the model class for table "request".
@@ -202,19 +203,22 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return Rate[]
+     * @return array
      */
     public function getBetterRates()
     {
         $allRates = $this->getRatesAll();
+        Console::stdout('All rates: ' . count($allRates). PHP_EOL);
         $mailedRates = $this->getMailedRatesAll();
+        Console::stdout('Mailed rates: ' . count($mailedRates). PHP_EOL);
         $mailedRatesMin = count($mailedRates)? min(ArrayHelper::map($mailedRates, 'id', 'price')): null;
 
         $betterRates = array_filter($allRates, function (Rate $rate) use ($mailedRatesMin) {
             return is_null($mailedRatesMin) || $rate->price < $mailedRatesMin;
         });
 
-        return $betterRates;
+        Console::stdout('Better rates: ' . count($betterRates). PHP_EOL);
+        return ArrayHelper::toArray($betterRates);
     }
 
     /**

@@ -131,7 +131,6 @@ class Mailing extends \yii\db\ActiveRecord
 
     private function processDRate()
     {
-        $today = new \DateTime();
         $requests = Request::getRequestsToMailArray();
 
         foreach ($requests as $request) {

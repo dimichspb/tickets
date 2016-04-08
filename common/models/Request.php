@@ -436,10 +436,11 @@ class Request extends \yii\db\ActiveRecord
     public function getBetterRates($limit = 1000)
     {
         $mailedRates = $this->getMailedRatesAll($limit);
-        Console::stdout('Mailed rates: ' . count($mailedRates). PHP_EOL);
+        Console::stdout('mailed rates: ' . count($mailedRates));
 
         $allRates = $this->getRates(count($mailedRates))->offset(0)->orderBy('price')->all();
-        Console::stdout('All rates: ' . count($allRates). PHP_EOL);
+
+        Console::stdout(', all rates: ' . count($allRates));
 
         $mailedRatesMin = count($mailedRates)? min(ArrayHelper::map($mailedRates, 'id', 'price')): null;
 
@@ -447,7 +448,7 @@ class Request extends \yii\db\ActiveRecord
             return is_null($mailedRatesMin) || $rate->price < $mailedRatesMin;
         });
 
-        Console::stdout('Better rates: ' . count($betterRates). PHP_EOL);
+        Console::stdout(', better rates: ' . count($betterRates). PHP_EOL);
 
         return $betterRates;
     }
@@ -458,7 +459,7 @@ class Request extends \yii\db\ActiveRecord
      */
     public function getMailedRates($limit = null)
     {
-        $result = $this->hasMany(Rate::className(), ['id' => 'rate'])->viaTable('request_mailing_rate', ['request' => 'id']);
+        $result = $this->hasMany(Rate::className(), ['id' => 'rate'])->viaTable('request_mailing_rate', ['request' => 'id'])->orderBy('price');
         if ($limit) {
             $result->limit($limit);
         }

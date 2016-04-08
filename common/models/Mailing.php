@@ -138,7 +138,8 @@ class Mailing extends \yii\db\ActiveRecord
         }
 
         foreach ($requests as $request) {
-            $log = ('request: ' . $request->id. '...');
+            $log = '';
+            Console::stdout('request: ' . $request->id. '...');
 
             $betterRates = $request->getBetterRates($limit);
             if (count($betterRates)) {

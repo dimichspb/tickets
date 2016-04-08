@@ -197,7 +197,7 @@ class City extends \yii\db\ActiveRecord
      * @param $cityData
      * @return bool
      */
-    private static function addCity($cityData)
+    private static function addCity(array $cityData)
     {
         $country = Country::getCountryByCode($cityData['country']);
 

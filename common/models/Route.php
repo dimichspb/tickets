@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Request;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
@@ -166,125 +167,6 @@ class Route extends \yii\db\ActiveRecord
 
         if (count($result) > 0) {
             return($result);
-        }
-    }
-
-    /**
-     * Method adds limited by $limit number of Routes of the specified $requestId
-     *
-     * @param $requestId
-     * @param $limit
-     */
-    public static function createRoutes($requestId, $limit)
-    {
-        Route::setLimit($limit);
-        if ($requestId) {
-            $requests = [Request::getRequestById($requestId)];
-        } else {
-            $requests = Request::getAllRequests();
-        }
-
-        foreach ($requests as $request) {
-            Route::createRoutesByRequest($request);
-        }
-    }
-
-    /**
-     * Method adds Routes of the particular $request
-     *
-     * @param Request $request
-     */
-    private static function createRoutesByRequest(Request $request)
-    {
-        $log = "Request: " . $request->id . '...';
-        $originPlace = Place::getPlaceById($request->origin);
-        $destinationPlace = Place::getPlaceById($request->destination);
-
-        $originCitiesList = $originPlace->getCities();
-        $destinationCitiesList = $destinationPlace->getCities();
-
-        $thereStartDateTime = new \DateTime($request->there_start_date);
-        $thereEndDateTime = new \DateTime($request->there_end_date);
-        $thereEndDateTime->add(new \DateInterval('P1D'));
-
-        $thereDatesList = new \DatePeriod(
-            $thereStartDateTime,
-            new \DateInterval('P1D'),
-            $thereEndDateTime
-        );
-
-        if ($request->travel_period_start && $request->travel_period_end) {
-            $travelPeriodRange = range($request->travel_period_start, $request->travel_period_end);
-        } else {
-            $travelPeriodRange = NULL;
-        }
-
-        $routesCreated = 0;
-
-        foreach ($originCitiesList as $originCity) {
-            foreach ($destinationCitiesList as $destinationCity) {
-                foreach ($thereDatesList as $thereDate) {
-                    if ($travelPeriodRange) {
-                        foreach ($travelPeriodRange as $traverPeriodItem) {
-                            $backDate = clone $thereDate;
-                            $backDate->add(new \DateInterval('P' . $traverPeriodItem . 'D'));
-                            $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate, $backDate);
-                            //$log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
-                            if ($route) $routesCreated++;
-                        }
-                    } else {
-                        $route = Route::createRoute($request, $originCity, $destinationCity, $thereDate);
-                        //$log .= ($route)? 'Route ' . $route->id . ', ': 'Error creating route, ';
-                        if ($route) $routesCreated++;
-                    }
-                }
-            }
-        }
-        $log .= $routesCreated . ' routes';
-        Console::stdout($log . PHP_EOL);
-    }
-
-    /**
-     * Method adds particular Route
-     *
-     * @param Request $request
-     * @param City $originCity
-     * @param City $destinationCity
-     * @param \DateTime $thereDate
-     * @param \DateTime|null $backDate
-     * @return Route
-     */
-    private static function createRoute(Request $request, City $originCity, City $destinationCity, \DateTime $thereDate, \DateTime $backDate = null)
-    {
-        if ($backDate) {
-            $route = Route::findOne([
-                'origin_city' => $originCity->code,
-                'destination_city' => $destinationCity->code,
-                'there_date' => $thereDate->format('Y-m-d H:i:s'),
-                'back_date' => $backDate->format('Y-m-d H:i:s'),
-            ]);
-        } else {
-            $route = Route::findOne([
-                'origin_city' => $originCity->code,
-                'destination_city' => $destinationCity->code,
-                'there_date' => $thereDate->format('Y-m-d H:i:s'),
-            ]);
-        }
-
-        if (!$route) {
-            Route::checkLimit();
-            $route = new Route();
-            $route->origin_city = $originCity->code;
-            $route->destination_city = $destinationCity->code;
-            $route->there_date = $thereDate->format('Y-m-d H:i:s');
-            $route->back_date = $backDate ? $backDate->format('Y-m-d H:i:s') : null;
-        }
-
-        if ($route->validate() && $route->save()) {
-            if (!$route->getRequests()->where(['id' => $request->id])->exists()) {
-                $route->link('requests', $request);
-            }
-            return $route;
         }
     }
 

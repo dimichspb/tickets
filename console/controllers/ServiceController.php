@@ -11,7 +11,7 @@ use common\models\Subregion;
 use common\models\Country;
 use common\models\City;
 use common\models\Airport;
-use common\models\Route;
+use common\models\Request;
 use common\models\Rate;
 use common\models\ServiceType;
 use common\models\Mailing;
@@ -119,7 +119,7 @@ class ServiceController extends Controller
      */
     public function actionRoutes($requestId = NULL, $limit = 1000)
     {
-        Route::createRoutes($requestId, $limit);
+        Request::process($requestId, $limit);
     }
 
     /**

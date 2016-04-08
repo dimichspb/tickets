@@ -11,7 +11,7 @@ class m160405_073207_adding_request_mailing_rate_table extends Migration
             'request' => $this->integer(11)->notNull(),
             'mailing_queue' => $this->integer(11)-> notNull(),
             'rate' => $this->integer(11)->notNull(),
-        ]);
+        ], "DEFAULT CHARSET=utf8");
 
         $this->addForeignKey('fk_request_mailing_rate_request_id', 'request_mailing_rate', 'request', 'request', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('fk_request_mailing_rate_mailing_id', 'request_mailing_rate', 'mailing_queue', 'mailing_queue', 'id', 'CASCADE', 'CASCADE');

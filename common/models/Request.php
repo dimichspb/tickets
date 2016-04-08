@@ -10,6 +10,7 @@ use yii\db\ActiveQuery;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
+use yii\db\Query;
 
 /**
  * This is the model class for table "request".
@@ -23,6 +24,7 @@ use yii\helpers\Console;
  * @property string $travel_period_end
  * @property integer $status
  * @property integer $mailing_processed
+ * @property integer $offset
  *
  * @property Place $destination
  * @property Place $origin
@@ -83,6 +85,14 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return Place
+     */
+    public function getDestinationOne()
+    {
+        return $this->getDestination()->one();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getOrigin()
@@ -91,11 +101,212 @@ class Request extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return Place
+     */
+    public function getOriginOne()
+    {
+        return $this->getOrigin()->one();
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestOriginCities()
+    {
+        return $this->hasMany(RequestOriginCity::className(), ['request' => 'id']);
+    }
+
+    /**
+     * @return RequestOriginCity[]
+     */
+    public function getRequestOriginCitiesAll()
+    {
+        return $this->getRequestOriginCities()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestOriginCitiesNew()
+    {
+        return $this->getRequestOriginCities()->where(['status' => RequestOriginCity::STATUS_NEW]);
+    }
+
+    /**
+     * @return RequestOriginCity[]
+     */
+    public function getRequestOriginCitiesNewAll()
+    {
+        return $this->getRequestOriginCitiesNew()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOriginCities()
+    {
+        return $this->hasMany(City::className(), ['code' => 'city'])->via('requestOriginCities');
+    }
+
+    /**
+     * @return City[]
+     */
+    public function getOriginCitiesAll()
+    {
+        return $this->getOriginCities()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOriginCitiesNew()
+    {
+        return $this->hasMany(City::className(), ['code' => 'city'])->via('requestOriginCitiesNew');
+    }
+
+    /**
+     * @return City[]
+     */
+    public function getOriginCitiesNewAll()
+    {
+        return $this->getOriginCitiesNew()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestDestinationCities()
+    {
+        return $this->hasMany(RequestDestinationCity::className(), ['request' => 'id']);
+    }
+
+    /**
+     * @return RequestDestinationCity[]
+     */
+    public function getRequestDestinationCitiesAll()
+    {
+        return $this->getRequestDestinationCities()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestDestinationCitiesNew()
+    {
+        return $this->getRequestDestinationCities()->where(['status' => RequestDestinationCity::STATUS_NEW]);
+    }
+
+    /**
+     * @return RequestDestinationCity[]
+     */
+    public function getRequestDestinationCitiesNewAll()
+    {
+        return $this->getRequestDestinationCitiesNew()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getDestinationCities()
+    {
+        return $this->hasMany(City::className(), ['code' => 'city'])->via('requestDestinationCities');
+    }
+
+    /**
+     * @return City[]
+     */
+    public function getDestinationCitiesAll()
+    {
+        return $this->getDestinationCities()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getDestinationCitiesNew()
+    {
+        return $this->hasMany(City::className(), ['code' => 'city'])->via('requestDestinationCitiesNew');
+    }
+
+    /**
+     * @return City[]
+     */
+    public function getDestinationCitiesNewAll()
+    {
+        return $this->getDestinationCitiesNew()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestThereDates()
+    {
+        return $this->hasMany(RequestThereDate::className(), ['request' => 'id']);
+    }
+
+    /**
+     * @return RequestThereDate[]
+     */
+    public function getRequestThereDatesAll()
+    {
+        return $this->getRequestThereDates()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestThereDatesNew()
+    {
+        return $this->getRequestThereDates()->where(['status' => RequestThereDate::STATUS_NEW]);
+    }
+
+    /**
+     * @return RequestThereDate[]
+     */
+    public function getRequestThereDatesNewAll()
+    {
+        return $this->getRequestThereDatesNew()->all();
+    }
+
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestTravelPeriods()
+    {
+        return $this->hasMany(RequestTravelPeriod::className(), ['request' => 'id']);
+    }
+
+    /**
+     * @return RequestTravelPeriod[]
+     */
+    public function getRequestTravelPeriodsAll()
+    {
+        return $this->getRequestTravelPeriods()->all();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRequestTravelPeriodsNew()
+    {
+        return $this->getRequestTravelPeriods()->where(['status' => RequestTravelPeriod::STATUS_NEW]);
+    }
+
+    /**
+     * @return RequestTravelPeriod[]
+     */
+    public function getRequestTravelPeriodsNewAll()
+    {
+        return $this->getRequestTravelPeriodsNew()->all();
     }
 
     /**
@@ -235,6 +446,176 @@ class Request extends \yii\db\ActiveRecord
     public function getMailedRatesAll()
     {
         return $this->getMailedRates()->all();
+    }
+
+
+    /**
+     * Method adds limited by $limit number of Routes of the specified $requestId
+     *
+     * @param $requestId
+     * @param $limit
+     */
+    public static function process($requestId, $limit = 1000)
+    {
+        if ($requestId) {
+            $requests = [Request::getRequestById($requestId)];
+        } else {
+            $requests = Request::getAllRequests();
+        }
+
+        foreach ($requests as $request) {
+            $request->createRoutes($limit);
+        }
+    }
+
+    public function createRoutes($limit = 1000)
+    {
+        $log = 'Request: ' . $this->id . '...';
+
+        $this->addSubTables();
+
+        $routesCreated = $this->createNewRoutes($limit);
+
+        $log .= $routesCreated . ' routes created/linked';
+        Console::stdout($log . PHP_EOL);
+    }
+
+    public function createNewRoutes($limit = 1000)
+    {
+        $routesCreated = 0;
+
+        $query = (new Query())
+            ->select([
+                'originCity' => 'origin_city.city',
+                'destinationCity' => 'destination_city.city',
+                'thereDate' => 'there_date.date',
+                'travelPeriod' => 'travel_period.period',
+            ])
+            ->from([
+                'origin_city' => 'request_origin_city',
+                'destination_city' => 'request_destination_city',
+                'there_date' => 'request_there_date',
+                'travel_period' => 'request_travel_period',
+            ])
+            ->where([
+                'origin_city.request' => $this->id,
+                'destination_city.request' => $this->id,
+                'there_date.request' => $this->id,
+                'travel_period.request' => $this->id,
+            ])
+            ->limit($limit)
+            ->offset($this->offset);
+
+        foreach ($query->all() as $row) {
+            $originCity = City::getCityByCode($row['originCity']);
+            $destinationCity = City::getCityByCode($row['destinationCity']);
+            $thereDate = new \DateTime($row['thereDate']);
+            $travelPeriod = $row['travelPeriod'];
+            if ($this->createRoute($originCity, $destinationCity, $thereDate, $travelPeriod)) {
+                $routesCreated++;
+            }
+        }
+
+        $this->offset = $this->offset + $routesCreated;
+        $this->update(false, ['offset']);
+        return $routesCreated;
+    }
+
+    public function createRoute(City $originCity, City $destinationCity, \DateTime $thereDate, $travelPeriod)
+    {
+        if ($travelPeriod) {
+            $backDate = new \DateTime($thereDate->format('Y-m-d H:i:s'));
+            $travelPeriod = new \DateInterval('P' . $travelPeriod . 'D');
+            $backDate->add($travelPeriod);
+        }
+
+        $route = Route::find()
+            ->where([
+                'origin_city' => $originCity->code,
+                'destination_city' => $destinationCity->code,
+                'there_date' => $thereDate->format('Y-m-d H:i:s'),
+                'back_date' => isset($backDate) ? $backDate->format('Y-m-d H:i:s') : null,
+            ])->one();
+
+        if (!$route) {
+            $route = new Route();
+            $route->origin_city = $originCity->code;
+            $route->destination_city = $destinationCity->code;
+            $route->there_date = $thereDate->format('Y-m-d H:i:s');
+            $route->back_date = isset($backDate) ? $backDate->format('Y-m-d H:i:s') : null;
+            if ($route->isNewRecord) {
+                $route->save();
+            }
+        }
+
+        if (!$route->getRequests()->where(['id' => $this->id])->exists()) {
+            $route->link('requests', $this);
+            return $route;
+        }
+    }
+
+    public function addSubTables()
+    {
+
+        $originCitiesList = $this->getOriginOne()->getCities();
+
+        foreach ($originCitiesList as $originCity) {
+            $requestOriginCity = RequestOriginCity::findOne(['request' => $this->id, 'city' => $originCity->code]);
+            if (!$requestOriginCity) {
+                $requestOriginCity = new RequestOriginCity();
+                $requestOriginCity->request = $this->id;
+                $requestOriginCity->city = $originCity->code;
+                $requestOriginCity->save();
+            }
+        }
+
+        $destinationCitiesList = $this->getDestinationOne()->getCities();
+
+        foreach ($destinationCitiesList as $destinationCity) {
+            $requestDestinationCity = RequestDestinationCity::findOne(['request' => $this->id, 'city' => $destinationCity->code]);
+            if (!$requestDestinationCity) {
+                $requestDestinationCity = new RequestDestinationCity();
+                $requestDestinationCity->request = $this->id;
+                $requestDestinationCity->city = $destinationCity->code;
+                $requestDestinationCity->save();
+            }
+        }
+
+        $thereStartDateTime = new \DateTime($this->there_start_date);
+        $thereEndDateTime = new \DateTime($this->there_end_date);
+        $thereEndDateTime->add(new \DateInterval('P1D'));
+
+        $thereDatesPeriod = new \DatePeriod(
+            $thereStartDateTime,
+            new \DateInterval('P1D'),
+            $thereEndDateTime
+        );
+
+        foreach ($thereDatesPeriod as $thereDate) {
+            $requestThereDate = RequestThereDate::findOne(['request' => $this->id, 'date' => $thereDate->format('Y-m-d H:i:s')]);
+            if (!$requestThereDate) {
+                $requestThereDate = new RequestThereDate();
+                $requestThereDate->request = $this->id;
+                $requestThereDate->date = $thereDate->format('Y-m-d H:i:s');
+                $requestThereDate->save();
+            }
+        }
+
+        if ($this->travel_period_start && $this->travel_period_end) {
+            $travelPeriodRange = range($this->travel_period_start, $this->travel_period_end);
+        } else {
+            $travelPeriodRange = [0];
+        }
+
+        foreach ($travelPeriodRange as $travelPeriod) {
+            $requestTravelPeriod = RequestTravelPeriod::findOne(['request' => $this->id, 'period' => $travelPeriod]);
+            if (!$requestTravelPeriod) {
+                $requestTravelPeriod = new RequestTravelPeriod();
+                $requestTravelPeriod->request = $this->id;
+                $requestTravelPeriod->period = $travelPeriod;
+                $requestTravelPeriod->save();
+            }
+        }
     }
 /*
     public function getRatesByCreateDate(\DateTime $dateTime)

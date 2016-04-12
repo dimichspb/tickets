@@ -585,7 +585,7 @@ class Request extends \yii\db\ActiveRecord
             }
         }
 
-        if (!$route->getRequests()->where(['id' => $this->id])->exists()) {
+        if (!$route->getRequests()->exists()) {
             $route->link('requests', $this);
             return $route;
         }

@@ -543,7 +543,9 @@ class Request extends \yii\db\ActiveRecord
             ->limit($limit)
             ->offset($this->route_offset);
 
-        var_dump(count($query->all()));
+        //var_dump(count($query->all()));
+
+        //var_dump(ArrayHelper::toArray($query->one()));
 
         foreach ($query->all() as $row) {
             $originCity = City::getCityByCode($row['originCity']);
@@ -555,7 +557,7 @@ class Request extends \yii\db\ActiveRecord
             }
         }
 
-        $this->route_offset = $this->route_offset + $routesCreated;
+        $this->route_offset = $this->route_offset + $limit;
         $this->update(false, ['route_offset']);
         return $routesCreated;
     }

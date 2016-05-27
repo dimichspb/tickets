@@ -152,7 +152,7 @@ class Server extends \yii\db\ActiveRecord
                 ->setPassword($this->getPassword());
         }
 
-        $logger = new \Swift_Plugins_Loggers_EchoLogger();
+        $logger = new \Swift_Plugins_Loggers_ArrayLogger();
         $mailer = \Swift_Mailer::newInstance($transport);
         $mailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($logger));
 

@@ -543,10 +543,6 @@ class Request extends \yii\db\ActiveRecord
             ->limit($limit)
             ->offset($this->route_offset);
 
-        //var_dump(count($query->all()));
-
-        //var_dump(ArrayHelper::toArray($query->one()));
-
         foreach ($query->all() as $row) {
             $originCity = City::getCityByCode($row['originCity']);
             $destinationCity = City::getCityByCode($row['destinationCity']);

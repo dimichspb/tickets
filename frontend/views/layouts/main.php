@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '<span class="glyphicon glyphicon-plane"></span>&nbsp;&nbsp;&nbsp;' . Yii::$app->name,
+        'brandLabel' => '<div class="row"><div class="col-xs-4"><span class="bt-logo"></span></div><div class="col-xs-8"><span class="bt-brand">' . Yii::$app->name . '</span></div></div>',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-default navbar-fixed-top',

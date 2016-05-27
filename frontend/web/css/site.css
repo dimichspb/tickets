@@ -96,3 +96,22 @@ a.desc:after {
 .margin-top-20 { margin-top: 2.0em; }
 .margin-top-25 { margin-top: 2.5em; }
 .margin-top-30 { margin-top: 3.0em; }
+
+.navbar-brand {
+    padding: 5px 5px 5px 5px;
+}
+
+.bt-logo {
+    background-image: url("/images/bt-logo128x128.png");
+    background-size: 100% 100%;
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+.bt-brand {
+    height: 40px;
+    display: block;
+    vertical-align: middle;
+    line-height: 40px;
+}

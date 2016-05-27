@@ -320,6 +320,7 @@ class User extends ActiveRecord implements IdentityInterface
             'link' => Html::a('BileTracker.ru', 'http://' . Yii::$app->params['frontend']['domain'] . '/login?auth_key=' . $this->auth_key),
         ]);
         return $mailingQueue->send();
+
     }
 
 }

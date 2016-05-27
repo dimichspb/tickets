@@ -261,7 +261,13 @@ class MailingQueue extends \yii\db\ActiveRecord
     {
         switch ($this->getServerType()->code) {
             case 'SMTP':
-                return $this->getServerOne()->sendSMTP($this);
+                if ($result = $this->getServerOne()->sendSMTP($this)) {
+                    $this->status = MailingQueue::STATUS_SENT;
+                } else {
+                    $this->status = MailingQueue::STATUS_ERROR;
+                    }
+                $this->save();
+                return $result;
                 break;
             default:
         }

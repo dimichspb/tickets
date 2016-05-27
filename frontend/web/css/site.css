@@ -117,9 +117,13 @@ a.desc:after {
 }
 
 .requests-grid-header {
-    font-size: 10px;
+    font-size: 14px;
 }
 
 .requests-grid-row {
-    font-size: 10px;
+    font-size: 14px;
+}
+
+.request-grid-container {
+    font-size: 14px;
 }

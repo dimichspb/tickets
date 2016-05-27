@@ -61,13 +61,16 @@ class TranslationController extends Controller {
             'Created by' => ['ru' => 'Кем добавлен'],
             'Origin place' => ['ru' => 'Место отправления'],
             'Destination place' => ['ru' => 'Место назначения'],
-            'There flight starts at' => ['ru' => 'Начальная дата вылета'],
-            'There flight ends at' => ['ru' => 'Конечная дата вылета'],
-            'Travel period from, days' => ['ru' => 'Период путешествия от, дней'],
-            'Travel period to, days' => ['ru' => 'Период путешествия до, дней'],
+            'Starts at' => ['ru' => 'Вылет с'],
+            'Ends at' => ['ru' => 'Вылет по'],
+            'From, days' => ['ru' => 'От, дней'],
+            'To, days' => ['ru' => 'До, дней'],
             'Request status' => ['ru' => 'Статус запроса'],
             'Mail sent status' => ['ru' => 'Сообщение отправлено'],
             'Currency' => ['ru' => 'Валюта'],
+
+            'Start request' => ['ru' => 'Возобновить'],
+            'Pause request' => ['ru' => 'Приостановить'],
 
         ];
     }

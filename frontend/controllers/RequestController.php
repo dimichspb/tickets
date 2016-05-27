@@ -140,8 +140,6 @@ class RequestController extends Controller
         $model = $this->findModel($id);
         $model->status = Request::STATUS_DELETED;
         $model->update(false, ['status']);
-        var_dump($model);
-        die();
         Yii::$app->session->addFlash('info', Yii::t('app', 'The request has been deleted'));
 
         return $this->redirect(['index']);

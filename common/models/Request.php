@@ -660,7 +660,7 @@ class Request extends \yii\db\ActiveRecord
     public function afterFind()
     {
         $today = new \DateTime();
-        if (strtotime($this->there_start_date) <= $today->getTimestamp() && strtotime($this->there_end_date) <= $today->getTimestamp()) {
+        if ($this->status != Request::STATUS_DELETED && strtotime($this->there_start_date) <= $today->getTimestamp() && strtotime($this->there_end_date) <= $today->getTimestamp()) {
             $this->status = Request::STATUS_OUTDATE;
             $this->update(false, ['status']);
         }

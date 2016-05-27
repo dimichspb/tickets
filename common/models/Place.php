@@ -29,10 +29,10 @@ class Place extends \yii\db\ActiveRecord
     {
         return [
             'id',
-            'name' => function (Place $model) {
-                $placeName = $model->getPlaceName();
-                return $placeName? $placeName: null;
-            },
+            //'name' => function (Place $model) {
+            //    $placeName = $model->getPlaceName();
+            //    return $placeName? $placeName: null;
+            //},
         ];
     }
 
@@ -377,9 +377,9 @@ class Place extends \yii\db\ActiveRecord
 
     }
 
-    public function getPlaceName()
+    public function getPlaceName(Language $language)
     {
-        $result = $this->getPlaceDescOne();
+        $result = $this->getPlaceDescOne($language);
 
         $name = isset($result->name)? $result->name: '';
         $city = isset($result->city)? ' (' .$result->city. ')': '';
@@ -514,17 +514,18 @@ class Place extends \yii\db\ActiveRecord
     }
 
 
-    private function getPlaceDescOne()
+    private function getPlaceDescOne(Language $language)
     {
-        return $this->getPlaceDesc()->one();
+        return $this->getPlaceDesc($language)->one();
     }
 
     /**
+     * @param $language Language
      * @return \yii\db\ActiveQuery
      */
-    public function getPlaceDesc()
+    public function getPlaceDesc(Language $language)
     {
-        $language = Language::getLanguageByRequestString();
+        //$language = Language::getLanguageByRequestString();
 
         if (isset($this->airport)) return $this->getAirportDescByLanguage($language);
         if (isset($this->city)) return $this->getCityDescByLanguage($language);

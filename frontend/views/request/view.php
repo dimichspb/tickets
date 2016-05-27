@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Request */
 
-$this->title = $model->getOriginOne()->getPlaceName() . ' - ' . $model->getDestinationOne()->getPlaceName();
+$this->title = $model->getOriginPlaceName() . ' - ' . $model->getDestinationPlaceName();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'My requests'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -22,11 +22,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attributes' => [
                     [
                         'attribute' => 'origin',
-                        'value' => $model->getOriginOne()->getPlaceName(),
+                        'value' => $model->getOriginPlaceName(),
                     ],
                     [
                         'attribute' => 'destination',
-                        'value' => $model->getDestinationOne()->getPlaceName(),
+                        'value' => $model->getDestinationPlaceName(),
                     ],
                     [
                         'attribute' => 'status',

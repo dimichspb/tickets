@@ -705,7 +705,22 @@ class Request extends \yii\db\ActiveRecord
 
     public function getOriginPlaceName()
     {
-        return $this->getOriginOne()->id;
+        if(is_a(Yii::$app,'yii\web\Application')) {
+            $language = Language::getLanguageByCode(Yii::$app->language);
+        } else {
+            $language = $this->getUserLanguage();
+        }
+        return $this->getOriginOne()->getPlaceName($language);
+    }
+
+    public function getDestinationPlaceName()
+    {
+        if(is_a(Yii::$app,'yii\web\Application')) {
+            $language = Language::getLanguageByCode(Yii::$app->language);
+        } else {
+            $language = $this->getUserLanguage();
+        }
+        return $this->getDestinationOne()->getPlaceName($language);
     }
 
     /*

@@ -47,6 +47,7 @@ class RequestSearch extends Request
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_date'=>SORT_DESC]],
         ]);
 
         $this->load($params);

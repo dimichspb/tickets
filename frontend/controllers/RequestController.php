@@ -35,7 +35,7 @@ class RequestController extends Controller
                 ],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'start', 'pause'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

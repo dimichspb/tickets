@@ -131,7 +131,7 @@ class RequestController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Request::find()->where(['id' => $id, 'user' => Yii::$app->user->identity->getId()])) !== null) {
+        if (($model = Request::find()->where(['id' => $id, 'user' => Yii::$app->user->identity->getId()])->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

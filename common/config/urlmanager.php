@@ -15,6 +15,9 @@ return [
 		        'request' => 'site/request',
 				'<lang:[\w\-]{2}>' => 'site/lang',
 
+				'requests' => 'request/index',
+				'request/<id:\d+>' => 'request/view',
+
                 '<_c:[\w\-]+>/<_a:[\w\-]+>' => '<_c>/<_a>',
                 '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',
                 '<_c:[\w\-]+>' => '<_c>/index',
@@ -24,3 +27,4 @@ return [
         ],
     ],
 ];
+

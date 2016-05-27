@@ -30,18 +30,6 @@ return [
                 ],
             ],
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-                'requests' => 'request/index',
-                'request/<id:\d+>' => 'request/view',
-
-                '<_c:[\w\-]+>/<_a:[\w\-]+>' => '<_c>/<_a>',
-                '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',
-                '<_c:[\w\-]+>' => '<_c>/index',
-                '<_c:[\w\-]+>/<_a:[\w\-]+>/<id:\d+>' => '<_c>/<_a>',        ],
-        ],
     ],
     'modules' => [
         'datecontrol' =>  [

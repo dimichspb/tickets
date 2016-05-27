@@ -308,7 +308,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $mailing = Mailing::getMailingByCode('SGNUP');
         $mailingQueue = $mailing->addToQueue($this, [
-            'link' => Html::a('TicketTracker.com', 'http://' . Yii::$app->params['frontend']['domain']),
+            'link' => Html::a('BileTracker.ru', 'http://' . Yii::$app->params['frontend']['domain']),
         ]);
         return $mailingQueue->send();
     }
@@ -317,7 +317,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $mailing = Mailing::getMailingByCode('LOGIN');
         $mailingQueue = $mailing->addToQueue($this, [
-            'link' => Html::a('TicketTracker.com', 'http://' . Yii::$app->params['frontend']['domain'] . '/login?auth_key=' . $this->auth_key),
+            'link' => Html::a('BileTracker.ru', 'http://' . Yii::$app->params['frontend']['domain'] . '/login?auth_key=' . $this->auth_key),
         ]);
         return $mailingQueue->send();
     }

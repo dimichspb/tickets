@@ -28,7 +28,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'destination',
                         'value' => $model->getDestinationOne()->getPlaceName(),
                     ],
-                    'status',
+                    [
+                        'attribute' => 'status',
+                        'format' => 'raw',
+                        'value' => $model->getStatusBadge(),
+                    ],
                     'currency',
                 ],
             ]) ?>

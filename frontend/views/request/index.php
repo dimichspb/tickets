@@ -42,7 +42,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'travel_period_start',
             'travel_period_end',
             'currency',
-            'status',
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function (Request $model) {
+                    return $model->getStatusBadge();
+                }
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {pause} {delete}',

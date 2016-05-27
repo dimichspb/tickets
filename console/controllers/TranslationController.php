@@ -65,8 +65,8 @@ class TranslationController extends Controller {
             'Ends at' => ['ru' => 'Вылет по'],
             'From, days' => ['ru' => 'От, дней'],
             'To, days' => ['ru' => 'До, дней'],
-            'Request status' => ['ru' => 'Статус запроса'],
-            'Mail sent status' => ['ru' => 'Сообщение отправлено'],
+            'Status' => ['ru' => 'Статус'],
+            'Mail sent' => ['ru' => 'Сообщение отправлено'],
             'Currency' => ['ru' => 'Валюта'],
 
             'Start request' => ['ru' => 'Возобновить'],
@@ -75,6 +75,13 @@ class TranslationController extends Controller {
             'The request has been deleted' => ['ru' => 'Запрос был удален'],
             'The request has been paused'  => ['ru' => 'Запрос был приостановлен'],
             'The request has been started' => ['ru' => 'Запрос был возобновлен'],
+
+            'Active' => ['ru' => 'Активен'],
+            'Inactive' => ['ru' => 'Приостановлен'],
+            'Deleted' => ['ru' => 'Удален'],
+            'Outdated' => ['ru' => 'Просрочен'],
+
+            'Wrong status' => ['ru' => 'Неверный статус'],
 
         ];
     }

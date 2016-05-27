@@ -26,13 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'origin',
                 'value' => function (Request $model) {
-                    return $model->origin->getPlaceName();
+                    return $model->getOriginOne()->getPlaceName();
                 },
             ],
             [
                 'attribute' => 'destination',
                 'value' => function (Request $model) {
-                    return $model->destination->getPlaceName();
+                    return $model->getDestinationOne()->getPlaceName();
                 },
             ],
             'there_start_date:date',

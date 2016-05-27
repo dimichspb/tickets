@@ -381,8 +381,8 @@ class Place extends \yii\db\ActiveRecord
     {
         $result = $this->getPlaceDescOne();
 
-        $name = isset($result->name)? $result->name: null;
-        $city = isset($result->city)? ' (' .$result->city. ')': null;
+        $name = isset($result->name)? $result->name: '';
+        $city = isset($result->city)? ' (' .$result->city. ')': '';
 
         return $name . $city;
     }

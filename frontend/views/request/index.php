@@ -56,10 +56,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'pause' => function ($url, $model, $key) {
                         switch ($model->status) {
                             case Request::STATUS_INACTIVE:
-                                return Html::a('<i class="glyphicon glyphicon-play"></i>', ['request/start'], ['title' => Yii::t('app', 'Start request')]);
+                                return Html::a('<i class="glyphicon glyphicon-play"></i>', ['request/start', 'id' => $model->id], ['title' => Yii::t('app', 'Start request')]);
                                 break;
                             case Request::STATUS_ACTIVE:
-                                return Html::a('<i class="glyphicon glyphicon-pause"></i>', ['request/pause'], ['title' => Yii::t('app', 'Pause request')]);
+                                return Html::a('<i class="glyphicon glyphicon-pause"></i>', ['request/pause', 'id' => $model->id], ['title' => Yii::t('app', 'Pause request')]);
                                 break;
                             default:
                                 return '';

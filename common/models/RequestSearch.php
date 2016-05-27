@@ -41,7 +41,7 @@ class RequestSearch extends Request
      */
     public function search($params)
     {
-        $query = Request::find()->where(['user' => Yii::$app->user->identity->getId()]);
+        $query = Request::find()->where(['user' => Yii::$app->user->identity->getId()])->andFilterWhere(['<>', 'status', Request::STATUS_DELETED]);
 
         // add conditions that should always apply here
 

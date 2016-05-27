@@ -152,7 +152,9 @@ class Server extends \yii\db\ActiveRecord
                 ->setPassword($this->getPassword());
         }
 
+        $logger = new \Swift_Plugins_Loggers_EchoLogger();
         $mailer = \Swift_Mailer::newInstance($transport);
+        $mailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($logger));
 
         $message = \Swift_Message::newInstance($mailingQueue->getSubject())
             ->setFrom([
@@ -163,12 +165,12 @@ class Server extends \yii\db\ActiveRecord
             ])
             ->setBody($mailingQueue->getBody(), 'text/html');
 
-        try {
-            //var_dump($message->getBody());
-            $result = $mailer->send($message);
-            MailingQueueLog::log($mailingQueue, ('Success, result: ') . ($result? 'true': 'false'));
-        } catch (\Swift_TransportException $e) {
-            MailingQueueLog::log($mailingQueue, $e->getMessage());
+        $result = $mailer->send($message);
+
+        if ($result) {
+            MailingQueueLog::log($mailingQueue, 'Success, result: true');
+        } else {
+            MailingQueueLog::log($mailingQueue, $logger->dump());
         }
 
         return isset($result)? $result: false;

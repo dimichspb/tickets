@@ -29,10 +29,10 @@ class Place extends \yii\db\ActiveRecord
     {
         return [
             'id',
-            //'name' => function (Place $model) {
-            //    $placeName = $model->getPlaceName();
-            //    return $placeName? $placeName: null;
-            //},
+            'name' => function (Place $model) {
+                $placeName = $model->getPlaceName();
+                return $placeName? $placeName: null;
+            },
         ];
     }
 
@@ -377,8 +377,11 @@ class Place extends \yii\db\ActiveRecord
 
     }
 
-    public function getPlaceName(Language $language)
+    public function getPlaceName(Language $language = null)
     {
+        if (is_null($language)) {
+            $language = Language::getLanguageByRequestString();
+        }
         $result = $this->getPlaceDescOne($language);
 
         $name = isset($result->name)? $result->name: '';

@@ -705,7 +705,7 @@ class Request extends \yii\db\ActiveRecord
 
     public function getOriginPlaceName()
     {
-        return $this->getOriginOne()->getPlaceName();
+        return $this->getOriginOne()->id;
     }
 
     /*

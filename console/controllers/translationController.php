@@ -8,6 +8,7 @@ use yii\db\Migration;
 class TranslationController extends Controller {
     public function actionUp()
     {
+        $this->actionDown();
         $this->addMessages('app', $this->getTranslations());
     }
 
@@ -54,6 +55,20 @@ class TranslationController extends Controller {
             'Please signup or login before request to let me know where to send search results' => ['ru' => 'Пожалуйста, зарегистрируйтесь или авторизуйтесь, чтобы я мог отправить результаты поиска'],
             'The authorization email has been sent' => ['ru' => 'Сообщение для авторизации отправлено'],
             'Could not find user with specified email' => ['ru' => 'Не могу найти пользователя с этим адресом'],
+
+            'My requests' => ['ru' => 'Мои запросы'],
+            'Created at' => ['ru' => 'Когда добавлен'],
+            'Created by' => ['ru' => 'Кем добавлен'],
+            'Origin place' => ['ru' => 'Место отправления'],
+            'Destination place' => ['ru' => 'Место назначения'],
+            'There flight starts at' => ['ru' => 'Начальная дата вылета'],
+            'There flight ends at' => ['ru' => 'Конечная дата вылета'],
+            'Travel period from, days' => ['ru' => 'Период путешествия от, дней'],
+            'Travel period to, days' => ['ru' => 'Период путешествия до, дней'],
+            'Request status' => ['ru' => 'Статус запроса'],
+            'Mail sent status' => ['ru' => 'Сообщение отправлено'],
+            'Currency' => ['ru' => 'Валюта'],
+
         ];
     }
 

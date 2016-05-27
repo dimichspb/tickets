@@ -261,10 +261,13 @@ class MailingQueue extends \yii\db\ActiveRecord
     {
         switch ($this->getServerType()->code) {
             case 'SMTP':
+                $today = new \DateTime();
                 if ($result = $this->getServerOne()->sendSMTP($this)) {
                     $this->status = MailingQueue::STATUS_SENT;
+                    $this->processed_date = $today->format('Y-m-d H:i:s');
                 } else {
                     $this->status = MailingQueue::STATUS_ERROR;
+                    $this->processed_date = $today->format('Y-m-d H:i:s');
                     }
                 $this->save();
                 return $result;

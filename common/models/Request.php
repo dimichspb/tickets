@@ -65,16 +65,17 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'create_date' => 'Create Date',
-            'user' => 'User',
-            'origin' => 'Origin',
-            'destination' => 'Destination',
-            'there_start_date' => 'There Start Date',
-            'there_end_date' => 'There End Date',
-            'travel_period_start' => 'Travel period start',
-            'travel_period_end' => 'Travel period end',
-            'status' => 'Status',
-            'mailing_processed' => 'Processed for mailing',
+            'create_date' => Yii::t('app', 'Created at'),
+            'user' => Yii::t('app', 'Created by'),
+            'origin' => Yii::t('app', 'Origin place'),
+            'destination' => Yii::t('app', 'Destination place'),
+            'there_start_date' => Yii::t('app', 'There flight starts at'),
+            'there_end_date' => Yii::t('app', 'There flight ends at'),
+            'travel_period_start' => Yii::t('app', 'Travel period from, days'),
+            'travel_period_end' => Yii::t('app', 'Travel period to, days'),
+            'status' => Yii::t('app', 'Request status'),
+            'mailing_processed' => Yii::t('app', 'Mail sent status'),
+            'currency' => Yii::t('app', 'Currency'),
         ];
     }
 

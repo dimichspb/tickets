@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="request-view">
 
     <h2><?= Html::encode($this->title) ?></h2>
+    <hr>
 
     <div class="row">
         <div class="col-md-6">

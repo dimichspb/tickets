@@ -15,10 +15,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="request-index">
 
     <h2><?= Html::encode($this->title) ?></h2>
+    <hr>
 
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         //'filterModel' => $searchModel,
+        'summary' => false,
         'options' => ['class' => 'request-grid-container'],
         'headerRowOptions' => ['class' => 'requests-grid-header'],
         'rowOptions' => ['class' => 'requests-grid-row'],

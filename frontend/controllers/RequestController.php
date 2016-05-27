@@ -109,6 +109,26 @@ class RequestController extends Controller
         }
     }
 
+    public function actionPause($id)
+    {
+        $model = $this->findModel($id);
+        $model->status = Request::STATUS_INACTIVE;
+        $model->update(false, ['status']);
+        Yii::$app->session->addFlash('info', Yii::t('app', 'The request has been paused'));
+
+        return $this->redirect(['index']);
+    }
+
+    public function actionStart($id)
+    {
+        $model = $this->findModel($id);
+        $model->status = Request::STATUS_ACTIVE;
+        $model->update(false, ['status']);
+        Yii::$app->session->addFlash('info', Yii::t('app', 'The request has been started'));
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * Deletes an existing Request model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -117,7 +137,10 @@ class RequestController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->status = Request::STATUS_DELETED;
+        $model->update(false, ['status']);
+        Yii::$app->session->addFlash('info', Yii::t('app', 'The request has been deleted'));
 
         return $this->redirect(['index']);
     }
@@ -131,7 +154,7 @@ class RequestController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Request::find()->where(['id' => $id, 'user' => Yii::$app->user->identity->getId()])->one()) !== null) {
+        if (($model = Request::find()->where(['id' => $id, 'user' => Yii::$app->user->identity->getId()])->andWhere(['<>', 'status', Request::STATUS_DELETED])->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -6,44 +6,42 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Request */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Requests', 'url' => ['index']];
+$this->title = $model->getOriginOne()->getPlaceName() . ' - ' . $model->getDestinationOne()->getPlaceName();
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'My requests'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="request-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h2><?= Html::encode($this->title) ?></h2>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'create_date',
-            'user',
-            'origin',
-            'destination',
-            'there_start_date',
-            'there_end_date',
-            'travel_period_start',
-            'travel_period_end',
-            'status',
-            'currency',
-            'email:email',
-            'mailing_processed',
-            'route_offset',
-            'rate_offset',
-        ],
-    ]) ?>
-
+    <div class="row">
+        <div class="col-md-6">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    [
+                        'attribute' => 'origin',
+                        'value' => $model->getOriginOne()->getPlaceName(),
+                    ],
+                    [
+                        'attribute' => 'destination',
+                        'value' => $model->getDestinationOne()->getPlaceName(),
+                    ],
+                    'status',
+                    'currency',
+                ],
+            ]) ?>
+        </div>
+        <div class="col-md-6">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'there_start_date:date',
+                    'there_end_date:date',
+                    'travel_period_start',
+                    'travel_period_end',
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>

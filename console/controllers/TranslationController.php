@@ -72,6 +72,10 @@ class TranslationController extends Controller {
             'Start request' => ['ru' => 'Возобновить'],
             'Pause request' => ['ru' => 'Приостановить'],
 
+            'The request has been deleted' => ['ru' => 'Запрос был удален'],
+            'The request has been paused'  => ['ru' => 'Запрос был приостановлен'],
+            'The request has been started' => ['ru' => 'Запрос был возобновлен'],
+
         ];
     }
 

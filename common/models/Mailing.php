@@ -180,7 +180,7 @@ class Mailing extends \yii\db\ActiveRecord
                 }
 
                 $mailingQueue = $this->addToQueue(User::getUserById($request->user), [
-                    'originPlace' => $request->getStatusName(),
+                    'originPlace' => $request->getOriginPlaceName(),
                     //'originPlace' => $request->getOriginOne()->getPlaceName(),
                     //'destinationPlace' => $request->getDestinationOne()->getPlaceName(),
                     //'thereDates' => Yii::$app->formatter->format($request->there_start_date, 'date') . ' - ' . Yii::$app->formatter->format($request->there_end_date, 'date'),

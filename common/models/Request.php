@@ -703,6 +703,11 @@ class Request extends \yii\db\ActiveRecord
         return '<span class="label ' . $statusBadgeClass . '">' . $this->getStatusName() . '</span>';
     }
 
+    public function getOriginPlaceName()
+    {
+        return $this->getOriginOne()->getPlaceName();
+    }
+
     /*
         public function getRatesByCreateDate(\DateTime $dateTime)
         {

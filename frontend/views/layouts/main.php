@@ -28,8 +28,10 @@ $this->registerJs('$(".bg").interactive_bg({
 $this->registerJs('
 $(window).resize(function() {
       $(".bg > .ibg-bg").css({
-        width: $(window).outerWidth(),
-        height: $(window).outerHeight()
+        width: $(window).outerWidth() + 100,
+        height: $(window).outerHeight() + 100,
+        left: "-50px",
+        top: "-50px"
       })
    })
 ');

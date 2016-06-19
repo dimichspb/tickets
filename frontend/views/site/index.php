@@ -13,10 +13,13 @@ $this->title = Yii::$app->name;
 <div class="site-index">
 
     <div class="body-content text-center">
-        <h1><?= Yii::t('app', 'Congratulations!'); ?></h1>
+        <div class="row">
+            <div class="col-xs-12">
+                <h1><?= Yii::t('app', 'Congratulations!'); ?></h1>
 
-        <p class="lead"><?= Yii::t('app', 'You are in one step to get the best air fares!'); ?></p>
-
+                <p class="lead"><?= Yii::t('app', 'You are in one step to get the best air fares!'); ?></p>
+            </div>
+        </div>
         <?php $form = ActiveForm::begin(['id' => 'form-request']); ?>
 
         <div class="row">

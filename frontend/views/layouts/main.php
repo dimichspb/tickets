@@ -12,6 +12,27 @@ use common\widgets\Alert;
 use common\models\Language;
 
 AppAsset::register($this);
+
+
+
+$this->registerJsFile('@web/js/jquery.interactive_bg.js', ['depends' => 'yii\web\JqueryAsset']);
+
+$this->registerJs('$(".bg").interactive_bg({
+    strength: 25,
+    scale: 1.005,
+    animationSpeed: "100ms",
+    contain: true,
+    wrapContent: false,
+});');
+
+$this->registerJs('
+$(window).resize(function() {
+      $(".bg > .ibg-bg").css({
+        width: $(window).outerWidth(),
+        height: $(window).outerHeight()
+      })
+   })
+');
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -26,7 +47,7 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
+<div class="wrap bg" data-ibg-bg="/images/bg.jpg">
     <?php
     NavBar::begin([
         'brandLabel' => '<div class="row"><div class="col-xs-4"><span class="bt-logo"></span></div><div class="col-xs-8"><span class="bt-brand">' . Yii::$app->name . '</span></div></div>',

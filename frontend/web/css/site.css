@@ -127,3 +127,32 @@ a.desc:after {
 .request-grid-container {
     font-size: 14px;
 }
+
+.bg {
+    background-image: url(/images/bg.jpg);
+    background-size: 100% 100%;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+}
+
+.nav-top, .header, .menu {
+    position: relative;
+}
+.header {
+    color: white;
+}
+.ibg-bg {
+    position: absolute;
+}
+
+.body-content {
+    color: white;
+}
+.navbar {
+    background-color: white;
+    background: white;
+    border-color: white;
+    opacity: 0.9
+}

@@ -13,9 +13,11 @@ $this->title = Yii::t('app', 'My requests');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="request-index">
+    <div class="row">
+        <div class="col-xs-12">
 
-    <h2><?= Html::encode($this->title) ?></h2>
-    <hr>
+            <h2><?= Html::encode($this->title) ?></h2>
+            <hr>
 
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -69,4 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-<?php Pjax::end(); ?></div>
+<?php Pjax::end(); ?>
+        </div>
+    </div>
+</div>

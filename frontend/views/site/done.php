@@ -12,12 +12,14 @@ $this->title = Yii::t('app', 'Well done!');
 ?>
 <div class="site-done">
     <div class="body-content text-center">
-        <h1><?= Html::encode($this->title) ?></h1>
+        <div class="row">
+            <div class="col-xs-12">
+                <h1><?= Html::encode($this->title) ?></h1>
 
-        <p class="lead"><?= Yii::t('app', 'Relax while I\'m doing my work!')?></p>
+                <p class="lead"><?= Yii::t('app', 'Relax while I\'m doing my work!')?></p>
 
-        <?= Html::a(Yii::t('app', 'New request'), ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
-
+                <?= Html::a(Yii::t('app', 'New request'), ['site/index'], ['class'=>'btn btn-lg btn-primary']); ?>
+            </div>
+        </div>
     </div>
-
 </div>

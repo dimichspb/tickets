@@ -80,11 +80,9 @@ $this->title = Yii::$app->name;
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <?php
-                $layout = <<< HTML
+                $layout = '
                     <span class="input-group-addon kv-date-calendar hidden-xs" title="Select date"><i class="glyphicon glyphicon-calendar"></i></span>
-                    {remove}
-                    {input}
-HTML;
+                    {input}';
 
                 echo FieldRange::widget([
                     'form' => $form,
@@ -92,11 +90,12 @@ HTML;
                     'label' => Yii::t('app', 'Flight dates range'),
                     'attribute1' => 'there_start_date',
                     'attribute2' => 'there_end_date',
+                    'separator' => ' - ',
                     'type' => FieldRange::INPUT_WIDGET,
                     'widgetClass' => DateControl::className(),
                     'widgetOptions1' => [
                         'saveFormat'=>'php:Y-m-d',
-                        'displayFormat' => 'php:Y-m-d',
+                        'displayFormat' => 'php:d.m.Y',
                         'options'=>[
                             'pluginOptions' => ['autoclose' => true,],
                             'layout' => $layout,
@@ -104,7 +103,7 @@ HTML;
                     ],
                     'widgetOptions2' => [
                         'saveFormat'=>'php:Y-m-d',
-                        'displayFormat' => 'php:Y-m-d',
+                        'displayFormat' => 'php:d.m.Y',
                         'options'=>[
                             'pluginOptions' => ['autoclose' => true,],
                             'layout' => $layout,
@@ -120,6 +119,7 @@ HTML;
                     'label' => Yii::t('app', 'Travel period range'),
                     'attribute1' => 'travel_period_start',
                     'attribute2' => 'travel_period_end',
+                    'separator' => ' - ',
                     'type' => FieldRange::INPUT_SPIN,
                 ])
                 ?>

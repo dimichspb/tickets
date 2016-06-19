@@ -18,7 +18,7 @@
   var defaults = {
     strength: 25,
     scale: 1.05,
-    animationSpeed: "100ms",
+    animationSpeed: "1000ms",
     contain: true,
     wrapContent: false
   };  
@@ -52,14 +52,16 @@
       
       if (el.data("ibg-bg") !== undefined) {
         el.find("> .ibg-bg").css({
-          background: "url('" + el.data("ibg-bg") + "') no-repeat center center",
+          "background": "url('" + el.data("ibg-bg") + "') no-repeat center center",
           "background-size": "cover",
         });
       }
       
       el.find("> .ibg-bg").css({
-        width: w,
-        height: h
+        width: w+100,
+        height: h+100,
+        left: "-50px",
+        top: "-50px"
       })
       
      

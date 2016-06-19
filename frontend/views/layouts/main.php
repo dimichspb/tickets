@@ -80,8 +80,11 @@ $(window).resize(function() {
     ?>
 
     <div class="container">
-
-        <?= Alert::widget() ?>
+        <div class="row">
+            <div class="col-xs-12">
+                <?= Alert::widget() ?>
+            </div>
+        </div>
         <?= $content ?>
     </div>
 </div>

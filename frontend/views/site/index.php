@@ -26,6 +26,7 @@ $this->title = Yii::$app->name;
             <div class="col-md-6 col-sm-12">
                 <?php echo '<label class="control-label">'.Yii::t('app', 'Origin').'</label>'; ?>
                 <?= Typeahead::widget([
+                        'id' => 'origin-input',
                         'name' => 'origin_text',
                         'options' => [
                             'placeholder' => Yii::t('app', 'Where are you from ...'),

@@ -1,5 +1,6 @@
 function useriata(json) {
     console.log(json);
+    $("#origin-input").val(json.iata);
 }
 
 $(document).ready(function() {
@@ -7,11 +8,11 @@ $(document).ready(function() {
     var apiUrl = "http://www.travelpayouts.com/whereami";
     var locale = "ru";
     var callback = "useriata";
-    var userIP = "145.255.238.136";
+    //var userIP = "145.255.238.136";
     var query = {
         'locale': locale,
         'callback': callback,
-        'ip': userIP,
+        //'ip': userIP,
     };
     $.ajax({
         type:"GET",

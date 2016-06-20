@@ -1,6 +1,6 @@
 function useriata(json) {
     console.log(json);
-    $("#origin-input").val(json.iata);
+    $("#origin-input").typeahead('val',json.name)
 }
 
 $(document).ready(function() {

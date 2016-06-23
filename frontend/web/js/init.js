@@ -1,6 +1,7 @@
 function useriata(json) {
     console.log(json);
-    $("#origin-input").typeahead('val',json.name)
+    $("#origin-input").typeahead('val',json.name);
+    $("#origin-input").trigger('typeahead:select');
 }
 
 $(document).ready(function() {

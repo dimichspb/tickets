@@ -35,7 +35,7 @@ $this->title = Yii::$app->name;
                             'highlight' => true,
                         ],
                         'pluginEvents' => [
-                            'typeahead:select' => 'function(data, item) {document.getElementById("request-origin").value = item.id; }',
+                            'typeahead:change' => 'function(data, item) {document.getElementById("request-origin").value = item.id; }',
                         ],
                         'scrollable' => true,
                         'dataset' => [
@@ -63,7 +63,7 @@ $this->title = Yii::$app->name;
                             'highlight' => true,
                         ],
                         'pluginEvents' => [
-                            'typeahead:select' => 'function(data, item) {document.getElementById("request-destination").value = item.id; }',
+                            'typeahead:change' => 'function(data, item) {document.getElementById("request-destination").value = item.id; }',
                         ],
                         'scrollable' => true,
                         'dataset' => [

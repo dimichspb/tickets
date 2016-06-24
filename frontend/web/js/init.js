@@ -1,8 +1,7 @@
 $(document).ready(function() {
 
     var apiUrl1 = "http://www.travelpayouts.com/whereami";
-    var responseData = '';
-
+    var apiUrl2 = "http://api.biletracker.com/v1/locations";
 
     $.ajax({
         url: apiUrl1,
@@ -10,19 +9,15 @@ $(document).ready(function() {
         dataType: "json",
         success: function (data) {
             console.log(data)
-            responseData = data;
-        }
-    });
-
-    var apiUrl2 = "http://api.biletracker.com/v1/locations";
-
-    $.ajax({
-        url: apiUrl2,
-        data: responseData,
-        dataType: "json",
-        success: function (data) {
-            console.log(data)
-            $("#origin-input").typeahead('val',data.name);
+            $.ajax({
+                url: apiUrl2,
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    $("#origin-input").typeahead('val',data.name);
+                }
+            });
         }
     });
 });

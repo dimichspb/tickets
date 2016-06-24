@@ -42,7 +42,7 @@ class LocationController extends Controller
             return;
         }
 
-        $place = Place::getPlaceByAirportCode($airport->code);
+        $place = Place::getPlaceByAirportCode($airport->getCity()->one()->code);
         if (!$place) {
             return;
         }

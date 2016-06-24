@@ -17,7 +17,8 @@ $(document).ready(function() {
                 dataType: "json",
                 success: function (data2) {
                     console.log(data2)
-                    $("#origin-input").typeahead('val',data2.name);
+                    $("#origin-input").typeahead('val',data1.name);
+                    $("#request-origin").val(data2.id);
                 }
             });
         }

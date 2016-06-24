@@ -34,7 +34,7 @@ class LocationController extends Controller
         return $this->getLocation($requestData);
     }
 
-    public function getLocation($requestData)
+    public function getLocation($iata, $name = '', $country_name = '')
     {
         var_dump($requestData);
 

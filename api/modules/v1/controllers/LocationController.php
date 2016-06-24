@@ -29,7 +29,7 @@ class LocationController extends Controller
         return $behaviors;
     }
 
-    public function actionView($iata, $name = '', $country_name = '')
+    public function actionView($iata)
     {
         return $this->getLocation($iata);
     }

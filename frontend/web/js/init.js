@@ -11,7 +11,9 @@ $(document).ready(function() {
             console.log(data)
             $.ajax({
                 url: apiUrl2,
-                data: data,
+                data: {
+                    'iata': data.iata
+                },
                 dataType: "json",
                 success: function (data) {
                     console.log(data)

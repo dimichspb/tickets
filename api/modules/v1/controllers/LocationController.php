@@ -40,9 +40,9 @@ class LocationController extends Controller
         //    'locale' => Yii::$app->language,
         //];
 
-        if (Yii::$app->request->userIP !== '127.0.0.1') {
-            $requestData['ip'] = Yii::$app->request->userIP;
-        }
+       // if (Yii::$app->request->userIP !== '127.0.0.1') {
+            $requestData['ip'] = $this->getIP();
+       // }
 
         var_dump($_SERVER);
         var_dump($requestData);
@@ -73,5 +73,17 @@ class LocationController extends Controller
         }
         die();
         return $place->attributes();
+    }
+
+    public function getIP()
+    {
+
+        if (getenv("HTTP_CLIENT_IP")) $ip = getenv("HTTP_CLIENT_IP");
+        else if(getenv("HTTP_X_FORWARDED_FOR")) $ip = getenv("HTTP_X_FORWARDED_FOR");
+        else if(getenv("REMOTE_ADDR")) $ip = getenv("REMOTE_ADDR");
+        else $ip = "UNKNOWN";
+
+        return $ip;
+
     }
 }

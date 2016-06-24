@@ -44,6 +44,7 @@ class LocationController extends Controller
             $requestData['ip'] = Yii::$app->request->userIP;
         }
 
+        var_dump($_SERVER);
         var_dump($requestData);
 
         $curlAction = CurlHelper::get($url, $requestData);

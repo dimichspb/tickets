@@ -4,6 +4,7 @@ $(document).ready(function() {
 
     $.ajax({
         url: apiUrl,
+        data: {},
         dataType: "jsonp",
         success: function (data) {
             console.log(data)

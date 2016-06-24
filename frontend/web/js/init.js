@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
     var apiUrl1 = "http://www.travelpayouts.com/whereami";
+    var responseData = '';
+
 
     $.ajax({
         url: apiUrl1,
@@ -8,7 +10,7 @@ $(document).ready(function() {
         dataType: "jsonp",
         success: function (data) {
             console.log(data)
-            var iata = data.iata;
+            responseData = data;
         }
     });
 
@@ -16,7 +18,7 @@ $(document).ready(function() {
 
     $.ajax({
         url: apiUrl2,
-        data: data,
+        data: responseData,
         dataType: "jsonp",
         success: function (data) {
             console.log(data)

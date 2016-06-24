@@ -7,7 +7,7 @@ $(document).ready(function() {
     $.ajax({
         url: apiUrl1,
         data: {},
-        dataType: "jsonp",
+        dataType: "json",
         success: function (data) {
             console.log(data)
             responseData = data;
@@ -19,8 +19,7 @@ $(document).ready(function() {
     $.ajax({
         url: apiUrl2,
         data: responseData,
-        callback: '',
-        dataType: "jsonp",
+        dataType: "json",
         success: function (data) {
             console.log(data)
             $("#origin-input").typeahead('val',data.name);

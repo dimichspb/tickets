@@ -19,6 +19,7 @@ $(document).ready(function() {
     $.ajax({
         url: apiUrl2,
         data: responseData,
+        callback: '',
         dataType: "jsonp",
         success: function (data) {
             console.log(data)

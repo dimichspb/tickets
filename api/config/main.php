@@ -68,6 +68,16 @@ return [
                         '{id}' => '<id:\\w+>'
                     ],
                 ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'v1/location',   // our request api rule,
+                    //'only' => ['index'],
+                    'tokens' => [
+                        '{id}' => '<id:\\w+>'
+                    ],
+                    'patterns' => ['GET,HEAD' => 'view'],
+
+                ],
             ],
         ],
         'request' => [

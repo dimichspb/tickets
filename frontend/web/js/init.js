@@ -7,17 +7,17 @@ $(document).ready(function() {
         url: apiUrl1,
         data: {},
         dataType: "json",
-        success: function (data) {
-            console.log(data)
+        success: function (data1) {
+            console.log(data1)
             $.ajax({
                 url: apiUrl2,
                 data: {
-                    'iata': data.iata
+                    'iata': data1.iata
                 },
                 dataType: "json",
-                success: function (data) {
-                    console.log(data)
-                    $("#origin-input").typeahead('val',data.name);
+                success: function (data2) {
+                    console.log(data2)
+                    $("#origin-input").typeahead('val',data2.name);
                 }
             });
         }

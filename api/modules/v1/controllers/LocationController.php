@@ -36,16 +36,12 @@ class LocationController extends Controller
 
     public function getLocation($iata)
     {
-        var_dump($iata);
-
         $airport = Airport::getAirportByCode($iata);
-        var_dump($airport);
         if (!$airport) {
             return;
         }
 
         $place = Place::getPlaceByAirportCode($airport->code);
-        var_dump($place);
         if (!$place) {
             return;
         }

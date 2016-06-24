@@ -29,41 +29,14 @@ class LocationController extends Controller
         return $behaviors;
     }
 
-    public function actionView($requestData)
+    public function actionView($iata, $name = '', $country_name = '')
     {
-        return $this->getLocation($requestData);
+        return $this->getLocation($iata);
     }
 
-    public function getLocation($iata, $name = '', $country_name = '')
+    public function getLocation($iata)
     {
-        var_dump($requestData);
-
-        $url = "http://www.travelpayouts.com/whereami";
-
-        $requestData = [];
-        //$requestData = [
-        //    'locale' => Yii::$app->language,
-        //];
-
-       // if (Yii::$app->request->userIP !== '127.0.0.1') {
-            $requestData['ip'] = $this->getIP();
-       // }
-
-        var_dump($_SERVER);
-        var_dump($requestData);
-
-        $curlAction = CurlHelper::get($url, $requestData);
-
-        $responseJson = $curlAction['response'];
-        $responseCode = $curlAction['responseCode'];
-
-
-        if ($responseCode !== 200) {
-            return;
-        }
-        $json = json_decode($responseJson);
-        var_dump($json);
-        $iata = $json->iata;
+        var_dump($iata);
 
         $airport = Airport::getAirportByCode($iata);
         var_dump($airport);
@@ -76,7 +49,7 @@ class LocationController extends Controller
         if (!$place) {
             return;
         }
-        die();
+
         return $place->attributes();
     }
 

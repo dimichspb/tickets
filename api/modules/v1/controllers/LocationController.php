@@ -31,9 +31,8 @@ class LocationController extends Controller
 
     public function actionView($iata)
     {
+
         return ((object)$this->getLocation($iata));
-        die();
-        return (object)$this->getLocation($iata);
     }
 
     public function getLocation($iata)

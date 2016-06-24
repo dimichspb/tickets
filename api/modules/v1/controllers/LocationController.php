@@ -24,9 +24,9 @@ class LocationController extends Controller
         $behaviors['contentNegotiator']['formats']['text/html'] = Response::FORMAT_JSON; //setting JSON as default reply
         $behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::className(),
-            'cors' => [
-                'Origin' => ['http://www.biletracker.com', 'http://biletracker.com', 'http://www.biletracker.ru', 'http://biletracker.ru'],
-            ],
+            //'cors' => [
+            //    'Origin' => ['http://www.biletracker.com', 'http://biletracker.com', 'http://www.biletracker.ru', 'http://biletracker.ru'],
+            //],
         ];
 
         return $behaviors;

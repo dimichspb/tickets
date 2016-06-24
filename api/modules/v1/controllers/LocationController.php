@@ -35,13 +35,14 @@ class LocationController extends Controller
     {
         $url = "http://www.travelpayouts.com/whereami";
 
-        $requestData = [
-            'locale' => Yii::$app->language,
-        ];
+        $requestData = [];
+        //$requestData = [
+        //    'locale' => Yii::$app->language,
+        //];
 
-        if (Yii::$app->request->userIP !== '127.0.0.1') {
-            $requestData['ip'] = Yii::$app->request->userIP;
-        }
+        //if (Yii::$app->request->userIP !== '127.0.0.1') {
+        //    $requestData['ip'] = Yii::$app->request->userIP;
+        //}
 
         var_dump($requestData);
 

@@ -53,19 +53,21 @@ class LocationController extends Controller
             return;
         }
         $json = json_decode($responseJson);
+        var_dump($json);
         $iata = $json->iata;
 
         $airport = Airport::getAirportByCode($iata);
+        var_dump($airport);
         if (!$airport) {
             return;
         }
 
         $place = Place::getPlaceByAirportCode($airport->code);
-
+        var_dump($place);
         if (!$place) {
             return;
         }
-
+        die();
         return $place->attributes();
     }
 }

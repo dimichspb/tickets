@@ -46,7 +46,7 @@ class LocationController extends Controller
             return;
         }
 
-        return $place->attributes();
+        return $place->getAttributes();
     }
 
     public function getIP()

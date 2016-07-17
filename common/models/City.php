@@ -140,8 +140,8 @@ class City extends \yii\db\ActiveRecord
             'name' => $cityName,
         ]);
 
-        $city = CIty::findOne([
-            'code' => $cityDesc->code,
+        $city = City::findOne([
+            'code' => $cityDesc->city,
         ]);
 
         return $city;

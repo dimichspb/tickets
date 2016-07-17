@@ -54,13 +54,11 @@ class LocationController extends Controller
     public function getLocationByName($name)
     {
         $city = City::getCityByName($name);
-        var_dump($city);
         if (!$city) {
             return false;
         }
 
         $place = Place::getPlaceByCityCode($city->code);
-        var_dump($place);
         if (!$place) {
             return false;
         }

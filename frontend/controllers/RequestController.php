@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\RateSearch;
 use Yii;
 use common\models\Request;
 use common\models\RequestSearch;
@@ -71,6 +72,8 @@ class RequestController extends Controller
         $ratesDataProvider = new ActiveDataProvider([
             'query' => $model->getRates(),
         ]);
+        var_dump($model->getRates());
+        die();
         return $this->render('view', [
             'model' => $model,
             'ratesDataProvider' => $ratesDataProvider,

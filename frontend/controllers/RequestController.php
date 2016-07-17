@@ -72,7 +72,7 @@ class RequestController extends Controller
         $ratesDataProvider = new ActiveDataProvider([
             'query' => $model->getRates(),
         ]);
-        var_dump($model->getRates());
+        var_dump($model->getRates()->createCommand()->rawSql);
         die();
         return $this->render('view', [
             'model' => $model,

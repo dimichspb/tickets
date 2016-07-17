@@ -121,7 +121,7 @@ class Rate extends \yii\db\ActiveRecord
     public function getOriginCityName(Language $language = null)
     {
         if (!$language) {
-            $language = Language::getDefault();
+            $language = Language::getDefaultLanguage();
         }
         return $this->getOriginCityOne()->getCityDescByLanguage($language)->name;
     }
@@ -149,7 +149,7 @@ class Rate extends \yii\db\ActiveRecord
     public function getDestinationCityName(Language $language = null)
     {
         if (!$language) {
-            $language = Language::getDefault();
+            $language = Language::getDefaultLanguage();
         }
         return $this->getDestinationCityOne()->getCityDescByLanguage($language)->name;
     }

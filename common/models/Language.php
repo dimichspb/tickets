@@ -67,6 +67,12 @@ class Language extends \yii\db\ActiveRecord
         return $language;
     }
 
+    public static function getDefaultLanguage()
+    {
+        $languageCode = Yii::$app->language;
+        return Language::findOne(['code' => $languageCode]);
+    }
+
     public static function getLanguageByRequestString()
     {
         $lString = Yii::$app->request->get('l')? Yii::$app->request->get('l'): Yii::$app->params['default_language'];
@@ -102,8 +108,7 @@ class Language extends \yii\db\ActiveRecord
     public static function get($languageCode = '')
     {
         if (!is_string($languageCode)) {
-            var_dump($languageCode);
-            die();
+            return null;
         }
         if ($languageCode === '') {
             $languageCode = Language::getDefaultCode();;

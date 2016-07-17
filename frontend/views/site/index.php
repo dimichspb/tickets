@@ -8,6 +8,8 @@ use kartik\field\FieldRange;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Html;
 
+$this->registerJsFile('js/init.js', ['depends' => 'yii\web\JqueryAsset']);
+
 $this->title = Yii::$app->name;
 ?>
 <div class="site-index">

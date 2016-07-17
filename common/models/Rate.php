@@ -67,7 +67,7 @@ class Rate extends \yii\db\ActiveRecord
             'id' => 'ID',
             'route' => Yii::t('app', 'Route'),
             'origin_city' => Yii::t('app', 'Origin city'),
-            'destination_city' => Yii::t('app', 'Destination City'),
+            'destination_city' => Yii::t('app', 'Destination city'),
             'there_date' => Yii::t('app', 'There Date'),
             'back_date' => Yii::t('app', 'Back Date'),
             'airline' => Yii::t('app', 'Airline'),

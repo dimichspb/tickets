@@ -57,34 +57,36 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <div class="col-md-12">
-            <?= GridView::widget([
-                'dataProvider' => $ratesDataProvider,
-                'columns' => [
-                    [
-                        'attribute' => 'origin_city',
-                        'value' => function (Rate $model) {
-                            return $model->getOriginCityName();
-                        }
-                    ],
-                    [
-                        'attribute' => 'destination_city',
-                        'value' => function (Rate $model) {
-                            return $model->getDestinationCityName();
-                        }
-                    ],
-                    'there_date:datetime',
-                    'back_date:datetime',
-                    [
-                        'attribute' => 'airline',
-                        'value' => function (Rate $model) {
-                            return $model->getAirlineName();
-                        }
-                    ],
-                    'flight_number',
-                    'price',
-                    'currency',
-                ]
-            ]); ?>
+            <div class="table-responsive">
+                <?= GridView::widget([
+                    'dataProvider' => $ratesDataProvider,
+                    'columns' => [
+                        [
+                            'attribute' => 'origin_city',
+                            'value' => function (Rate $model) {
+                                return $model->getOriginCityName();
+                            }
+                        ],
+                        [
+                            'attribute' => 'destination_city',
+                            'value' => function (Rate $model) {
+                                return $model->getDestinationCityName();
+                            }
+                        ],
+                        'there_date:datetime',
+                        'back_date:datetime',
+                        [
+                            'attribute' => 'airline',
+                            'value' => function (Rate $model) {
+                                return $model->getAirlineName();
+                            }
+                        ],
+                        'flight_number',
+                        'price',
+                        'currency',
+                    ]
+                ]); ?>
+            </div>
         </div>
     </div>
 </div>

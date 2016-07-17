@@ -30,19 +30,19 @@ $(document).ready(function() {
 
 function init() {
 
-    var apiUrl2 = "http://api.biletracker.com/v1/locations";
+    var apiUrl = "http://api.biletracker.com/v1/locations";
 
     var geolocation = ymaps.geolocation;
     console.log(geolocation);
     $.ajax({
-        url: apiUrl1,
+        url: apiUrl,
         data: {
-
+            'name': geolocation.city
         },
         dataType: "json",
         success: function (data) {
             console.log(data)
-            $("#origin-input").typeahead('val',data.name);
+            $("#origin-input").typeahead('val', geolocation.city);
             $("#request-origin").val(data.id);
         }
     });

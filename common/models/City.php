@@ -131,6 +131,19 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param $cityName
+     * @return City
+     */
+    public static function getCityByName($cityName)
+    {
+        $city = City::findOne([
+            'name' => $cityName,
+        ]);
+
+        return $city;
+    }
+
+    /**
      * Method adds all Cities to Place table
      *
      */

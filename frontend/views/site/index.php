@@ -29,7 +29,7 @@ $this->title = Yii::$app->name;
                         'id' => 'origin-input',
                         'name' => 'origin_text',
                         'options' => [
-                            'placeholder' => Yii::t('app', 'Where are you from ...'),
+                            'placeholder' => Yii::t('app', 'City, country, continent ...'),
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
@@ -57,7 +57,7 @@ $this->title = Yii::$app->name;
                 <?= Typeahead::widget([
                         'name' => 'destination_text',
                         'options' => [
-                            'placeholder' => Yii::t('app', 'Where are you going to ...'),
+                            'placeholder' => Yii::t('app', 'City, country, continent ...'),
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
@@ -123,7 +123,7 @@ $this->title = Yii::$app->name;
                     'label' => Yii::t('app', 'Travel period range'),
                     'attribute1' => 'travel_period_start',
                     'attribute2' => 'travel_period_end',
-                    'separator' => ' - ',
+                    'separator' => Yii::t('app', 'days'),
                     'type' => FieldRange::INPUT_SPIN,
                 ])
                 ?>

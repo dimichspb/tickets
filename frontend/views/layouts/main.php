@@ -13,7 +13,9 @@ use common\models\Language;
 
 AppAsset::register($this);
 
+$this->registerJsFile('https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=' . Yii::$app->language);
 
+/*
 
 $this->registerJsFile('@web/js/jquery.interactive_bg.js', ['depends' => 'yii\web\JqueryAsset']);
 
@@ -35,6 +37,7 @@ $(window).resize(function() {
       })
    })
 ');
+*/
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -49,7 +52,7 @@ $(window).resize(function() {
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap bg" data-ibg-bg="/images/bg.jpg">
+<div class="wrap">
     <?php
     NavBar::begin([
         'brandLabel' => '<div class="row"><div class="col-xs-4"><span class="bt-logo"></span></div><div class="col-xs-8"><span class="bt-brand">' . Yii::$app->name . '</span></div></div>',

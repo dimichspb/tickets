@@ -3,6 +3,7 @@
 namespace api\modules\v1\controllers;
 
 use common\models\Airport;
+use common\models\City;
 use common\models\Place;
 use Yii;
 use yii\rest\Controller;
@@ -29,22 +30,37 @@ class LocationController extends Controller
         return $behaviors;
     }
 
-    public function actionView($iata)
+    public function actionView($name)
     {
 
-        return ((object)$this->getLocation($iata));
+        return ((object)$this->getLocationByName($name));
     }
 
-    public function getLocation($iata)
+    public function getLocationByIATA($iata)
     {
         $airport = Airport::getAirportByCode($iata);
         if (!$airport) {
-            return;
+            return false;
         }
 
         $place = Place::getPlaceByCityCode($airport->getCity()->one()->code);
         if (!$place) {
-            return;
+            return false;
+        }
+
+        return $place->getAttributes();
+    }
+
+    public function getLocationByName($name)
+    {
+        $city = City::getCityByName($name);
+        if (!$city) {
+            return false;
+        }
+
+        $place = Place::getPlaceByCityCode($city->code);
+        if (!$place) {
+            return false;
         }
 
         return $place->getAttributes();

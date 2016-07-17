@@ -274,8 +274,8 @@ class Rate extends \yii\db\ActiveRecord
         $data = Json::decode($dataJson);
 
         if (count($data['data']) === 0) {
-            $route->status = 1;
-            $route->save();
+            //$route->status = 1;
+            //$route->save();
             return;
         }
 

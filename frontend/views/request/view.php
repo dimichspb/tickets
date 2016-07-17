@@ -81,8 +81,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     'flight_number',
-                    'currency',
                     'price',
+                    'currency',
                 ]
             ]); ?>
         </div>

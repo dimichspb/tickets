@@ -75,7 +75,7 @@ class TranslationController extends Controller {
             'Origin city' => ['ru' => 'Город вылета'],
             'Destination city' => ['ru' => 'Город назначения'],
             'There Date' => ['ru' => 'Дата вылета'],
-            'Back date' => ['ru' => 'Дата возвращения'],
+            'Back Date' => ['ru' => 'Дата возвращения'],
             'Airline' => ['ru' => 'Авиалиния'],
             'Flight Number' => ['ru' => 'Номер рейса'],
             //'Currency' => ['ru' => 'Валюта'],

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use common\models\Request;
 use common\models\RequestSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,7 +36,7 @@ class RequestController extends Controller
                 ],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'delete', 'start', 'pause'],
+                        'actions' => ['index', 'view', 'delete', 'start', 'pause'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -66,8 +67,13 @@ class RequestController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $ratesDataProvider = new ActiveDataProvider([
+            'query' => $model->getRates(),
+        ]);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'ratesDataProvider' => $ratesDataProvider,
         ]);
     }
 

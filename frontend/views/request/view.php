@@ -2,9 +2,11 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Request */
+/* @var $ratesDataProvider \yii\data\DataProviderInterface */
 
 $this->title = $model->getOriginPlaceName() . ' - ' . $model->getDestinationPlaceName();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'My requests'), 'url' => ['index']];
@@ -50,6 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'travel_period_end',
                 ],
             ]) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <?= GridView::widget([
+                'dataProvider' => $ratesDataProvider,
+            ]); ?>
         </div>
     </div>
 </div>

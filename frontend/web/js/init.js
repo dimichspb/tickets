@@ -30,14 +30,14 @@ $(document).ready(function() {
 
 function init() {
 
-    var apiUrl = "http://api.biletracker.com/v1/locations";
+    var apiUrl2 = "http://api.biletracker.com/v1/locations";
 
     var geolocation = ymaps.geolocation;
     console.log(geolocation);
     $.ajax({
-        url: apiUrl,
+        url: apiUrl1,
         data: {
-            'name': geolocation.city
+
         },
         dataType: "json",
         success: function (data) {

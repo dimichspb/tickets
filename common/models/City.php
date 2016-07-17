@@ -136,8 +136,12 @@ class City extends \yii\db\ActiveRecord
      */
     public static function getCityByName($cityName)
     {
-        $city = City::findOne([
+        $cityDesc = CityDesc::findOne([
             'name' => $cityName,
+        ]);
+
+        $city = CIty::findOne([
+            'code' => $cityDesc->code,
         ]);
 
         return $city;

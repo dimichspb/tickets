@@ -71,6 +71,16 @@ class TranslationController extends Controller {
             'Mail sent' => ['ru' => 'Сообщение отправлено'],
             'Currency' => ['ru' => 'Валюта'],
 
+            'Route' => ['ru' => 'Маршрут'],
+            'Origin city' => ['ru' => 'Город вылета'],
+            'Destination city' => ['ru' => 'Город назначения'],
+            'There Date' => ['ru' => 'Дата вылета'],
+            'Back date' => ['ru' => 'Дата возвращения'],
+            'Airline' => ['ru' => 'Авиалиния'],
+            'Flight Number' => ['ru' => 'Номер рейса'],
+            //'Currency' => ['ru' => 'Валюта'],
+            'Price' => ['ru' => 'Цена'],
+
             'Start request' => ['ru' => 'Возобновить'],
             'Pause request' => ['ru' => 'Приостановить'],
 

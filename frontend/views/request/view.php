@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use common\models\Rate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Request */
@@ -58,6 +59,31 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <?= GridView::widget([
                 'dataProvider' => $ratesDataProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'origin_city',
+                        'value' => function (Rate $model) {
+                            return $model->getOriginCityName();
+                        }
+                    ],
+                    [
+                        'attribute' => 'destination_city',
+                        'value' => function (Rate $model) {
+                            return $model->getDestinationCityName();
+                        }
+                    ],
+                    'there_date:datetime',
+                    'back_date:datetime',
+                    [
+                        'attribute' => 'airline',
+                        'value' => function (Rate $model) {
+                            return $model->getAirlineName();
+                        }
+                    ],
+                    'flight_number',
+                    'currency',
+                    'price',
+                ]
             ]); ?>
         </div>
     </div>

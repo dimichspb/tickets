@@ -65,15 +65,15 @@ class Rate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'route' => 'Route',
-            'origin_city' => 'Origin City',
-            'destination_city' => 'Destination City',
-            'there_date' => 'There Date',
-            'back_date' => 'Back Date',
-            'airline' => 'Airline',
-            'flight_number' => 'Flight Number',
-            'currency' => 'Currency',
-            'price' => 'Price',
+            'route' => Yii::t('app', 'Route'),
+            'origin_city' => Yii::t('app', 'Origin city'),
+            'destination_city' => Yii::t('app', 'Destination City'),
+            'there_date' => Yii::t('app', 'There Date'),
+            'back_date' => Yii::t('app', 'Back Date'),
+            'airline' => Yii::t('app', 'Airline'),
+            'flight_number' => Yii::t('app', 'Flight Number'),
+            'currency' => Yii::t('app', 'Currency'),
+            'price' => Yii::t('app', 'Price'),
         ];
     }
 
@@ -83,6 +83,19 @@ class Rate extends \yii\db\ActiveRecord
     public function getAirline()
     {
         return $this->hasOne(Airline::className(), ['id' => 'airline']);
+    }
+
+    /**
+     * @return Airline
+     */
+    public function getAirlineOne()
+    {
+        return $this->getAirline()->one();
+    }
+
+    public function getAirlineName()
+    {
+        return $this->getAirlineOne()->name;
     }
 
     /**
@@ -105,8 +118,11 @@ class Rate extends \yii\db\ActiveRecord
      * @param Language $language
      * @return string
      */
-    public function getOriginCityName(Language $language)
+    public function getOriginCityName(Language $language = null)
     {
+        if (!$language) {
+            $language = Language::getDefault();
+        }
         return $this->getOriginCityOne()->getCityDescByLanguage($language)->name;
     }
 
@@ -130,8 +146,11 @@ class Rate extends \yii\db\ActiveRecord
      * @param Language $language
      * @return string
      */
-    public function getDestinationCityName(Language $language)
+    public function getDestinationCityName(Language $language = null)
     {
+        if (!$language) {
+            $language = Language::getDefault();
+        }
         return $this->getDestinationCityOne()->getCityDescByLanguage($language)->name;
     }
 

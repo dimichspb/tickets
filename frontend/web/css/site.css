@@ -1,8 +1,8 @@
 html,
 body {
     height: 100%;
-    //background-color: #e6f2ff;
-    background-image: url("/images/bg.jpg");
+//background-color: #e6f2ff;
+    //background-image: url("/images/bg.jpg");
     background-size: 100%;
 }
 
@@ -107,8 +107,8 @@ a.desc:after {
 .bt-logo {
     background-image: url("/images/bt-logo128x128.png");
     background-size: 100% 100%;
-    //width: 40px;
-    //height: 40px;
+//width: 40px;
+//height: 40px;
     display: block;
 }
 
@@ -131,15 +131,6 @@ a.desc:after {
 
 .request-grid-container {
     font-size: 14px;
-}
-
-.bg {
-    background-image: url(/images/bg.jpg);
-    background-size: 100% 100%;
-    //position: absolute;
-    //height: 100%;
-    //width: 100%;
-    //z-index: 0;
 }
 
 .nav-top, .header, .menu {
@@ -278,3 +269,17 @@ a, a:hover, a:focus {
 ::-moz-placeholder          {color:white !important;}/* Firefox 19+ */
 :-moz-placeholder           {color:white !important;}/* Firefox 18- */
 :-ms-input-placeholder      {color:white !important;}
+
+.site-index {
+    text-align: center;
+}
+body {
+    background: url(/images/bg.jpg);
+    background-size: 100%;
+}
+
+@media only screen and (min-width : 320px) and (max-width : 480px) {
+    body {
+        background: url(/images/bg.jpg) no-repeat center center fixed;
+    }
+}

@@ -1,7 +1,9 @@
 html,
 body {
     height: 100%;
-    background-color: #e6f2ff;
+    //background-color: #e6f2ff;
+    background-image: url("/images/bg.jpg");
+    background-size: 100%;
 }
 
 .wrap {
@@ -99,22 +101,24 @@ a.desc:after {
 .margin-top-30 { margin-top: 3.0em; }
 
 .navbar-brand {
-    padding: 5px 5px 5px 5px;
+    min-width: 250px;
 }
 
 .bt-logo {
     background-image: url("/images/bt-logo128x128.png");
     background-size: 100% 100%;
-    width: 40px;
-    height: 40px;
+    //width: 40px;
+    //height: 40px;
     display: block;
 }
 
 .bt-brand {
-    height: 40px;
+    background-image: url("/images/bt-logo128x128.png");
+    background-repeat: no-repeat;
+    background-size: contain;
     display: block;
     vertical-align: middle;
-    line-height: 40px;
+    padding-left: 20%;
 }
 
 .requests-grid-header {
@@ -149,8 +153,116 @@ a.desc:after {
 }
 
 .body-content {
-    color: black;
+    color: white;
 }
 .navbar {
     opacity: 0.9
 }
+
+@media (min-width: 768px){
+    .navbar-nav .open .dropdown-menu {
+        position: static;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: transparent;
+        border: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    .navbar-nav .open .dropdown-menu > li > a {
+        line-height: 20px;
+    }
+    .navbar-nav .open .dropdown-menu > li > a,
+    .navbar-nav .open .dropdown-menu .dropdown-header {
+        padding: 5px 15px 5px 25px;
+    }
+    .dropdown-menu > li > a {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: normal;
+        line-height: 1.42857143;
+        color: white;
+        white-space: nowrap;
+    }
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+        margin-top: 15px;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        /*margin: 7.5px -15px;*/
+        margin: 7.5px 50px 7.5px -15px
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in {
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+}
+
+.navbar {
+    background:transparent !important;
+}
+
+.form-group .checkbox label, .form-group .radio label, .form-group label {
+    color: white !important;
+}
+
+.checkbox label, .radio label, label {
+    color: white !important;
+}
+
+.form-control {
+    color: white !important;
+}
+
+.glyphicon {
+    color: white !important;
+}
+
+.input-group-addon {
+    color: white !important;
+}
+
+.form-control, .form-group .form-control {
+    float: left;
+}
+
+.kv-container-from,
+.kv-container-to {
+    background-image: none !important;
+}
+
+.has-success .input-group-btn .btn-default {
+    background-color: transparent !important;
+}
+
+::-webkit-input-placeholder {color:white !important;}
+::-moz-placeholder          {color:white !important;}/* Firefox 19+ */
+:-moz-placeholder           {color:white !important;}/* Firefox 18- */
+:-ms-input-placeholder      {color:white !important;}

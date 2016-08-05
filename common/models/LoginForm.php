@@ -10,7 +10,8 @@ use yii\base\Model;
 class LoginForm extends Model
 {
     public $email;
-
+    public $auth_key;
+    
     private $_user;
 
 
@@ -60,7 +61,11 @@ class LoginForm extends Model
      */
     public function login()
     {
-        return Yii::$app->user->login($this->getUser(), 3600 * 24 * 365);
+        $user = $this->getUser();
+        if (!$user) {
+            return false;
+        }
+        return Yii::$app->user->login($user, 3600 * 24 * 365);
     }
 
     /**
@@ -72,7 +77,7 @@ class LoginForm extends Model
     {
         if ($this->_user === null) {
             //$this->_user = User::findByEmail($this->email);
-            $this->_user = User::findByAuthKey(Yii::$app->request->get('auth_key'));
+            $this->_user = User::findByAuthKey($this->auth_key);
         }
 
         return $this->_user;

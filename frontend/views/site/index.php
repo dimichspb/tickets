@@ -26,7 +26,7 @@ $this->title = Yii::$app->name;
 
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <?php echo '<label class="control-label">'.Yii::t('app', 'Origin').'</label>'; ?>
+                <?= '<label class="control-label">'.Yii::t('app', 'Origin').'</label>'; ?>
                 <?= Typeahead::widget([
                         'id' => 'origin-input',
                         'name' => 'origin_text',
@@ -35,6 +35,7 @@ $this->title = Yii::$app->name;
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
+                            'hint' => false,
                         ],
                         'pluginEvents' => [
                             'typeahead:select' => 'function(data, item) {document.getElementById("request-origin").value = item.id; }',
@@ -64,6 +65,7 @@ $this->title = Yii::$app->name;
                         ],
                         'pluginOptions' => [
                             'highlight' => true,
+                            'hint' => false,
                         ],
                         'pluginEvents' => [
                             'typeahead:select' => 'function(data, item) {document.getElementById("request-destination").value = item.id; }',
@@ -136,7 +138,7 @@ $this->title = Yii::$app->name;
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
-                    <?= Html::submitButton(Yii::t('app', 'Track now!'), ['class' => 'btn btn-lg btn-success', 'name' => 'signup-button']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Track now!'), ['class' => 'btn btn-lg btn-success btn-raised', 'name' => 'signup-button']) ?>
                 </div>
             </div>
         </div>

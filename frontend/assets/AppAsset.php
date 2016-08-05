@@ -23,8 +23,16 @@ class AppAsset extends AssetBundle
     public $js = [
         //'js/init.js',
     ];
+
+    /*
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+    ];
+    */
+    public $depends = [
+        'yii\web\YiiAsset',
+        'romdim\bootstrap\material\BootMaterialCssAsset',
+        'romdim\bootstrap\material\BootMaterialJsAsset'
     ];
 }

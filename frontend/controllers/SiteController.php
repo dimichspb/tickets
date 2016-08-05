@@ -111,9 +111,10 @@ class SiteController extends Controller
     /**
      * Logs in a user.
      *
+     * @param  $auth_key
      * @return mixed
      */
-    public function actionLogin()
+    public function actionLogin($auth_key = null)
     {
         if (!\Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -121,12 +122,14 @@ class SiteController extends Controller
 
         $model = new LoginForm();
 
-        if (Yii::$app->request->get('auth_key')) {
+        if ($auth_key) {
+            $model->auth_key = $auth_key;
             if ($model->login()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'You are successfully logged in'));
                 return $this->goBack();
             } else {
-                return $this->redirect(['site/error']);
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Authentication error'));
+                return $this->redirect(['site/index']);
             }
         }
 
@@ -134,7 +137,7 @@ class SiteController extends Controller
             if ($model->validate()) {
                 if ($user = User::findByEmail($model->email)) {
                     $user->sendLoginEmail();
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'The authorization email has been sent'));
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'The Authentication email has been sent'));
                     return $this->redirect(['site/index']);
                 }
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not find user with specified email'));

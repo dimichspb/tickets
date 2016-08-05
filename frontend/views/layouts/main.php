@@ -8,12 +8,17 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
-use common\widgets\Alert;
+//use common\widgets\Alert;
+use kartik\widgets\AlertBlock;
 use common\models\Language;
 
 AppAsset::register($this);
 
 $this->registerJsFile('https://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=' . Yii::$app->language);
+
+$this->registerJs('
+    $(function() { $.material.init(); });
+');
 
 /*
 
@@ -55,7 +60,7 @@ $(window).resize(function() {
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '<div class="row"><div class="col-xs-4"><span class="bt-logo"></span></div><div class="col-xs-8"><span class="bt-brand">' . Yii::$app->name . '</span></div></div>',
+        'brandLabel' => '<span class="bt-brand">' . Yii::$app->name . '</span>',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-default navbar-fixed-top',
@@ -87,7 +92,7 @@ $(window).resize(function() {
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <?= Alert::widget() ?>
+                <?= AlertBlock::widget() ?>
             </div>
         </div>
         <?= $content ?>

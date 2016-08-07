@@ -229,6 +229,7 @@ class Rate extends \yii\db\ActiveRecord
      */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
+        var_dump(count($routesToUpdate));
         $i = 0;
         $today = new \DateTime();
         foreach ($routesToUpdate as $routeToUpdate) {

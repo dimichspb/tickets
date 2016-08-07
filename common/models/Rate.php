@@ -229,13 +229,15 @@ class Rate extends \yii\db\ActiveRecord
      */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
-        var_dump(count($routesToUpdate));
+        Console::stdout("Total routes to update: " . count($routesToUpdate));
         $i = 0;
         $today = new \DateTime();
         foreach ($routesToUpdate as $routeToUpdate) {
+            Console::stdout("Route: " . $routeToUpdate->id . ', ' . $i++);
             $thereDate = new \DateTime($routeToUpdate->there_date);
             $backDate = new \DateTime($routeToUpdate->back_date);
             if ($thereDate <= $today || $backDate <= $today) {
+                Console::stdout('out of date');
                 $routeToUpdate->status = 1;
                 $routeToUpdate->save();
                 continue;
@@ -254,8 +256,6 @@ class Rate extends \yii\db\ActiveRecord
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
-
-            echo $i++ . "<br>";
 
             if ($responseCode !== 200) {
                 continue;

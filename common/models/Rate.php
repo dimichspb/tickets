@@ -229,7 +229,7 @@ class Rate extends \yii\db\ActiveRecord
      */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
-        Console::stdout("Total routes to update: " . count($routesToUpdate));
+        Console::stdout("Total routes to update: " . count($routesToUpdate) . PHP_EOL);
         $i = 0;
         $today = new \DateTime();
         foreach ($routesToUpdate as $routeToUpdate) {
@@ -261,6 +261,7 @@ class Rate extends \yii\db\ActiveRecord
                 continue;
             }
             Rate::addRatesAVS($endpoint, $routeToUpdate, $responseJson);
+            Console::stdout(PHP_EOL);
         }
     }
 

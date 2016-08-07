@@ -136,6 +136,7 @@ class Route extends \yii\db\ActiveRecord
             ->select('`route`.*, count(`rate`.`id`) as `rates`')
             ->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')
             ->groupBy('`route`.`id`')
+            ->orderBy(['route.last_update' => SORT_ASC])
             ->limit($limit)
             ->having('`rates` = 0');
 
@@ -160,6 +161,7 @@ class Route extends \yii\db\ActiveRecord
             ->innerJoin('request_to_route', '`request_to_route`.`route` = `route`.`id` AND `request_to_route`.`request`=' . $requestId)
             ->leftJoin('rate', '`rate`.`route`=`route`.`id` AND DATE(`rate`.`create_date`) = CURDATE()')
             ->groupBy('`route`.`id`')
+            ->orderBy(['route.last_update' => SORT_ASC])
             ->limit($limit)
             ->having('`rates` = 0');
 

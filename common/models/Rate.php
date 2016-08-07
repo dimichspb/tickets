@@ -276,6 +276,8 @@ class Rate extends \yii\db\ActiveRecord
     private static function addRatesAVS(Endpoint $endpoint, Route $route, $dataJson)
     {
         $log = 'Route: ' . $route->id . '...';
+        $route->last_update = (new \DateTime())->format('Y-m-d H:i:s');
+        $route->update(false, ['last_update']);
         $data = Json::decode($dataJson);
 
         if (count($data['data']) === 0) {

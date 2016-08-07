@@ -229,7 +229,7 @@ class Rate extends \yii\db\ActiveRecord
      */
     private static function getRatesFromAVS(Endpoint $endpoint, array $routesToUpdate)
     {
-        var_dump($routesToUpdate);
+        //var_dump($routesToUpdate);
         $today = new \DateTime();
         foreach ($routesToUpdate as $routeToUpdate) {
             $thereDate = new \DateTime($routeToUpdate->there_date);
@@ -253,6 +253,8 @@ class Rate extends \yii\db\ActiveRecord
 
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
+
+            var_dump($responseJson);
 
             if ($responseCode !== 200) {
                 continue;

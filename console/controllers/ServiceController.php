@@ -117,7 +117,7 @@ class ServiceController extends Controller
      * @param null $requestId
      * @param int $limit
      */
-    public function actionRoutes($requestId = null, $limit = 1000)
+    public function actionRoutes($requestId = null, $limit = 5000)
     {
         Request::process($requestId, $limit);
     }
@@ -128,7 +128,7 @@ class ServiceController extends Controller
      * @param null $requestId
      * @param int $limit
      */
-    public function actionRates($requestId = null, $limit = 100)
+    public function actionRates($requestId = null, $limit = 1000)
     {
         Rate::process($requestId, $limit);
     }

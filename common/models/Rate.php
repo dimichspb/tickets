@@ -254,6 +254,7 @@ class Rate extends \yii\db\ActiveRecord
             $responseJson = $curlAction['response'];
             $responseCode = $curlAction['responseCode'];
 
+            var_dump($routeToUpdate->id);
             var_dump($requestData);
             var_dump($responseJson);
 

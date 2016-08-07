@@ -21,9 +21,9 @@ $this->title = Yii::$app->name;
     <?php $form = ActiveForm::begin(['id' => 'form-request']); ?>
     <div class="row">
         <div class="col-xs-12">
-            <h1><?= Yii::t('app', 'Congratulations!'); ?></h1>
+            <h1><?= Yii::t('app', 'Whole day and night'); ?></h1>
 
-            <p class="lead"><?= Yii::t('app', 'You are in one step to get the best air fares!'); ?></p>
+            <p class="lead"><?= Yii::t('app', 'I will track the best fares for your flight'); ?></p>
         </div>
     </div>
     <div class="row">
@@ -159,7 +159,7 @@ $this->title = Yii::$app->name;
     <div class="row">
         <div class="col-xs-12">
             <div class="form-group">
-                <?= Html::submitButton(Yii::t('app', 'Track now!'), ['class' => 'btn btn-lg btn-success btn-raised', 'name' => 'signup-button']) ?>
+                <?= Html::submitButton(Yii::t('app', 'Start tracking'), ['class' => 'btn btn-lg btn-success btn-raised', 'name' => 'signup-button']) ?>
             </div>
         </div>
     </div>

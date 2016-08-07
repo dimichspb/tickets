@@ -38,6 +38,7 @@ class TranslationController extends Controller {
             'days' => ['ru' => 'дней'],
             'City, country, continent ...' => ['ru' => 'Город, страна, континент ...'],
 
+            'Start tracking' => ['ru' => 'Начать работу'],
             'Track now!' => ['ru' => 'Найти лучшие цены!'],
             'Send' => ['ru' => 'Отправить'],
             'New request' => ['ru' => 'Новый запрос'],
@@ -45,11 +46,14 @@ class TranslationController extends Controller {
             'More details' => ['ru' => 'Дополнительно'],
 
             'Congratulations!' => ['ru' => 'Поздравляем!'],
+            'You are in one step to get the best air fares!' => ['ru' => 'Всего один шаг, чтобы получить лучшие цены!'],
+            'Whole day and night' => ['ru' => 'День и ночь'],
+            'I will track the best fares for your flight' => ['ru' => 'Я буду отслеживать лучшие цены на Ваш рейс'],
+
             'Well done!' => ['ru' => 'Превосходно!'],
 
             'I need to know your email to send link to login' => ['ru' => 'Мне нужно знать email куда отправить ссылку для входа'],
             'Please fill out the following fields to signup' => ['ru' => 'Пожалуйста, заполните поля для регистрации'],
-            'You are in one step to get the best air fares!' => ['ru' => 'Всего один шаг, чтобы получить лучшие цены!'],
             'You are successfully logged in' => ['ru' => 'Вы успешно авторизованы'],
             'Relax while I\'m doing my work!' => ['ru' => 'Отдохните, а я пока поработаю!'],
             'The request has been placed successfully' => ['ru' => 'Запрос успешно размещен'],

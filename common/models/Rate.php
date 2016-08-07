@@ -237,7 +237,7 @@ class Rate extends \yii\db\ActiveRecord
             $thereDate = new \DateTime($routeToUpdate->there_date);
             $backDate = new \DateTime($routeToUpdate->back_date);
             if ($thereDate <= $today || $backDate <= $today) {
-                Console::stdout('out of date');
+                Console::stdout('out of date' . PHP_EOL);
                 $routeToUpdate->status = 1;
                 $routeToUpdate->save();
                 continue;

@@ -17,6 +17,7 @@ use yii\helpers\Console;
  * @property string $there_date
  * @property string $back_date
  * @property string $currency
+ * @property string $last_update
  * @property integer $status
  * @property City $destinationCity
  * @property City $originCity
@@ -40,7 +41,7 @@ class Route extends \yii\db\ActiveRecord
     {
         return [
             [['origin_city', 'destination_city', 'there_date'], 'required'],
-            [['there_date', 'back_date'], 'safe'],
+            [['there_date', 'back_date', 'last_update',], 'safe'],
             [['origin_city', 'destination_city', 'currency'], 'string', 'max' => 3]
         ];
     }
@@ -58,6 +59,7 @@ class Route extends \yii\db\ActiveRecord
             'back_date' => 'Back Date',
             'currency' => 'Currency',
             'status' => 'Status',
+            'last_update' => 'Last update time',
         ];
     }
 

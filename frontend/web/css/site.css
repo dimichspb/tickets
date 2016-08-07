@@ -196,8 +196,6 @@ a.desc:after {
         /*margin: 7.5px -15px;*/
         /*margin: 7.5px 50px 7.5px -15px*/
         margin: 0 0 0 0;
-        background-color: rgb(102, 99, 80);
-
     }
     .navbar-nav>li {
         float: none;
@@ -299,6 +297,22 @@ body {
 
 .datepicker table tr td, .datepicker table tr th {
     color: black;
+}
+
+.navbar-nav {
+    background-color: rgb(102, 99, 80) !important;
+}
+
+@media (max-width: 767px) {
+    .navbar .navbar-nav .dropdown .dropdown-toggle .caret {
+        display: inline-block;
+    }
+    a.dropdown-toggle:after {
+        display: none;
+    }
+    .navbar .dropdown-menu .dropdown-header, .navbar.navbar-default .dropdown-menu .dropdown-header {
+        background-color: inherit;
+    }
 }
 
 

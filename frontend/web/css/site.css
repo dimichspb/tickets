@@ -332,9 +332,12 @@ body {
     background: none !important;
 }
 
-.site-index {
-    padding-left:200px;
-    padding-right:200px;
+@media (min-width: 768px) {
+    .site-index {
+
+        padding-left:200px;
+        padding-right:200px;
+    }
 }
 
 .datepicker.dropdown-menu {
@@ -365,6 +368,15 @@ body {
 
 .navbar .navbar-collapse, .navbar .navbar-form {
     border:none;
+}
+
+.field-request-origin,
+.field-request-destination {
+    display: none;
+}
+
+.wrap {
+    padding-bottom: 0;
 }
 
 

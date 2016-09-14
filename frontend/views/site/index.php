@@ -15,11 +15,30 @@ $layout = '
 <span class="input-group-addon kv-date-calendar hidden-xs" title="Select date"><i class="glyphicon glyphicon-calendar"></i></span>
 {input}';
 
+$this->registerJs('
+    $("#request-there_start_date-disp").on("change", function() {
+        var startInput = $(this);
+        var endInput = $("#request-there_end_date-disp");
+        var firstValue = startInput.val().split(".");
+        var secondValue = endInput.val().split(".");
+
+        var firstDate=new Date();
+        firstDate.setFullYear(firstValue[2],(firstValue[1] - 1 ),firstValue[0]);
+        
+        var secondDate=new Date();
+        secondDate.setFullYear(secondValue[2],(secondValue[1] - 1 ),secondValue[0]); 
+        
+        if (firstDate > secondDate) {
+            endInput.val(startInput.val());
+        };
+    });
+');
+
 $this->title = Yii::$app->name;
 ?>
 <div class="site-index">
     <?php $form = ActiveForm::begin(['id' => 'form-request']); ?>
-    <div class="row">
+    <div class="row hidden-xs hidden-sm">
         <div class="col-xs-12">
             <h1><?= Yii::t('app', 'Whole day and night'); ?></h1>
 

@@ -74,7 +74,7 @@ $(window).resize(function() {
         $menuItems[] = ['label' => '<span class="glyphicon glyphicon-plus"></span> ' . Yii::t('app', 'Signup'), 'url' => ['/site/signup']];
         $menuItems[] = ['label' => '<span class="glyphicon glyphicon-user"></span> ' . Yii::t('app', 'Login'), 'url' => ['/site/login']];
     } else {
-        $menuItems[] = ['label' => '<span class=""></span> ' . Yii::t('app', 'My requests'), 'url' => ['request/index']];
+        $menuItems[] = ['label' => '<span class="glyphicon glyphicon-th-list"></span> ' . Yii::t('app', 'My requests'), 'url' => ['request/index']];
         $menuItems[] = ['label' => '<span class="glyphicon glyphicon-off"></span> ' . Yii::t('app', 'Logout'), 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']];
     }
     $menuItems[] = [
